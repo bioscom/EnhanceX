@@ -1,6 +1,6 @@
 {% load humanize %}
 
-<div class="container-fluid p-1 bg-success">
+<div class="container-fluid p-2 bg-success">
   <!-- Row 1: Header and KPIs -->
     <div class="row">
         <!-- Column 1 -->
@@ -8,7 +8,7 @@
             <div class="card col-md g-1 mb-1">
                 <div class="card-header">
                     {% if request.user.is_staff %}
-                        <a type="button" class="text-end" data-bs-toggle="modal" data-bs-target="#deliveryTargetModal" title="Click to update delivery Target for the current Year"><b>delivery Target</b></a>
+                        <a type="button" data-bs-toggle="modal" data-bs-target="#deliveryTargetModal" title="Click to update delivery Target for the current Year"><b>Delivery Target</b></a>
                     {% else %}
                         <b>Delivery Target</b>
                     {% endif %}
@@ -20,13 +20,13 @@
 
             <div class="card col-md mb-1">
                 <div class="card-header">
-                    <h6>Functions</h6>
+                    <h6>Workstream</h6>
                 </div>
                 <div class="card-body">
                     <select id="functionFilter" class="form-select mb-2">
                         <option value="">All</option>
                         {% for o in xfunctions %}
-                            <option value="{{o.id}}" {% if request.GET.functionFilter == o.id|stringformat:"s" %}selected{% endif %}>{{ o.title }}</option>
+                            <option value="{{o.id}}" {% if request.GET.functionFilter == o.id|stringformat:"s" %}selected{% endif %}>{{ o.workstreamname }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -56,142 +56,151 @@
 
             <div class="card col-md mb-1">
                 <div class="card-header">
+                    <h6>Banked YTD</h6>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-success text-center">${{BankedYTD}}M</h3>
+                </div>
+            </div>
+
+            {% comment %} <div class="card col-md mb-1">
+                <div class="card-header">
                     <h6>Funnel Size</h6>
                 </div>
                 <div class="card-body">
                     <h4 class="text-center">${{FunnelSize}}M</h4>
                 </div>
-            </div>
+            </div> {% endcomment %}
 
-            <div class="card col-md">
+            {% comment %} <div class="card col-md">
                 <div class="card-header">
                     <h6 class="small" title="Initiative Count">Init. Count</h6>
                 </div>
                 <div class="card-body">
                     <h2 class="text-center" title="Initiative Count">{{record}}</h2>
                 </div>
-            </div>
+            </div> {% endcomment %}
         </div>
         <!-- Column 2 -->
-        <div class="col-md-8">
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="card col-md-3">
-                        <div class="card-header">
-                            <h6>delivery Funnel</h6>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="funnelChart" class="resize"></canvas>
-                        </div>
+        <div class="row col-md-8 mb-1">
+            <div class="row col-md-12 g-1">
+                <div class="card col-md-2">
+                    <div class="card-header">
+                        <h6 title="Initiative Count">Total Initiative Count</h6>
                     </div>
-                    
-                    <div class="col-md-4">
-                        <div class="row g-1 mb-2 h-50">
-                            <div class="card col-md">
-                                <div class="card-header">
-                                    <h6>Funnel Value Below L3</h6>
-                                </div>
-                                <div class="card-body">
-                                    <h3 class="text-center">${{funnelBelowG3}}M</h3>
-                                </div>
-                            </div>
+                    <div class="card-body">
+                        <h2 class="text-center" title="Initiative Count">{{record}}</h2>
+                    </div>
+                </div>
 
-                            <div class="card col-md">
-                                <div class="card-header">
-                                    <h6>Funnel Growth - Week</h6>
-                                </div>
-                                <div class="card-body">
-                                    <h3 class="text-center">${{FunnelGrowth}}M</h3>
-                                </div>
+                <div class="col-md-4">
+                    <div class="row h-50">
+                        <div class="card col-md">
+                            <div class="card-header">
+                                <h6>Funnel Size</h6>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="text-center">${{FunnelSize}}M</h3>
                             </div>
                         </div>
 
-                        <div class="row g-1 h-50">
-                            <div class="card col-md">
-                                <div class="card-header">
-                                    <h6>Banked YTD</h6>
-                                </div>
-                                <div class="card-body">
-                                    <h3 class="text-success text-center">${{BankedYTD}}M</h3>
-                                </div>
+                        <div class="card col-md">
+                            <div class="card-header">
+                                <h6>Funnel Growth - Week</h6>
                             </div>
-                            <div class="card col-md">
-                                <div class="card-header">
-                                    <h6>Banked This Week</h6>
-                                </div>
-                                <div class="card-body">
-                                    <h3 class="text-success text-center">${{TotalBankedTW}}M</h3>
-                                </div>
+                            <div class="card-body">
+                                <h3 class="text-center">${{FunnelGrowth}}M</h3>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card col-md-2">
-                        <div class="card-header">
-                            <h6>Pipeline Robustness</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="resize">
-                                <h5>Target 150%</h5>
-                                <h1 class="d-flex justify-content-center align-items-center text-warning mt-5">{{pipeLineRobustness}}%</h1>
+                    <div class="row h-50">
+                        <div class="card col-md">
+                            <div class="card-header">
+                                <h6>Banked This Week</h6>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="text-success text-center">${{TotalBankedTW}}M</h3>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="card col-md-3">
-                        <div class="card-header">
-                            <h6>Banked YTD by Functions</h6>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="bankedYTDChart" class="resize"></canvas>
-                            {{ chart_labels|json_script:"chart-labels" }}
-                            {{ chart_data|json_script:"chart-data" }}
+                        <div class="card col-md">
+                            <div class="card-header">
+                                <h6>Funnel Value Below L3</h6>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="text-center">${{funnelBelowG3}}M</h3>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mt-1">
-                    <div class="card zoom-card col-md-12">
+                <div class="card col-md-2">
+                    <div class="card-header">
+                        <h6>Pipeline Robustness</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="resize">
+                            <h5>Target 150%</h5>
+                            <h1 class="d-flex justify-content-center align-items-center text-warning mt-5">{{pipeLineRobustness}}%</h1>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card col-md-4">
+                    <div class="card-header">
+                        <h6>Banked YTD by Functions</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="bankedYTDChart" class="resize"></canvas>
+                        {{ chart_labels|json_script:"chart-labels" }}
+                        {{ chart_data|json_script:"chart-data" }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-1 g-1">
+                <div class="card zoom-card col-md-12">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>Funnel Value by Workstream</h6>
+                        {% comment %} <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span> {% endcomment %}
+                    </div>
+                    <div class="card-body">
+                        <canvas id="funnelValueChart" height="90"></canvas>
+                    </div>
+                </div>
+                <div class="row g-1">
+                    <div class="card zoom-card col-md-6">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6>Funnel Value by Functions/Assets</h6>
-                            {% comment %} <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span> {% endcomment %}
+                            <h6>Initiative Movement to L3+ by Value & Count</h6>
+                            <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
                         </div>
                         <div class="card-body">
-                            <canvas id="funnelValueChart" height="90"></canvas>
+                            <canvas id="l3InitiativeMovementChart"></canvas>
                         </div>
                     </div>
-                    <div class="row g-1 h-100">
-                        <div class="card zoom-card col-md-6">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h6>Initiative Movement to L3+</h6>
-                                <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
-                            </div>
-                            <div class="card-body">
-                                <canvas id="l3InitiativeMovementChart"></canvas>
-                            </div>
-                        </div>
 
-                        <div class="card zoom-card col-md-6 g-1">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h6>Total & New Initiative Count per Function/Asset</h6>
-                                <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span> 
-                            </div>
-                            <div class="card-body">
-                                <canvas id="initiativeCountChart"></canvas>
-                            </div>
+                    <div class="card zoom-card col-md-6 g-1">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6>Total Count, L3+ & New Initiative per Workstream</h6>
+                            <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span> 
                         </div>
-                    </div>
-                </div>
-
-                <div class="row mt-2">
-                    <div class="card">
                         <div class="card-body">
-                            <canvas id="lgateChart" height="35px"></canvas>
+                            <canvas id="initiativeCountChart"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="row mt-2">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="lgateChart" height="35px"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
+
         <!-- Column 3 -->
         <div class="col-md-3">
             <div class="card zoom-card mb-1">
@@ -249,16 +258,42 @@
                     </div>
                 </div>
             </div>
+
+            <div class="card zoom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>Commitments</h6>
+                    <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive shadow" style="height: 30vh; overflow-y; auto;">
+                        <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
+                            <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
+                                <tr>
+                                    <th></th>
+                                    <th>Functions</th>
+                                    <th>Initiatives </th>
+                                    <th>Commitments</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% comment %} {% for o in topInitiatives %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{o.initiative_id}}</td>
+                                        <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                        <td>{{o.actual_Lgate}}</td>
+                                        <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                {% endfor %} {% endcomment %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Row 4: Funnel Stage Summary -->
-    {% comment %} <div class="col-md-12">
-        <div class="border p-2 bg-white text-center">
-            <div class="d-flex justify-content-center">
-                <canvas id="lgateChart" height="20"></canvas>
-            </div>
-        </div>
-    </div> {% endcomment %}
     <div class="row mb-2 mt-2">
         <div class="col-sm-10 text-end">
             <b>Dashboard Last Updated</b>

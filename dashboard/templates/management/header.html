@@ -26,15 +26,18 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="container-flux">
+            <div class="container-flux mb-2">
                 <form method="POST">
-                {% csrf_token %}
-                <div class="col-sm-12">
-                    {% include 'management/year_selector.html' with years=year_range %}
-                </div>
-            </form>
+                    {% csrf_token %}
+                    <div class="col-sm-12">
+                        {% include 'management/year_selector.html' with years=year_range %}
+                    </div>
+                </form>
             </div>
+            {% include 'management/menu.html' %}
         </div>
     </div>
 </div>
+
+    
 

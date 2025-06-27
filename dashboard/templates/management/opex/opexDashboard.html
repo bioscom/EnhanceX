@@ -8,7 +8,7 @@
             <div class="card col-md g-1 mb-1">
                 <div class="card-header">
                     {% if request.user.is_staff %}
-                        <a type="button" class="text-end" data-bs-toggle="modal" data-bs-target="#opexTargetModal" title="Click to update Opex Target for the current Year"><b>Opex Target</b></a>
+                        <a type="button" data-bs-toggle="modal" data-bs-target="#opexTargetModal" title="Click to update Opex Target for the current Year"><b>Opex Target</b></a>
                     {% else %}
                         <b>Opex Target</b>
                     {% endif %}
