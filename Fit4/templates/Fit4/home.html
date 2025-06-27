@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load table_tags %}
+{% load i18n %}
+{% load humanize %}
+
+{% block title %} Home | Renaissance {% endblock %}
+
+{% block body %}
+
+<!-- Modal -->
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="modal fade" id="optionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"> New Initiative</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-sm-6 ms-4">
+                            <span class="text-danger">*</span><b>Select Record Type</b><br>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                    Opportunity - New
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                    Threat - New
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="initiativeOption" type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal" class="btn btn-primary">Create Initiative</button>
+                        <button id="threatOption" display:none type="button" data-bs-toggle="modal" data-bs-target="#threatModal" class="btn btn-danger">Create Initiative</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form action="{% url 'Fit4:add_initiative' %}" method="POST">
+        {% csrf_token %}
+        {{ form.media }}
+        <div class="modal fade" id="initiativeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"> New Initiative: Initiative - New</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% include "partials/partial_add_initiative.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form action="{% url 'Fit4:add_threat' %}" method="POST">
+        {% csrf_token %}
+        {{ threatForm.media }}
+        <div class="modal fade" id="threatModal" tabindex="-1" aria-labelledby="threatModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="threatModalLabel"> New Threat: Threat - New</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% include "partials/partial_add_threat.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="card mb-2" style="height: 153px; background:#FCE883">{% comment %} Clover Lime {% endcomment %}
+        <div id="lottie-banner" class="border border-1 w-100 h-100">
+            <div class="row">
+                <div class="col-sm-3">
+                    <img src="/media/logo/LOGO.png" alt="" height="120" loading="lazy" />
+                </div>
+                <div id="slideshow" class="col-sm-9">
+                    {% for banner in banners %}
+                        {% if banner.is_active %}
+                            {% if banner.url %}
+                                <a href="{{banner.url}}" target="_blank">
+                                    <img src="{{ banner.image.url }}" alt="{{ banner.title }}" height="150" width="100%" loading="lazy" />
+                                </a>
+                            {% else %}
+                                <img src="{{ banner.image.url }}" alt="{{ banner.title }}" height="150" width="100%" loading="lazy" />
+                            {% endif%}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% comment %} <img src="/media/logo/LOGO.png" alt="" height="120" loading="lazy" /> {% endcomment %}
+        </div>
+    </div>
+    {% comment %} <div class="card mb-2">
+        <div class="row">
+            <div class="col-sm-3">
+                <img src="/media/logo/LOGO.png" alt="" height="120" loading="lazy" />
+            </div>
+            <div class="col-sm-9">
+                <a href="https://eu001-sp.shell.com/sites/AAFAA6816/SitePages/Fit4TrainingVideos.aspx" target="_blank" class="mt-3"><h3>EnhanceX Training Videos</h3></a>
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    <div class="card">
+        <div class="card-body">
+            {% if user.is_authenticated %}
+                {% if loggedInAs %}
+                    <div>Logged in as {{request.user.get_full_name}}  Log out as {{request.user.get_full_name}}</div>
+                {% endif %}
+                <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        {% if initiativesCount == 0 %}
+                            <a href="#myinitiatives" class="nav-link active" data-bs-toggle="tab"><b>My Initiatives</b></a>
+                        {% else %}
+                            <a href="#myinitiatives" class="nav-link active" data-bs-toggle="tab"><b>My Initiatives</b> <img src="/media/logo/bell_notification.png" alt="" loading="lazy" /></a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        {% if noOfActions == 0 %}
+                            <a href="#myactions" class="nav-link" data-bs-toggle="tab"><b>My Actions</b></a>
+                        {% else %}
+                            <a href="#myactions" class="nav-link" data-bs-toggle="tab"><b>My Actions</b> <img src="/media/logo/bell_notification.png" alt="" loading="lazy" /></a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        {% if noOfApprovals == 0 %}
+                            <a href="#myapprovals" class="nav-link" data-bs-toggle="tab"><b>My Approvals</b></a>
+                        {% else %}
+                            <a href="#myapprovals" class="nav-link" data-bs-toggle="tab"><b>My Approvals</b> <img src="/media/logo/bell_notification.png" alt="" loading="lazy" /></a>
+                        {% endif %}
+                    </li>
+                    <span class="flex-grow-1"></span>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#optionModal" class="btn btn-primary">+ New Initiative</button>
+                    {% comment %} {% if user.is_authenticated %}
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#optionModal" class="btn btn-primary">+ New Initiative</button>
+                    {% else %}
+                        <a href="{% url 'account:login' %}">Login to create an Initiative</a>
+                    {% endif %} {% endcomment %}
+                    {% comment %} <span class="flex-grow-1"></span> {% endcomment %}
+                    {% comment %} <div class="col-sm">
+                        {% if user.is_authenticated %}
+                        <div class="nav-item pull-right">
+                            <a class="nav-link" href="/en/login_page">{{request.user.get_full_name}} ({{request.user}}) (Log out)</a>
+                        </div>
+                        {% else %}
+                        <a class="nav-link active">{% trans "Welcome, Guest:" %}
+                            <a href="{% url 'account:register' %}" class="nav-link active">{% trans "Register" %},<a href="#" class="nav-link active s" hx-get="{% url 'account:login' %}" hx-target="#dialog">{% trans "Login" %}</a></a>
+                        </a>
+                        {% endif %}
+                    </div> {% endcomment %}
+                </ul>
+                
+                <div class="tab-content ms-2">
+                    <div class="tab-pane fade show active" id="myinitiatives">
+                        <div class="shadow bg-body rounded">
+                            {{userId}}
+                            {% include 'Fit4/Initiative/My_Initiative_List.html' %}
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="myactions">
+                        <div class="shadow bg-body rounded">
+                            {% include "Fit4/Initiative/my_actions.html" %}
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="myapprovals">
+                        <div class="shadow bg-body rounded">
+                            {% include "Fit4/Initiative/my_approvals.html" %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                
+            {% endif %}
+        </div>
+    </div>
+    <br><br>
+
+    <script>
+        let images = document.querySelectorAll('#slideshow img');
+        let index = 0;
+      
+        function showImage() {
+          images.forEach((img, i) => img.style.display = i === index ? 'block' : 'none');
+          index = (index + 1) % images.length; // Loop back to start
+        }
+      
+        setInterval(showImage, 30000); // Change every 30 seconds
+        showImage(); // Initial display
+    </script>
+
+
+{% endblock %}
+
+
+{% block js %}
+    
+
+{% endblock %}

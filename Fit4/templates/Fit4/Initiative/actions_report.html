@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %} Actions Report | Renaissance {% endblock %}
+
+{% block body %}
+<style>
+  th {
+    white-space: nowrap;
+  }
+
+  td {
+    white-space: nowrap;
+  }
+</style>
+
+
+<div class="card">
+    <div class="card-header">
+        <h5>Initiative Actions Status Report</h5>
+    </div>
+    <div class="card-body" style="height: 78vh; overflow-y: auto;">
+        <div class="row col-sm-12">
+            {% comment %} <div class="col-sm-2">
+                <div class="card">
+                    <div class="card-header">
+                        <b>Workstreams</b>
+                    </div>
+                    <div class="card-body" style="height: 70vh; overflow-y: auto;">
+                        <table class="table table-hover">
+                            {% for o in workstreams%}
+                                <tr>
+                                    <td> {{o.workstreamname}} </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div> {% endcomment %}
+
+            <div class="col-sm-12">
+                <div class="accordion" id="accordionPanelsActions">
+                    <div class="accordion-item">
+                        <h1 class="accordion-header" id="PendingActions-heading">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#PendingActions-collapse" aria-expanded="true" aria-controls="PendingActions-collapse">
+                            <b>Pending Actions</b>
+                            </button>
+                        </h1>
+                        <div id="PendingActions-collapse" class="accordion-collapse collapse show" aria-labelledby="PendingActions-heading">
+                            <div class="accordion-body">
+                                <div class="card">
+                                    <div class="card-body" style="height: 70vh; overflow-y: auto;">
+                                        <table id="rptTable" class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Workstream</th>
+                                                    <th>Initiative</th>
+                                                    <th>Action name</th>
+                                                    <th>Status</th>
+                                                    <th>Start date</th>
+                                                    <th>Due date</th>
+                                                    <th>Assigned to</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for o in pending %}
+                                                <tr>
+                                                    <td><a href="{% url 'Fit4:workstream_details' o.initiative.Workstream.slug %}">{{o.initiative.Workstream.workstreamname }}</a></td>
+                                                    <td><a href="{% url 'Fit4:initiative_details' o.initiative.slug %}">{{o.initiative.initiative_name }}</a></td>
+                                                    <td><a href="{% url 'Fit4:action_details' o.id %}">{{o.action_name }}</a></td>
+                                                    <td>{{o.status.name }}</td>
+                                                    <td>{{o.start_date|date:'d-m-Y' }}</td>
+                                                    <td>{{o.due_date|date:'d-m-Y' }}</td>
+                                                    <td>{{o.assigned_to.get_full_name}}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="accordion-item">
+                        <h1 class="accordion-header" id="CompletedActions-heading">
+                          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#CompletedActions-collapse" aria-expanded="true" aria-controls="CompletedActions-collapse">
+                              <b>Completed Actions</b>
+                          </button>
+                        </h1>
+                        <div id="CompletedActions-collapse" class="accordion-collapse collapse show" aria-labelledby="CompletedActions-heading">
+                          <div class="accordion-body">
+                            <div class="card">
+                                <div class="card-body" style="height: 70vh; overflow-y: auto;">
+                                    <table id="rptTable2" class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Workstream</th>
+                                                <th>Initiative</th>
+                                                <th>Action name</th>
+                                                <th>Status</th>
+                                                <th>Start date</th>
+                                                <th>Due date</th>
+                                                <th>Assigned to</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for o in completed %}
+                                            <tr>
+                                                <td><a href="{% url 'Fit4:workstream_details' o.initiative.Workstream.slug %}">{{o.initiative.Workstream.workstreamname }}</a></td>
+                                                <td><a href="{% url 'Fit4:initiative_details' o.initiative.slug %}">{{o.initiative.initiative_name }}</a></td>
+                                                <td><a href="{% url 'Fit4:action_details' o.id %}">{{o.action_name }}</a></td>
+                                                <td>{{o.status.name }}</td>
+                                                <td>{{o.start_date|date:'d-m-Y' }}</td>
+                                                <td>{{o.due_date|date:'d-m-Y' }}</td>
+                                                <td>{{o.assigned_to.get_full_name}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div><br><br>
+
+{% endblock %}
+
+{% block js %}
+
+  
+{% endblock %}

@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load static %}
+{% load table_tags %}
+{% load i18n %}
+{% load humanize %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load BankNumber_tags %}
+
+{% block title %} Production Units | Renaissance {% endblock %}
+
+{% block body %}
+
+    {% comment %} <style>
+        th {
+        white-space: nowrap;
+        }
+    
+        td {
+        white-space: nowrap;
+        }
+    </style> {% endcomment %}
+
+
+    <div class="modal fade" id="addModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Unit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="{% url 'Fit4:add_unit' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="unitName" class="form-label">Unit Name</label>
+                            {% render_field unitForm.name class="form-control" %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="unitUOM" class="form-label">UOM</label>
+                            {% render_field unitForm.UOM class="form-control" %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="unitRatedCapacity" class="form-label">Rated Capacity</label>
+                            {% render_field unitForm.rated_capacity class="form-control" %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="unitMargin" class="form-label">Margin</label>
+                            {% render_field unitForm.margin class="form-control" %}
+                        </div>
+                        <div class="mb-3">
+                            Is active:<br>
+                            {% render_field unitForm.active class="form-check" placeholder="" %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Unit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editForm" method="POST" action="{% url 'Fit4:edit_unit' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="unitId">
+                        <div class="mb-3">
+                            <label for="unitName" class="form-label">Unit Name</label>
+                            <input type="text" name="name" id="unitName" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="unitUOM" class="form-label">UOM</label>
+                            <input type="text" name="UOM" id="unitUOM" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="unitRatedCapacity" class="form-label">Rated Capacity</label>
+                            <input type="number" name="rated_capacity" id="unitRatedCapacity" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="unitMargin" class="form-label">Margin</label>
+                            <input type="number" name="margin" id="unitMargin" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="unitActive" class="form-label">Is active</label>
+                            <br>
+                            <input type="checkbox" name="active" id="unitActive">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card col-sm-8">
+        <div class="card-header">
+            <h5>Units</h5>
+        </div>
+        <div class="card-body">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#addModal" class="btn btn-primary">+ Add Unit</button>
+            <hr>
+            
+            <div class="table-responsive shadow" style="height: 75vh; overflow-y: auto;">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light" style="position: sticky; top:0; z-index:1; font-size: 13px";>
+                        <tr>
+                            <th></th>
+                            <th>Unit Name</th>
+                            <th>UOM</th>
+                            <th>Rated Capacity</th>
+                            <th>Margin</th>
+                            <th>Is Active</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for o in oUnit %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{o.name|default_if_none:""}}</td>
+                                <td>{{o.UOM|default_if_none:""}}</td>
+                                <td>{{o.rated_capacity|currency|default_if_none:""}}</td>
+                                <td>{{o.margin|default_if_none:""}}</td>
+                                <td>{{o.active}}</td>
+                                <td></td>
+                                <td>
+                                    {% comment %} <button id="save_changes" type="submit" class="btn btn-light border border-1 border-primary"><i class="fa fa-save"></i>  Update  </button> {% endcomment %}
+                                    <button type="button" class="btn btn-light border border-1 border-primary edit-btn"
+                                        data-id="{{ o.id }}"
+                                        data-name="{{ o.name }}"
+                                        data-uom="{{ o.UOM }}"
+                                        data-rated_capacity="{{ o.rated_capacity }}"
+                                        data-margin="{{ o.margin }}"
+                                        data-active="{{ o.active }}"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editModal">
+                                        <i class="fa fa-save"></i>  Update  </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div><br><br><br>
+
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".edit-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    document.getElementById("unitId").value = this.dataset.id;
+                    document.getElementById("unitName").value = this.dataset.name;
+                    document.getElementById("unitUOM").value = this.dataset.uom;
+                    document.getElementById("unitRatedCapacity").value = this.dataset.rated_capacity;
+                    document.getElementById("unitMargin").value = this.dataset.margin;
+                    document.getElementById("unitActive").value = this.dataset.active;
+                });
+                
+            });
+        });
+
+        {% comment %} document.getElementById("editForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent page reload
+        
+            let formData = new FormData(this);
+        
+            fetch("{% url 'Fit4:edit_user' %}", {
+                method: "POST",
+                body: formData
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            }).then(data => {
+                if (data.success) {
+                    alert("User updated successfully!");
+                    location.reload(); // Refresh the table
+                } else {
+                    alert("Error: " + data.error);
+                }
+            }).catch(error => {
+                console.error("Request failed:", error);
+                alert("An error occurred. Please check the console.");
+            });
+        }); {% endcomment %}
+    </script>
+{% endblock %}

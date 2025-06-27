@@ -1,0 +1,16 @@
+{% comment %} {% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-dismissible alert-success">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      {{message}}
+    </div>
+ {% endfor %}
+{% endif %} {% endcomment %}
+
+{% if messages %}
+  <ul>
+    {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}

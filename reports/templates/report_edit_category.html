@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load static %}
+{% load table_tags %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %} Report | Update Category {% endblock %}
+
+{% block body %}
+
+
+{% comment %} <form action="{% url 'reports:edit_category' form.id %}" method="POST"> {% endcomment %}
+
+<div class="card">
+    <div class="card-body">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title" id="catModalLabel">Update Category</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row col-sm-12">
+                        <div class="col-sm-1">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">Category:</label>
+                        </div>
+                        <div class="col-sm-10">
+                            {% render_field form.category class="form-control" placeholder="" %}
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                        <div class="invalid-feedback">{{ form.category.errors|first }}</div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <br>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="header-title">Report Categories</h5>
+            </div>
+            <div class="card-body">
+                <div class="row col-sm-12">
+                    <table class="table table-hover">
+                    {% for o in catList %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><a href="{% url 'reports:edit_category' o.id %}">{{o.category}}</a></td>
+                    </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}

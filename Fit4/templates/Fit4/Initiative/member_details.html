@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{form.action_name}} | Renaissance {% endblock %}
+
+{% block css %}
+    
+{% endblock %}
+
+{% block body %}
+
+    {% with WIDGET_ERROR_CLASS='is-invalid' %}
+        {{ form.media }} {#  Adds widget's JS/CSS files from CDN #}
+        <form action="{% url 'Fit4:edit_member' form.id %}" method="POST">
+            {% csrf_token %}
+            <div class="modal fade" id="editMemberModal" tabindex="-1" aria-labelledby="editMemberModalLabel" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editMemberModalLabel">Update Team Members</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {% include 'partials/partial_edit_member.html' %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% endwith %}
+
+    <div class="container-flux mb-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="col-sm-12">
+                    <ul class="nav" id="myTab">
+                        <div class="col-sm-5">
+                            <div><small>Team Member</small></div>
+                            <div><h5>{{form.member.first_name}} {{form.member.last_name}}</h5></div>
+                        </div>
+                        <span class="flex-grow-1"></span>
+                        <div class="btn-group pull-right" role="group">
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#editMemberModal" class="btn btn-light border border-1">Edit</button>
+                            <button type="button" hx-get="{% url 'Fit4:add_initiative' %}" hx-target="#dialog" class="btn btn-light border border-1">Clone</button>
+                            <button type="button" class="btn btn-light border border-1" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+
+    <div class="col-sm-8 shadow p-3 mb-2 bg-body rounded">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="col-sm-12">
+                    <small>Name</small>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-11">{{form.member}}</div>
+                    <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editMemberModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                    <hr>
+                </div>
+                
+                <div class="col-sm-12">
+                    <small>Resource Time Allocation</small>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-11">{{ form.resourcetimeallocation }}</div>
+                    <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editMemberModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                    <hr>
+                </div>
+
+                <div class="col-sm-12">
+                    <small>Discipline</small>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-11">{{form.discipline}}</div>
+                    <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editMemberModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="col-sm-6"> 
+                <div class="col-sm-12">
+                    <small>Initiative</small>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-11"><a href="{% url 'Fit4:initiative_details' form.initiative.id %}">{{form.initiative.initiative_name}}</a></div>
+                    <hr>
+                </div>
+
+                <div class="col-sm-12">
+                    <small>Team Member Name</small>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-11">{{form.member}}</div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div class="row mt-2">
+            <div class="col-sm-6">
+                <div class="col-sm-12">
+                    <small>Created By</small>
+                </div>
+                <div class="col-sm-12">
+                    {{form.created_by.first_name}} {{form.created_by.last_name}}, {{form.date_created|date:"d-m-Y"}}
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="col-sm-12">
+                    <small>Last Modified By</small>
+                </div>
+                <div class="col-sm-12">
+                    {{form.last_modified_by.first_name}} {{form.last_modified_by.last_name}}, {{form.date_updated|date:"d-m-Y"}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+
+
+{% endblock %}
+
+{% comment %} 
+    {% if form.errors %}
+        <ul>
+            {% for key,value in form.errors.items %} 
+                <li>{{ key|escape }} : {{ value|escape }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endcomment %}
+

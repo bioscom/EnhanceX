@@ -1,0 +1,83 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% comment %} {% block css %}
+{% endblock %}
+
+{% block body %} {% endcomment %}
+    
+    <div class="shadow p-3 mb-2 bg-body rounded">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="col-sm-12">
+                    <label for="{{ form.initiative_name.id_for_label }}" class="form-label">Initiative Name*:</label>
+                </div>
+                <div class="col-sm-12">
+                    {% render_field form.initiative_name class="form-control required" placeholder="" %}
+                </div>
+                <div class="invalid-feedback">{{ form.initiative_name.errors|first }}</div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-sm-12">
+                    <label for="{{ form.overall_status.id_for_label }}" class="form-label">Overrall Status*:</label>
+                </div>
+                <div class="col-sm-12">
+                    {% render_field form.overall_status class="select form-select required" placeholder="" %}
+                </div>
+                <div class="invalid-feedback">{{ form.overall_status.errors|first }}</div>
+            </div>
+        </div>
+        
+        <div class="row mt-2">
+            <div class="col-sm-6">
+                <div class="col-sm-12">
+                    <label for="{{ form.Workstream.id_for_label }}" class="form-label">Workstream*:</label>
+                </div>
+                <div class="col-sm-12">
+                    {% render_field form.Workstream class="select form-select required" placeholder="" %}
+                </div>
+                <div class="invalid-feedback">{{ form.Workstream.errors|first }}</div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-sm-12">
+                    <label for="{{ form.actual_Lgate.id_for_label }}"  class="form-label">Initial L-Gate*:</label>
+                </div>
+                <div class="col-sm-12">
+                    {% render_field form.actual_Lgate class="select form-select required" placeholder="" %}
+                </div>
+                <div class="invalid-feedback">{{ form.actual_Lgate.errors|first }}</div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-sm-6">
+                
+            </div>
+            <div class="col-md-6">
+                <div class="col-sm-12">
+                    <label for="{{ form.mark_as_confidential.id_for_label }}" class="form-label">Mark as Confidential:</label>
+                </div>
+                <div class="col-sm-12">
+                    {% render_field form.mark_as_confidential class="form-check check" placeholder="" %}
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-sm-12">
+                <label for="{{ form.description.id_for_label }}" class="form-label">Description:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field form.description class="form-control" %}
+                {% comment %} {{ form.description|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:5" }} {% endcomment %}
+            </div>
+            <div class="invalid-feedback">{{ form.description.errors|first }}</div>
+        </div>
+    </div>
+    {% comment %} {% if form.errors %}
+        <ul>
+            {% for key,value in form.errors.items %} 
+                <li>{{ key|escape }} : {{ value|escape }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}{% endcomment %}

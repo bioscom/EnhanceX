@@ -1,0 +1,17 @@
+<div class="card">
+    <div class="card-header">
+        <h5>Initiatives To Approve</h5>
+    </div>
+    <div class="card-body">
+        <table class="table-hover">
+            {% for o in oApprovals %}
+                <tr>
+                    <td style="padding-bottom:10px;"><a href="{% url 'Fit4:approval_details' o.id %}">{{o.initiative.initiative_name}}</a></td>
+                </tr>
+                <tr>
+                    <td>Initiative . Submitted by {{ o.initiative.author.first_name }}  {{ o.initiative.author.last_name }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>

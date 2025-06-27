@@ -1,0 +1,79 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+    
+<div class="shadow p-3 mb-2 bg-body rounded">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeForm.initiative_name.id_for_label }}" class="form-label">Initiative Name*:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeForm.initiative_name class="form-control required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeForm.initiative_name.errors|first }}</div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeForm.overall_status.id_for_label }}" class="form-label">Overrall Status*:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeForm.overall_status class="select form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeForm.overall_status.errors|first }}</div>
+        </div>
+    </div>
+    
+    <div class="row mt-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeForm.Workstream.id_for_label }}" class="form-label">Workstream*:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeForm.Workstream class="select form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeForm.Workstream.errors|first }}</div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeForm.actual_Lgate.id_for_label }}"  class="form-label">Initial L-Gate*:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeForm.actual_Lgate class="select form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeForm.actual_Lgate.errors|first }}</div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-sm-6">
+            
+        </div>
+        <div class="col-md-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeForm.mark_as_confidential.id_for_label }}" class="form-label">Mark as Confidential:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeForm.mark_as_confidential class="form-check check" placeholder="" %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-sm-12">
+            <label for="{{ initiativeForm.description.id_for_label }}" class="form-label">Description:</label>
+        </div>
+        <div class="col-sm-12">
+            {{ initiativeForm.description|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:5" }}
+        </div>
+        <div class="invalid-feedback">{{ initiativeForm.description.errors|first }}</div>
+    </div>
+</div>
+
+{% if initiativeForm.errors %}
+    <ul>
+        {% for key,value in initiativeForm.errors.items %} 
+            <li>{{ key|escape }} : {{ value|escape }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}

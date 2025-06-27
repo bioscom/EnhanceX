@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %} Home | Renaissance {% endblock %}
+
+{% block body %}
+<style>
+  th {
+    white-space: nowrap;
+  }
+
+  td {
+    white-space: nowrap;
+  }
+</style> 
+
+  <input type="hidden" name="action" value="save_and_run" />
+  <input type="hidden" id="metadata_field" name="meta_data" readonly>
+
+  <div class="card">
+    <div class="card-header">
+      <form id="reportFilterForm" method="post" action="{% url 'reports:save_filter' cat.id %}">
+        {% csrf_token %}
+        <div class="row col-sm-12">
+            <div class="row col-sm-4">
+              <div class="col-sm-4">Report Name:</div>
+              <div class="col-sm-8">
+                {% render_field form.name class="form-control required" placeholder="" %}
+                {% comment %} <input type="text" id="filter_name" name="filter_name" class="form-control" required> {% endcomment %}
+              </div>
+            </div>
+            <div class="col-sm-5"><b>{{cat.category}}</b></div>
+            <div class="col-sm-3 text-end">
+              <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="submit" class="btn btn-light border border-2 border-secondary">Add Chart</button>
+                <button type="submit" class="btn btn-light border border-2 border-secondary">Save & Run</button> 
+                {% comment %} <button type="submit" onclick="fetchMetadataThenPost()" class="btn btn-light border border-2 border-secondary">Save & Run</button>  {% endcomment %}
+                <button type="button" class="btn btn-light border border-2 border-secondary">Close</button>
+              </div>
+            </div>
+        </div>
+      </form> 
+    </div>
+
+    <div class="card-body" style="height: 78vh; overflow-y: auto;">
+      <div class="row">
+        <div class="col-sm-2">
+          <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <a href="#Filters" class="nav-link active" data-bs-toggle="tab"><b>Filters</b></a>
+              </li>
+          </ul>
+          
+          <div class="col-sm-12 border border-1">
+              <div class="tab-pane fade show active" id="Filters">
+                <form method="get">
+                  <div class="table-responsive shadow" style="height: 65vh; overflow-y; auto;">
+                    <table class="table table-bordered table-font table-sm">
+                      <tbody class="table-light" style="position: sticky; top:0; z-index:1"> 
+                        <tr>
+                          <td style="width:200px">
+                            <div class="col-sm-12">
+                                <b>Initiative:</b><hr>
+                                Workstream:<br>
+                                <div class="form-group border border-1" style="height: 30vh; overflow-y: auto;">
+                                  {% for checkbox in filter.form.Workstream %}
+                                      <div class="form-check">
+                                          {{ checkbox.tag }} {{ checkbox.choice_label }}
+                                      </div>
+                                  {% endfor %}
+                                </div><br>
+                                Overall Status:<br>
+                                <div class="form-group border border-1" style="height: 20vh; overflow-y: auto;">
+                                  {% for checkbox in filter.form.overall_status %}
+                                      <div class="form-check">
+                                          {{ checkbox.tag }} {{ checkbox.choice_label }}
+                                      </div>
+                                  {% endfor %}
+                                </div><br>
+                                Plan Relevance:<br>
+                                <div class="form-group border border-1" style="height: 20vh; overflow-y: auto;">
+                                  {% for checkbox in filter.form.Plan_Relevance %}
+                                      <div class="form-check">
+                                          {{ checkbox.tag }} {{ checkbox.choice_label }}
+                                      </div>
+                                  {% endfor %}
+                                </div><br>
+                                Functions:<br>
+                                <div class="form-group border border-1" style="height: 20vh; overflow-y: auto;">
+                                  {% for checkbox in filter.form.functions %}
+                                      <div class="form-check">
+                                          {{ checkbox.tag }} {{ checkbox.choice_label }}
+                                      </div>
+                                  {% endfor %}
+                                </div><br>
+
+                                {% comment %} {% render_field filter.form.Plan_Relevance|attr:"multiple:multiple"|attr:"style: height:200px" title="Plan Relevance" class="form-control" %}<br> {% endcomment %}
+                                Enabled by:<br>
+                                <div class="form-group border border-1" style="height: 20vh; overflow-y: auto;">
+                                  {% for checkbox in filter.form.enabledby %}
+                                      <div class="form-check">
+                                          {{ checkbox.tag }} {{ checkbox.choice_label }}
+                                      </div>
+                                  {% endfor %}
+                                </div><br>
+                                {% comment %} {% render_field filter.form.enabledby|attr:"multiple:multiple"|attr:"style: height:200px" title="Plan Relevance" class="form-control" %}<br> {% endcomment %}
+                                {% comment %} Hashtag #:<br>
+                                {% render_field filter.form.HashTag class="form-control" placeholder="" %}<br> {% endcomment %}
+                                <b>Initiative Impact:</b><hr>
+                                Benefit Types:<br>
+                                <div class="border border-1" style="height: 30vh; overflow-y: auto;">
+                                  <div class="form-check">
+                                    {% render_field impactfilter.form.benefittype class="check" placeholder="" %}
+                                  </div>
+                                </div><br>
+                                Year:<br>
+                                <div class="form-group border border-1" style="height: 20vh; overflow-y: auto;">
+                                  <div class="form-check">
+                                    {% render_field impactfilter.form.YYear class="check" placeholder="" %}
+                                  </div>
+                                </div><br>
+                              {% comment %} <p>Query Parameters: {{request.GET}}</p> {% endcomment %}
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <input type="submit" class="btn btn-primary w-100 mt-2" /><br>
+                  <small><i class="text-danger">Note: Click Submit first, then click Save & Run button</i></small>
+                </form>
+              </div>
+          </div>
+        </div>
+
+        <div class="col-sm-10 rounded border border-2">
+          <!-- Javascript for this table is on Fit4/templates/base.html -->
+          <div id="demo-output" style="margin-bottom: 1em;" class="chart-display"></div>
+          <div class="table-responsive shadow" style="height: 70vh; overflow-y; auto;">
+            <table id="rptTable" class="table table-bordered table-hover table-font">
+              <thead class="table-light" style="position: sticky; top:0; z-index:1;"> 
+                <tr>
+                  <th></th>
+                  <th>Workstream</th>
+                  <th>Id</th>
+                  <th>Initiative name</th>
+                  <th>Initiative Owner</th>
+                  <th>Workstream Sponsor</th>
+                  <th>Workstream Lead</th>
+                  <th>Finance Sponsor</th>
+                  <th>Planned_Date </th>
+                  <th>Plan_Relevance </th>
+                  <th>actual_Lgate </th>
+                  <th>HashTag </th>
+                  <th>L0 Completion Date (Planned)</th>
+                  <th>L1 Completion Date (Planned)</th>
+                  <th>L2 Completion Date (Planned)</th>
+                  <th>L3 Completion Date (Planned)</th>
+                  <th>L4 Completion Date (Planned)</th>
+                  <th>L5 Completion Date (Planned)</th>
+                  <th>Saving Type</th>
+                  <th>Function</th>
+                  <th>Discipline</th>
+                  <th>Approval Status</th>
+                  <th>Benefit Type</th>
+                </tr>
+              </thead>
+              <tbody id="report-results">
+                  {% for obj in filter.qs|slice:":20" %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td><a href="{% url 'Fit4:workstream_details' obj.Workstream.id %}">{{ obj.Workstream }}</a></td>
+                      <td>{{ obj.initiative_id }}</td>
+                      <td><a href="{% url 'Fit4:initiative_details' obj.slug %}">{{ obj.initiative_name }}</a></td>
+                      <td><a href="{% url 'account:user_detailed' obj.author.id %}">{{ obj.author.get_full_name }}</a></td>
+                      <td>
+                        {% if obj.workstreamsponsor %}
+                          <a href="{% url 'account:user_detailed' obj.workstreamsponsor.id %}">{{ obj.workstreamsponsor.get_full_name }}</a>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if obj.workstreamlead %}
+                          <a href="{% url 'account:user_detailed' obj.workstreamlead.id %}">{{ obj.workstreamlead.get_full_name }}</a>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if obj.financesponsor %}
+                          <a href="{% url 'account:user_detailed' obj.financesponsor.id %}">{{ obj.financesponsor.get_full_name }}</a>
+                        {% endif %}
+                      </td>
+                      <td>{{ obj.Planned_Date|default_if_none:""|date:"d-M-Y" }}</td>
+                      <td>
+                        {% for o in obj.initiative.Plan_Relevance.all %}
+                          {{ o.title }}; 
+                        {% endfor %}
+                      </td>
+                      <td>{{ obj.actual_Lgate }}</td>
+                      <td>{{ obj.HashTag }}</td>
+                      <td>{{ obj.L0_Completion_Date_Planned|default_if_none:""|date:"d-M-Y" }}</td>
+                      <td>{{ obj.L1_Completion_Date_Planned|default_if_none:""|date:"d-M-Y" }}</td>
+                      <td>{{ obj.L2_Completion_Date_Planned|default_if_none:""|date:"d-M-Y" }}</td>
+                      <td>{{ obj.L3_Completion_Date_Planned|default_if_none:""|date:"d-M-Y" }}</td>
+                      <td>{{ obj.L4_Completion_Date_Planned|default_if_none:""|date:"d-M-Y" }}</td>
+                      <td>{{ obj.L5_Completion_Date_Planned|default_if_none:""|date:"d-M-Y" }}</td>
+                      <td>{{ obj.SavingType|default_if_none:"" }}</td>
+                      <td>{{ obj.functions|default_if_none:"" }}</td>
+                      <td>{{ obj.discipline|default_if_none:"" }}</td>
+                      <td>{{ obj.Approval_Status|default_if_none:"" }}</td>
+                      <td>{{ obj.BenefitType|default_if_none:"" }}</td>
+                    </tr>
+                  {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<br><br><br>
+  
+  
+  {% comment %} </div> {% endcomment %}
+{% endblock %}
+
+{% block js %}
+  <script>
+    function fetchMetadataThenPost() {
+        const filterValue = document.getElementById('metadata_field').value;
+        const currentLangPrefix = window.location.pathname.split('/')[1]; // e.g., 'en', 'fr', etc.
+        const saveUrl = `/${currentLangPrefix}/fetch-metadata/?filter=${encodeURIComponent(filterValue)}`;
+        fetch(saveUrl)
+        .then(response => response.json())
+        .then(data => {
+            // Populate the form with data from the GET response
+            document.getElementById('metadata_field').value = data.metadata;
+
+            // Now POST the form
+            document.getElementById('reportFilterForm').submit();
+        });
+    }
+
+    function handleCombinedRequest() {
+        // First, make a GET request (e.g., fetch data or log info)
+        fetch(`/fetch_metadata/?filter=abc`, {
+            method: 'GET'
+        }).then(response => response.json())
+          .then(data => {
+            console.log('GET completed:', data);
+            // Then, submit the POST form
+            document.getElementById('reportFilterForm').submit();
+        });
+    }
+  </script>
+  
+{% endblock %}

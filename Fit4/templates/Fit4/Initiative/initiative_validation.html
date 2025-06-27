@@ -1,0 +1,59 @@
+<div class="container-flux">
+    <div class="card shadow mb-2 bg-body rounded">
+        <div class="card-body">
+            <div class="row col-sm-12">
+                {% if initiative.author %}
+                    <div class="col-sm"><i class="fa fa-check-circle" style="font-size:36px;color:green"><span style="color:red">*</span></i> <small>Initiative Owner</small></div>
+                {% endif %}
+
+                {% if initiative.initiative_name %}
+                    <div class="col-sm"><i class="fa fa-check-circle" style="font-size:36px;color:green"><span style="color:red">*</span></i> <small>Initiative Name</small></div>
+                {% endif %}
+
+                {% if initiative.description %}
+                    <div class="col-sm"><i class="fa fa-check-circle" style="font-size:36px;color:green"></i> <small>Description</small></div>
+                {% else %}
+                    <div class="col-sm"><i class="fa fa-times-circle" style="font-size:36px;color:orange"></i> <small>Description</small></div>
+                {% endif %}
+
+                {% if initiative.L1_Completion_Date_Planned %}
+                    <div class="col-sm"><i class="fa fa-check-circle" style="font-size:36px;color:green"><span style="color:red">*</span></i> <small>L1 Completion Date (Plan)</small></div>
+                {% else %}
+                    <div class="col-sm"><i class="fa fa-times-circle" style="font-size:36px;color:red">*</i> <small>L1 Completion Date (Plan)</small></div>
+                {% endif %}
+
+                {% if initiative.L2_Completion_Date_Planned %}
+                    <div class="col-sm"><i class="fa fa-check-circle" style="font-size:36px;color:green"><span style="color:red">*</span></i> <small>L2 Completion Date (Plan)</small></div>
+                {% else %}
+                    <div class="col-sm"><i class="fa fa-times-circle" style="font-size:36px;color:red">*</i> <small>L2 Completion Date (Plan)</small></div>
+                {% endif %}
+
+                {% comment %} {% if initiative.L3_Completion_Date_Planned %}
+                    <div class="col-sm"><i class="fa fa-check-circle" style="font-size:36px;color:green"><span style="color:red">*</span></i> <small>L3 Completion Date (Plan)</small></div>
+                {% else %}
+                    <div class="col-sm"><i class="fa fa-times-circle" style="font-size:36px;color:red">*</i> <small>L3 Completion Date (Plan)</small></div>
+                {% endif %}
+
+                {% if initiative.L4_Completion_Date_Planned %}
+                    <div class="col-sm"><i class="fa fa-check-circle" style="font-size:36px;color:green"><span style="color:red">*</span></i> <small>L4 Completion Date (Plan)</small></div>
+                {% else %}
+                    <div class="col-sm"><i class="fa fa-times-circle" style="font-size:36px;color:red"></i> <small>L4 Completion Date (Plan)</small></div>
+                {% endif %}
+
+                {% if initiative.L5_Completion_Date_Planned %}
+                    <div class="col-sm"><i class="fa fa-check-circle" style="font-size:36px;color:green"><span style="color:red">*</span></i> <small>L5 Completion Date (Plan)</small></div>
+                {% else %}
+                    <div class="col-sm"><i class="fa fa-times-circle" style="font-size:36px;color:red"></i> <small>L5 Completion Date (Plan)</small></div>
+                {% endif %} {% endcomment %}
+
+
+                {% if initiativeImpact.count > 0 %}
+                    <div class="col-sm"><i class="fa fa-check-circle" style="font-size:36px;color:green"><span style="color:red">*</span></i> <small>Plan Value in Initiative Impact</small></div>
+                {% else %}
+                    <div class="col-sm"><i class="fa fa-times-circle" style="font-size:36px;color:red">*</i> <small>Plan Value in Initiative Impact</small></div>
+                {% endif %}
+            </div>
+            <i style="color:red">All items marked in * are mandatory</i>
+        </div>
+    </div>
+</div>

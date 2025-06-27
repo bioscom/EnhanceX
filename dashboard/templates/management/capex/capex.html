@@ -1,0 +1,163 @@
+<div class="container-fluid p-1 bg-success">
+  <!-- Row 1: Header and KPIs -->
+    <div class="row">
+        <!-- Column 1 -->
+        <div class="col-md-1">
+            <div class="border p-2 bg-white mb-1">
+                <h5>Capex Target</h5>
+                <h2>$33M</h2>
+            </div>
+
+            <div class="border p-2 bg-white mb-1">
+                <label for="functionFilter">Functions</label>
+                <select id="functionFilter" class="form-select mb-2">
+                    <option value="">All</option>
+                    {% for o in xfunctions %}
+                        <option value="{{o.id}}" {% if request.GET.functionFilter == o.id|stringformat:"s" %}selected{% endif %}>{{ o.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div class="border p-2 bg-white mb-1">
+                <label for="reportWeek">Report Week</label>
+                <select id="reportWeek" class="form-select mb-2">
+                <option>25</option>
+                </select>
+            </div>
+        
+            <div class="border p-2 bg-white mb-1">
+                <p><strong>Current Week:</strong></p><br>
+                <p><strong class="text-center">25</strong></p>
+            </div>
+        
+            <div class="border p-2 bg-white mb-1">
+                <p><strong>Funnel Size:</strong></p><br>
+                <p><strong class="text-center">$65.9M</strong></p>
+            </div>
+        
+            <div class="border p-2 bg-white mb-1">
+                <p><strong>Initiative Count:</strong></p>
+                <p><strong class="text-center"> 52</strong></p>
+            </div>
+        </div>
+        <!-- Column 2 -->
+        <div class="col-md-8">
+            <div class="row g-1">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 g-1">
+                            <div class="border p-2 bg-white h-100">
+                                <h5>Opex Funnel</h5>
+                                <canvas id="opexFunnelChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-4 g-1">
+                            <div class="row h-50">
+                                <div class="col-md">
+                                    <div class="border p-2 bg-white h-100 mb-1">
+                                        <h6>Value in the Funnel Below L3</h6>
+                                        <p>$14.3M</p>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="border p-2 bg-white h-100 mb-1">
+                                        <h6>Funnel Growth This Week</h6>
+                                        <p>$5.3M</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row h-50">
+                                <div class="col-md">
+                                <div class="border p-2 bg-white h-100">
+                                    <h6>Banked YTD</h6>
+                                    <p>$7.7M</p>
+                                </div>
+                                </div>
+                                <div class="col-md">
+                                <div class="border p-2 bg-white h-100">
+                                    <h6>Banked This Week</h6>
+                                    <p>$1.7M</p>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2 g-1">
+                            <div class="border p-2 bg-white h-100">
+                                <h5>Pipeline Robustness</h5>
+                                <p>Target 150%</p>
+                                <h1>132%</h1>
+                            </div>
+                        </div>
+                        <div class="col-md-3 g-1">
+                            <div class="border p-2 bg-white h-100">
+                                <h6>Banked YTD</h6>
+                                <canvas id="bankedYTDChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="row mt-1 g-1">
+                            <div class="col-md-6">
+                                <div class="border p-2 bg-white h-100">
+                                    <h6>Funnel Value by Functions/Assets</h6>
+                                    <canvas id="funnelValueChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12 mb-1">
+                                    <div class="border p-2 bg-white">
+                                        <h6>Initiative Movement to L3+</h6>
+                                        <canvas id="movementChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="border p-2 bg-white">
+                                        <h6>Total & New Initiative Count</h6>
+                                        <canvas id="initiativeCountChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Column 3 -->
+        <div class="col-md-3">
+            <div class="border p-2 bg-white mb-1 h-50">
+                <h3>Recognition</h3>
+                <p>Funnel Growth: $5.3M</p>
+                <p>Banked: $1.7M</p>
+            </div>
+
+            <div class="border p-2 bg-white h-50">
+                <h6>Top Initiatives</h6>
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Id</th>
+                            <th>Initiative Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>R-00001330</td>
+                            <td>Rationalize Portfolio of apps...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Row 4: Funnel Stage Summary -->
+    <div class="col-md-12 mt-2">
+        <div class="border p-2 bg-white text-center">
+            <div class="d-flex justify-content-center">
+                <div class="p-2 bg-primary text-white mx-1 rounded">Idea: $10M</div>
+                <div class="p-2 bg-warning text-dark mx-1 rounded">Plan: $15M</div>
+                <div class="p-2 bg-success text-white mx-1 rounded">Track: $12M</div>
+            </div>
+        </div>
+    </div>
+</div>

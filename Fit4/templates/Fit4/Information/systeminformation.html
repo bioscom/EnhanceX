@@ -1,0 +1,70 @@
+<div class="card">
+    <div class="card-header">
+        <h7>System Information</h7>
+    </div>
+    <div class="card-body">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <div class="col-sm-12">
+                    <small>Created by:</small>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-11">
+                        <img src="/media/logo/user_img.png" alt="" loading="lazy" />
+                        <a href="{% url 'account:user_detailed' initiative.created_by.id %}">{{initiative.created_by.get_full_name}}</a>.  {{initiative.Created_Date}}
+                    </div>
+                    <div class="text-end col-sm-1"></div>
+                    <hr>
+                </div>
+                
+            </div>
+            <div class="col-md-6">
+                <div class="col-sm-12">
+                    <small>Owner:</small>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-11">
+                        <img src="/media/logo/user_img.png" alt="" loading="lazy" /> 
+                        <a href="/en/user_detailed/{{initiative.author.id}}"> {{initiative.author.get_full_name}}</a> 
+                    </div>
+                    <div class="text-end col-sm-1">
+                        <a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal">
+                            <a data-bs-toggle="modal" data-bs-target="#ownerModal">
+                                <img src="/media/logo/change_owner_img.png" alt="" loading="lazy" />
+                            </a>
+                        </a>
+                    </div> 
+                    <hr>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <div class="col-sm-12">
+                    <small>Last Modified by:</small>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-11">
+                        <img src="/media/logo/user_img.png" alt="" loading="lazy" />
+                        <a href="{% url 'account:user_detailed' initiative.last_modified_by.id %}">{{initiative.last_modified_by.get_full_name}}</a>. {{initiative.last_modified_date}}
+                    </div>
+                    <div class="text-end col-sm-1"></div>
+                    <hr>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-sm-12">
+                    <small>Record Type:</small>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-11">
+                        {{initiative.recordType.name}} 
+                    </div>
+                    <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div> 
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

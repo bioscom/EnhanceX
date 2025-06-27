@@ -1,0 +1,64 @@
+{% load i18n %}
+
+<div class="dropdown dropdown-menu-end" style="font-size:10px">
+
+    {% if user.is_authenticated %}
+        {% if user.profile.image %}
+            <button type="button" class="text-white btn dropdown-toggle navbar-toggle collapsed" data-bs-toggle="dropdown">
+                <img src="{{user.profile.image.url}}" alt="" class="rounded-circle" height="35" loading="lazy">
+            </button>
+        {% else %}
+            <button type="button" class="text-white btn dropdown-toggle navbar-toggle collapsed" data-bs-toggle="dropdown">
+                <img src="/media/profile_pics/user_icon_400x472.png" alt="" class="rounded-circle" height="35" loading="lazy">
+            </button>
+        {% endif %}
+    {% else %}
+        <button type="button" class="text-white btn dropdown-toggle navbar-toggle collapsed" data-bs-toggle="dropdown">
+            <img src="/media/profile_pics/user_icon_400x472.png" alt="" class="rounded-circle" height="35" loading="lazy">
+        </button>
+    {% endif %}
+
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="Dropdown" style="font-size:10px; width:250px">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link {% block profileactive %} {% endblock profileactive %}" href="#" hx-get="{% url "edit_profile" %}" hx-target="#dialog">{% trans "Edit Profile" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'campaign:myads' %}">{% trans "My Adverts" %}</a>
+                </li>
+                {% if user.is_superuser %}
+                    <hr>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/">{% trans "Site Admin" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/category_list/">{% trans "Categories Ad Rate" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'campaign:campaign' %}">{% trans "Ad Slots" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'campaign:all_ads' %}">{% trans "Ad Management" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'campaign:advertcredit' %}">{% trans "Ad Credit Management" %}</a>
+                    </li>
+                {% endif %}
+                <hr>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" hx-get="{% url "password_change" %}" hx-target="#dialog">{% trans "Change Password" %}</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "logout" %}">{% trans "Logout" %}</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a href="#" class="nav-link {% block registeractive %} {% endblock registeractive %}" type="link" hx-get="{% url "register" %}" hx-target="#dialog">{% trans "Register" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link {% block loginactive %} {% endblock loginactive %}" type="link" hx-get="{% url "login" %}" hx-target="#dialog">{% trans "Login" %}</a>
+                </li>
+            {% endif %}
+        </ul>
+</div>

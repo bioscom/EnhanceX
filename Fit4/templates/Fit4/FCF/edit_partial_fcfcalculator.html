@@ -1,0 +1,88 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+    <div class="p-3 mb-1 bg-body rounded">
+        <fieldset class="border p-3 mb-2">
+            <legend class="mb-3 azm-color-444"><small>Information</small></legend>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <label class="form-label">Multiplier Name*:</label>
+                    </div>
+                    <div class="col-sm-12">
+                        {% render_field multiplierForm.name class="form-control required" placeholder="" %}
+                        <div class="invalid-feedback">{{ form.name.errors|first }}</div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <label class="form-label">Year*:</label>
+                    </div>
+                    <div class="col-sm-12">
+                        {% render_field multiplierForm.YYear class="form-control required" placeholder="" %}
+                        <div class="invalid-feedback">{{ form.YYear.errors|first }}</div>
+                    </div>
+                    
+                    <div class="col-sm-12">
+                        <label class="form-label">Benefit Type*:</label>
+                    </div>
+                    <div class="col-sm-12">
+                        {% render_field multiplierForm.benefittype class="form-control required" placeholder="" %}
+                        <div class="invalid-feedback">{{ form.benefittype.errors|first }}</div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="border p-3 mb-2">
+            <legend class="mb-3 azm-color-444"><small>Volume Multiplier</small></legend>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <label class="form-label">Planned Volume Multiplier:</label>
+                    </div>
+                    <div class="col-sm-12">
+                        {% render_field multiplierForm.planned_volume_multiplier class="form-control required" placeholder="" %}
+                        <div class="invalid-feedback">{{ multiplierForm.planned_volume_multiplier.errors|first }}</div>
+                    </div>
+                    
+                    <div class="col-sm-12">
+                        <label class="form-label">Forecast Volume Multiplier:</label>
+                    </div>
+                    <div class="col-sm-12">
+                        {% render_field multiplierForm.forecast_volume_multiplier class="form-control required" placeholder="" %}
+                        <div class="invalid-feedback">{{ multiplierForm.forecast_volume_multiplier.errors|first }}</div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <label class="form-label">Actual Volume Multiplier:</label>
+                    </div>
+                    <div class="col-sm-12">
+                        {% render_field multiplierForm.actual_volume_multiplier class="form-control required" placeholder="" %}
+                        <div class="invalid-feedback">{{ multiplierForm.actual_volume_multiplier.errors|first }}</div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        
+        <fieldset class="border p-3 mb-2">
+            <legend class="mb-3 azm-color-444"><small>FCF Multiplier</small></legend>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <label class="form-label">FCF Multiplier:</label>
+                    </div>
+                    <div class="col-sm-12">
+                        {% render_field multiplierForm.fcf_multiplier class="form-control required" placeholder="" %}
+                        <div class="invalid-feedback">{{ multiplierForm.fcf_multiplier.errors|first }}</div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    {% comment %} {% if form.errors %}
+        <ul>
+            {% for key,value in form.errors.items %} 
+                <li>{{ key|escape }} : {{ value|escape }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %} {% endcomment %}

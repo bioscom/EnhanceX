@@ -1,0 +1,267 @@
+{% load humanize %}
+
+<style>
+  .resize {
+    width: 100% !important;
+    height: 200px !important;
+  }
+
+  .resize2 {
+    width: 100% !important;
+    height: 100px !important;
+  }
+</style>
+
+<style>
+    .zoom-card {
+        transition: transform 0.4s ease, top 0.4s ease, left 0.4s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .zoomed-in {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1.1);
+        z-index: 1050; /* above Bootstrap modals */
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+        background-color: white;
+    }
+
+    .zoom-toggle-icon {
+        float: right;
+        cursor: pointer;
+        font-size: 1.2rem;
+    }
+
+    .table-font{
+        font-size: 14px
+    }
+
+</style> 
+
+<form action="{% url 'dashboard:add_opex_recognition' %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="opexRecognitionModal" tabindex="-1" aria-labelledby="impactModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="impactModalLabel">Update Opex Recognition</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include 'partials/partial_add_opex_recognition.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="opexTargetModal" tabindex="-1" aria-labelledby="impactModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="impactModalLabel">Update Opex Target</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include 'partials/partial_opex_target.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="syncModal" tabindex="-1" aria-labelledby="syncModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="syncModalLabel">Sync this week Opex Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        Are you sure you selected current year, {% now "Y" %}, for today's {% now "l, jS F Y" %}, Renaissance Opex Initiatives Report?<br><br>
+                        If you are not sure, kindly click No and go back to select the right report.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-primary">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form id="checkboxForm" action="{% url 'dashboard:trigger_opex_data_copy' %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="listReportModal" tabindex="-1" aria-labelledby="impactModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="impactModalLabel">Select This Year's Opex Report</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12 text-danger mb-2"> 
+                        <b>⚠️ Important:</b>
+                         You are required to select the <b>OPEX Report for the current year</b><br>
+                         and copy it to the database. Please verify that the correct report is selected before proceeding. 
+                    </div>
+                    {% include 'partials/partial_show_reports.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button id="syncButton" type="submit" class="btn btn-primary">Sync Data for this week</button>
+                    {% comment %} <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#syncModal">Sync Data for this week</button>
+                    <button type="submit" class="btn btn-primary">Sync Data for this week</button> {% endcomment %}
+                    <div id="availabilityNote" class="text-muted small">
+                        🔒 This button will be available from <strong>Friday 9:00 AM</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="col-sm-12 row mb-2">
+    <div class="text-end mb-2">
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#listReportModal">Sync Opex data for this week</button>
+    </div>
+    <div class="col-sm-12">
+        <div class="tab-content ms-2" id="myTabContent">
+            <div class="tab-pane fade show active" id="Opex" role="tabpanel" aria-labelledby="opex-tab">
+                {% include 'management/opex/opexDashboard.html' %}
+            </div>
+            <div class="tab-pane fade" id="movement" role="tabpanel" aria-labelledby="movement-tab">
+                {% include 'management/opex/opexMovement.html' %}
+            </div>
+            <div class="tab-pane fade" id="bankingplan" role="tabpanel" aria-labelledby="banking-tab">
+                {% include 'management/opex/opexMonthlyBankingPlan.html' %}
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="opex-tab" data-bs-toggle="tab" data-bs-target="#Opex" type="button" role="tab" aria-controls="Opex" aria-selected="true">
+                    <b>Opex Dashboards</b>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="movement-tab" data-bs-toggle="tab" data-bs-target="#movement" type="button" role="tab" aria-controls="movement" aria-selected="false">
+                    <b>Opex Movement</b>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="banking-tab" data-bs-toggle="tab" data-bs-target="#bankingplan" type="button" role="tab" aria-controls="bankingplan" aria-selected="false">
+                    <b>Monthly Banking Plan</b>
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+{% comment %} <div class="row mb-2">
+    <div class="col-sm-12">
+        <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a href="#Opex" class="nav-link active" data-bs-toggle="tab"><b>Opex Dashboards</b></a>
+            </li>
+            <li class="nav-item">
+                <a href="#movement" class="nav-link" data-bs-toggle="tab"><b>Opex Movement</b></a>
+            </li>
+            <li class="nav-item">
+                <a href="#bankingplan" class="nav-link" data-bs-toggle="tab"><b>Monthly Banking Plan</b></a>
+            </li>
+            <span class="flex-grow-1"></span>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#listReportModal">Sync Opex data for this week</button>
+        </ul>
+
+        <div class="tab-content ms-2">
+            <div class="tab-pane fade show active" id="Opex">
+                {% include 'management/opexDashboard.html' %}
+            </div>
+            <div class="tab-pane fade" id="movement">
+                    {% include 'management/opexBankedTW.html' %}
+            </div>
+            <div class="tab-pane fade" id="bankingplan">
+            <div class="col-sm-12">
+                    <div class="card">
+                    {% include 'management/opexMonthlyBankingPlan.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<script>
+    var triggerTabList = [].slice.call(document.querySelectorAll('#myTab button'))
+    triggerTabList.forEach(function (triggerEl) {
+    var tabTrigger = new bootstrap.Tab(triggerEl)
+    triggerEl.addEventListener('click', function (event) {
+        event.preventDefault()
+        tabTrigger.show()
+    })
+    })
+</script>{% endcomment %}
+
+
+{% block js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const zoomIcons = document.querySelectorAll('[data-zoom-btn]');
+
+            zoomIcons.forEach(icon => {
+            icon.addEventListener('click', function (e) {
+                e.stopPropagation(); // prevent event bubbling
+                const card = icon.closest('.zoom-card');
+
+                // Remove zoom from all others
+                document.querySelectorAll('.zoom-card.zoomed-in').forEach(c => {
+                if (c !== card) c.classList.remove('zoomed-in');
+                });
+
+                // Toggle this card
+                card.classList.toggle('zoomed-in');
+            });
+            });
+        });
+    </script>
+
+    <script>
+        function isThursdayAfter3PM() {
+            const now = new Date();
+            const isThursday = now.getDay() === 5; // 0=Sunday, 4=Thursday
+            const isAfter3PM = now.getHours() >= 9;
+            return isThursday && isAfter3PM;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const syncButton = document.getElementById('syncButton');
+            const availabilityNote = document.getElementById('availabilityNote');
+
+            if (isThursdayAfter3PM()) {
+            syncButton.disabled = false;
+            availabilityNote.style.display = 'none';
+            } else {
+            syncButton.disabled = true;
+            availabilityNote.style.display = 'block';
+            syncButton.title = "Button active only on Fridays from 9AM";
+            }
+        });
+    </script>
+{% endblock %}

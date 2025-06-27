@@ -1,0 +1,22 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+<div class="row col-sm-12">
+    <div class="row mb-3">
+        <div class="col-sm-1">
+            <label class="form-label">Title</label>
+        </div>
+        <div class="col-sm-11">
+            {% render_field noteForm.title class="form-control" placeholder="" %}
+        </div>
+        <div class="invalid-feedback">{{ noteForm.title.errors|first }}</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Note</label>
+        {% render_field noteForm.Notes class="form-control" placeholder="" %}
+    </div>
+    <div class="invalid-feedback">{{ noteForm.Notes.errors|first }}</div>
+    related to: {% render_field notes.initiative.initiative_name class="form-control" placeholder="" %}
+</div>

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %} Pending Approval | Renaissance {% endblock %}
+
+{% block body %}
+{% comment %} <style>
+  th {
+    white-space: nowrap;
+  }
+
+  td {
+    white-space: nowrap;
+  }
+</style> {% endcomment %}
+
+<div class="card">
+    <div class="card-header">
+        <h5>Initiatives Pending Approval</h5>
+    </div>
+    <div class="card-body" style="height: 78vh; overflow-y: auto;">
+        <div class="col-sm-12">
+            <table id="rptTable" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Initiative</th>
+                        <th>Gate</th>
+                        <th>Approver</th>
+                        <th>Actual Approver</th>
+                        <th>Status</th>
+                        <th>Role</th>
+                        <th>Comments</th>
+                        <th>Submitted Date</th>
+                        <th>Modified Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for o in pending %}
+                    <tr>
+                        <td><a href="{% url 'Fit4:initiative_details' o.initiative.slug %}">{{o.initiative.initiative_name }}</a></td>
+                        <td>{{o.LGateId.LGate}}</td>
+                        <td>{{o.approver.get_full_name}}</td>
+                        <td>{{o.actualApprover.get_full_name}}</td>
+                        <td>
+                            {% comment %} class ApprovalStatus(Enum):
+                            Submitted = 1
+                            Rejected = 2
+                            Reassigned = 3
+                            Approved = 4 {% endcomment %}
+                            {% if o.status == 1 %}
+                                Submitted
+                            {% elif o.status == 2 %}
+                                Rejected
+                            {% elif o.status == 3 %}
+                                Reassigned
+                            {% elif o.status == 4 %}
+                                <b class="text-success">Approved</b>
+                            {% elif o.status == None %}
+                                <b class="text-warning">Pending</b>
+                            {% endif %}
+                        </td>
+                        <td>{{o.rolePlayed }}</td>
+                        <td>{{o.comments|default_if_none:""}}</td>
+                        <td>{{o.Created_Date|date:'d-m-Y'}}</td>
+                        <td>{{o.last_modified_date|date:'d-m-Y'}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div><br><br><br>
+
+{% endblock %}
+
+{% block js %}
+
+  
+{% endblock %}

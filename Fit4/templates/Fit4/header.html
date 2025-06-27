@@ -1,0 +1,105 @@
+{% load i18n %}
+{% load static %}
+{% comment %} {% load my_tags %} {% endcomment %}
+{% load humanize %}
+
+<style>
+  /* Bootstrap 4 text input with search icon */
+
+  .has-search .form-control {
+    padding-left: 2.375rem;
+  }
+
+  .has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+  }
+</style>
+
+
+<div class="navbar navbar-expand-lg navbar-light sticky-top mb-2 border-bottom border border-2" style="background-color:white">
+  <div class="container-fluid">
+    <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-2">
+            {% comment %} <a class="navbar-brand" href="/"><img src="/media/logo/LOGO.png" alt="" height="50" loading="lazy" /></a> {% endcomment %}
+            <a class="fs-2 fw-bold" href="/">EnhanceX</a>
+          </div>
+          <div class="col-sm-8 mt-2">
+            <div class="form-group has-search">
+              <span class="fa fa-search form-control-feedback"></span>
+              <input type="search" class="form-control" placeholder="Search by Initiative ID, Initiative name or Initiative owner" name="search" hx-get="{% url 'Fit4:search' %}" hx-trigger="keyup changed delay:500ms" hx-target="#dialog">
+            </div>
+          </div>
+          <div class="col-sm-2 mt-2">
+            <div class="pull-right">
+              <a href="/en/login_page">{{request.user.get_full_name}} ({{request.user}}) (Log out)</a>
+            </div>
+          </div>
+        </div>
+        <div class="collapse navbar-collapse">
+          {% include "Fit4/menus.html" %}
+        </div>
+    </div>
+  </div>
+</div>
+
+
+    {% comment %} <div class="container-fluid navbar-white sticky-top mb-2" style="background-color:white">
+      <div class="col-sm-12 row">
+        <div class="col-sm-3">
+          <a class="navbar-brand" href="/"><img src="/media/logo/LOGO.png" alt="" height="75" loading="lazy" /></a>
+        </div>
+        
+        <div class="col-sm-5 text-center">
+          <input type="text" class="form-control input" placeholder="Search" name="search" hx-get="{% url 'Fit4:search' %}" hx-trigger="keyup changed delay:500ms" hx-target="#dialog">
+        </div>
+
+        <div class="col-sm-4 pull-right" style="font-size:18px">
+          <ul class="nav navbar-nav mb-2">
+              {% if user.is_authenticated %}
+                  <li class="nav-item">
+                    <span><a class="nav-link active" href="{% url "profile" request.user.id %}">{% trans "Welcome " %} {{request.user.first_name}},  {{request.user.last_name}} ({{request.user}} )</a>
+                  </li>
+              {% else %}
+                  <a class="nav-link active s">{% trans "Welcome, Guest:" %}
+                    <a href="{% url "register" %}" class="nav-link active">{% trans "Register" %},<a href="{% url 'login' %}" class="nav-link active">{% trans "Login" %}</a></a>
+                  </a>
+              {% endif %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-sm-12 row">
+        {% include "Fit4/menus.html" %}
+      </div> 
+    </div> {% endcomment %}
+
+    
+{% for message in messages %}
+  <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+    <div class="row">
+      <div class="text-center col-sm-11">
+        {{ message | safe }}
+      </div>
+      <div class="col-sm-1">
+        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+
+
+<script>
+  function eventFunction() {
+    const element = document.getElementById("event_Id");
+    element.title = "Post Event Here";
+  }
+</script>

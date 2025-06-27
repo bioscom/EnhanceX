@@ -1,0 +1,31 @@
+{% load humanize %}
+
+<div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item">
+      <h1 class="accordion-header" id="panelsStayOpen-heading1">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse1" aria-expanded="true" aria-controls="panelsStayOpen-collapse1">
+            <b>Impact Calculator</b>
+        </button>
+      </h1>
+      <div id="panelsStayOpen-collapse1" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-heading1">
+        <div class="accordion-body">
+            {% include 'MTO/ImpactCalculator.html' %}
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+        <h1 class="accordion-header" id="panelsStayOpen-heading2">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse2" aria-expanded="true" aria-controls="panelsStayOpen-collapse2">
+            <b>Scoring Form</b>
+          </button>
+        </h1>
+        <div id="panelsStayOpen-collapse2" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-heading2">
+          <div class="accordion-body">
+            {% include 'MTO/ScoringForm.html' %}
+            <hr>
+            {% include 'MTO/xReport.html' %}
+          </div>
+        </div>
+    </div>
+  </div>

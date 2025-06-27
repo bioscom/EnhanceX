@@ -1,0 +1,203 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load BankNumber_tags %}
+
+<style>
+    .td {
+        border: 1px solid silver;
+        border-spacing: 0;
+        height: 100px;
+        width: 100px;
+        margin: 0; 
+        padding: 0;
+        text-align: center;
+        vertical-align: middle;
+        cursor:pointer;
+    }
+
+    #info-modal .modal {
+        position: fixed;
+        z-index: 1000;
+        left: 0; top: 0;
+        width: 100%; height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    #info-modal .modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 5px;
+        width: 12%;
+        border-radius: 8px;
+     }
+
+    .close {
+        float: right;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+</style>
+
+
+{{ initiative_id|json_script:"initiative-id" }}
+{% comment %} {{ saved_data|json_script:"saved-cell-data" }} {% endcomment %}
+
+<div id="saved-cell-data">{{ saved_data|safe }}</div>
+
+
+<!-- Modal--> 
+<div id="info-modal" class="modal modal-dialog-centered" style="display:none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            Select Consequences
+            <span class="close">&times;</span>
+        </div> 
+        <div class="modal-body">
+            <select name="saving-select" class="select form-select">
+                <option>--Select--</option>
+                <option value="1">Asset</option>
+                <option value="2">Community</option>
+                <option value="3">Environment</option>
+                <option value="4">People</option>
+            </select> 
+        </div>
+    </div>
+</div>
+
+<form action="{% url 'Fit4:risk_assessment' initiative.slug %}" method="POST">
+    {% csrf_token %}
+    <table class="table shadow">
+        <tbody>
+            <tr>
+                <td class="td" rowspan="3"><b>Severity</b></td>
+                <td class="td" colspan="4"><b>Consequences</b></td>
+                <td class="td" colspan="5"><b>Increase Likelihood</b></td>
+            </tr>
+            <tr>
+                <td class="td" rowspan="2"><b>People</b></td>
+                <td class="td" rowspan="2"><b>Asset</b></td>
+                <td class="td" rowspan="2"><b>Environment</b></td>
+                <td class="td" rowspan="2"><b>Community</b></td>
+                <td class="td"><b>A (0.01)</b></td>
+                <td class="td"><b>B (0.10)</b></td>
+                <td class="td"><b>C (0.25)</b></td>
+                <td class="td"><b>D (0.50)</b></td>
+                <td class="td"><b>E (1.00)</b></td>
+            </tr>
+            <tr>
+                <td class="td"><small>Never heard of in the Industry</small></td>
+                <td class="td"><small>Heard in the Industry</small></td>
+                <td class="td"><small>Has Happened in the organisation or more than once per year in the Industry</small></td>
+                <td class="td"><small>Has Happened at the location or more than once per year in the organisation</small></td>
+                <td class="td"><small>Has happened more than once per year at the location</small></td>
+            </tr>
+            <tr>				 			
+                <td class="td"><small>0</small></td>
+                <td class="td"><small>No Injury or health Effect</small></td>
+                <td class="td"><small>No damage</small></td>
+                <td class="td"><small>No effect</small></td>
+                <td class="td"><small>No impact</small></td>
+                <td class="td clickable-cell" style="background:#ADD8E6" data-index="0"></td>
+                <td class="td clickable-cell" style="background:#ADD8E6" data-index="1"></td>
+                <td class="td clickable-cell" style="background:#ADD8E6" data-index="2"></td>
+                <td class="td clickable-cell" style="background:#ADD8E6" data-index="3"></td>
+                <td class="td clickable-cell" style="background:#ADD8E6" data-index="4"></td>
+            </tr>
+            <tr>
+                <td class="td"><small>1 (5,000)</small></td>
+                <td class="td"><small>Slight injury or health effect</small></td>
+                <td class="td"><small>Slight damage</small></td>
+                <td class="td"><small>Slight Effect</small></td>
+                <td class="td"><small>Slight Impact</small></td>
+                <td class="td clickable-cell" style="background:#ADD8E6" data-index="5"></td>
+                <td class="td clickable-cell" style="background:#ADD8E6" data-index="6"></td>
+                <td class="td clickable-cell bg-primary" data-index="7"></td>
+                <td class="td clickable-cell bg-primary" data-index="8"></td>
+                <td class="td clickable-cell bg-primary" data-index="9"></td>
+            </tr>
+            <tr>			
+                <td class="td"><small>2 (50,000)</small></td>
+                <td class="td"><small>Minor injury or health effect</small></td>
+                <td class="td"><small>Minor damage</small></td>
+                <td class="td"><small>Minor Effect</small></td>
+                <td class="td"><small>Minor Impact</small></td>
+                <td class="td clickable-cell" style="background:#ADD8E6" data-index="10"></td>
+                <td class="td clickable-cell bg-primary" data-index="11"></td>
+                <td class="td clickable-cell bg-primary" data-index="12"></td>
+                <td class="td clickable-cell" style="background:yellow;" data-index="13"></td>
+                <td class="td clickable-cell" style="background:yellow;" data-index="14"></td>
+            </tr>
+            <tr>			
+                <td class="td"><small>3 (500,000)</small></td>
+                <td class="td"><small>Major injury or health effect</small></td>
+                <td class="td"><small>Moderate damage</small></td>
+                <td class="td"><small>Moderate Effect</small></td>
+                <td class="td"><small>Moderate Impact</small></td>
+                <td class="td clickable-cell bg-primary" data-index="15"></td>
+                <td class="td clickable-cell bg-primary" data-index="16"></td>
+                <td class="td clickable-cell" style="background:yellow;" data-index="17"></td>
+                <td class="td clickable-cell" style="background:yellow;" data-index="18"></td>
+                <td class="td clickable-cell" style="background:red;" data-index="19"></td>
+            </tr>
+            <tr>		
+                <td class="td"><small>4 (5,000,000)</small></td>
+                <td class="td"><small>Permanent total disability or up to three fatalities</small></td>
+                <td class="td"><small>Major damage</small></td>
+                <td class="td"><small>Major Effect</small></td>
+                <td class="td"><small>Major Impact</small></td>
+                <td class="td clickable-cell bg-primary" data-index="20"></td>
+                <td class="td clickable-cell" style="background:yellow;" data-index="21"></td>
+                <td class="td clickable-cell" style="background:yellow;" data-index="22"></td>
+                <td class="td clickable-cell" style="background:red;" data-index="23"></td>
+                <td class="td clickable-cell" style="background:red;" data-index="24"></td>
+            </tr>
+            <tr> 				
+                <td class="td"><small>5 (20,000,000)</small></td>
+                <td class="td"><small>More than 3 fatalities</small></td>
+                <td class="td"><small>Massive damage</small></td>
+                <td class="td"><small>Massive Effect</small></td>
+                <td class="td"><small>Massive Impact</small></td>
+                <td class="td clickable-cell" style="background:yellow;" data-index="25"></td>
+                <td class="td clickable-cell" style="background:yellow;" data-index="26"></td>
+                <td class="td clickable-cell" style="background:red;" data-index="27"></td>
+                <td class="td clickable-cell" style="background:red;" data-index="28"></td>
+                <td class="td clickable-cell" style="background:red;" data-index="29"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row col-sm-12">
+                <div class="col-sm-4">
+                    <small>Proactive</small><br>
+                    {% render_field mtoScoringInfoForm.proactiveType class="form-check check" placeholder="" %}
+                </div>
+                <div class="col-sm-4">
+                    <small>Proactive/Reactive Type</small><br>
+                    {% render_field riskAssessmentForm.proactive_type class="select form-select" placeholder="" %}
+                </div>
+                <div class="col-sm-4">
+                    <small>* Likelihood of Asset Consequence</small><br>
+                    {% render_field riskAssessmentForm.likelihood_asset_consequence class="select form-select" placeholder="" %}
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-6">
+                    <small>Severity/Impact Justification</small><br>
+                    {% render_field riskAssessmentForm.impact_justification class="form-control" placeholder="" %}
+                    
+                </div>
+                <div class="col-sm-6">
+                    <small>Probability likelihood justification</small><br>
+                    {% render_field riskAssessmentForm.likelihood_justification class="form-control" placeholder="" %}
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <button type="submit" class="btn btn-light border border-1 border-primary">  <i class="fa fa-save"></i>   Save  </button>
+        </div>
+    </div>
+</form>

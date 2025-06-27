@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{oApproval.initiative.initiative_name}} | Renaissance{% endblock %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block body %}
+
+<form action="{% url 'Fit4:approve_initiative' oApproval.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="approveInitiativeModal" tabindex="-1" aria-labelledby="approveInitiativeModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="approveInitiativeModalLabel">Approve Initiative</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Comments
+                    {{ oApprovalForm.comments|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:8" }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Approve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form action="{% url 'Fit4:reject_initiative' oApproval.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="rejectInitiativeModal" tabindex="-1" aria-labelledby="rejectInitiativeModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rejectInitiativeModalLabel">Reject Initiative</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Comments
+                    {{ oApprovalForm.comments|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:8" }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Approve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<form action="{% url 'Fit4:reassign_initiative' oApproval.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="reassignInitiativeModal" tabindex="-1" aria-labelledby="reassignInitiativeModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reassignInitiativeModalLabel">Reassign Approval Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select name="selected_user"  class="select-user2 select-control select2" data-placeholder="Select a person...">
+                        <option>Search Users...</option>
+                        {% for o in allUsers %}
+                            <option value="{{o.id}}">{{o.first_name}}, {{o.last_name}}</option>
+                        {% endfor %}
+                    </select><br><br>
+                    <input class="mb-3" type="checkbox" checked /> Send Notification <br>
+                    <b>Comments:</b><br>
+                    {{ oApprovalForm.comments|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:8" }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Approve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<div class="container-flux mb-2">
+    <div class="card">
+        <div class="card-header">
+            <div class="row col-sm-12">
+                <div class="col-sm-10">
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="/media/logo/InitiativeApproval.png" alt="" loading="lazy"/>
+                            </td>
+                            <td>
+                                <div><small>Approval Request</small></div>
+                                <div><h5>Initiative Approval</h5></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-sm-2 text-end">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#approveInitiativeModal" class="btn btn-light border">Approve</button>
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#rejectInitiativeModal" class="btn btn-light border">Reject</button>
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#reassignInitiativeModal" class="btn btn-light border">Reasign</button>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <div class="card-body">
+            <div class="row col-sm-12">
+                <div class="col-sm-3"><small>Submitted by</small></div>
+                <div class="col-sm-2"><small>Date Submitted</small></div>
+                <div class="col-sm-2"><small>Actual Approver</small></div>
+                <div class="col-sm-2"><small>Assigned To</small></div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-3">{{ oApproval.initiative.author.first_name }}  {{ oApproval.initiative.author.last_name }}</div>
+                <div class="col-sm-2">{{ oApproval.Created_Date }}</div>
+                <div class="col-sm-2">{{ oApproval.approver.get_full_name }}</div>
+                <div class="col-sm-2">{{ oApproval.actualApprover.get_full_name }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-8 shadow p-3 mb-2 bg-body rounded">
+    <div class="row">
+        <div class="col-sm-6">
+            <small>Initiative Name</small>
+            <div class="col-sm-12"><a href="{% url 'Fit4:initiative_details' oApproval.initiative.slug %}">{{oApproval.initiative.initiative_name}}</a></div>
+            <hr>
+        </div>
+        <div class="col-sm-6">
+            <div class="col-sm-12"><small>Owner</small></div>
+            <div class="col-sm-12"> <a href="{% url 'account:user_detailed' oApproval.initiative.author.id %}">{{ oApproval.initiative.author.first_name }}  {{ oApproval.initiative.author.last_name }}</a></div>
+            <hr>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <small>Workstream</small>
+            <div class="col-sm-12"><a href="{% url 'Fit4:workstream_details' oApproval.initiative.Workstream.id %}">{{oApproval.initiative.Workstream.workstreamname}}</a></div>
+            <hr>
+        </div>
+        <div class="col-sm-6">
+            <small>L-Gate</small>
+            <div class="col-sm-12">{{ oApproval.initiative.actual_Lgate.LGate }}</div>
+            <hr>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <small>Overall Status</small>
+            <div class="col-sm-12">{{oApproval.initiative.overall_status}}</div>
+            <hr>
+        </div>
+        <div class="col-sm-6">
+            <small>Open Actions by Current L-Gate</small>
+            <div class="col-sm-12">{{oApproval.LGateId}}</div>
+            <hr>
+        </div>
+    </div>
+</div>
+{% comment %} <div class="card">
+    <div class="card-body">
+        
+    </div>
+</div> {% endcomment %}
+
+
+
+{% endblock %}
+
+
+{% block js %}
+
+{% comment %} <script>
+    $(document).ready(function() {
+        $('#select-user2').select2({ theme:'classic', width:'100%', dropdownParent: $('#reassignInitiativeModal')});
+    });
+</script> {% endcomment %}
+
+{% endblock %}
+
+{% comment %} 
+    {% if form.errors %}
+        <ul>
+            {% for key,value in form.errors.items %} 
+                <li>{{ key|escape }} : {{ value|escape }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endcomment %}
+

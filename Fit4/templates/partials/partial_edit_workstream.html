@@ -1,0 +1,133 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+<div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item">
+      <h1 class="accordion-header" id="panelsStayOpen-headingThree">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="true" aria-controls="panelsStayOpen-collapseThree">
+            <b>Information</b>
+        </button>
+      </h1>
+      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingThree">
+        <div class="accordion-body">
+            <div class="shadow p-3 mb-2 bg-body rounded">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="col-sm-12">
+                            <label for="{{ workstreamform.workstreamname.id_for_label }}" class="form-label"><small>*Workstream Name</small></label>
+                        </div>
+                        <div class="col-sm-12">
+                            {% render_field workstreamform.workstreamname class="form-control required" placeholder="" %}
+                        </div>
+                        <div class="invalid-feedback">{{ workstreamform.workstreamname.errors|first }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="col-sm-12">
+                            <small>Owner</small>
+                        </div>
+                        <div class="col-sm-12">
+                            {{request.user.get_full_name}}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-2">
+                    <div class="col-sm-6">
+                        <div class="col-sm-12">
+                            <label for="{{ workstreamform.user_workstreamsponsor.id_for_label }}" class="form-label"><small>*Workstream Sponsor</small></label>
+                        </div>
+                        <div class="col-sm-12">
+                            {% render_field workstreamform.user_workstreamsponsor class="select2-workstream select select-contol select2" %}
+                        </div>
+                        <div class="invalid-feedback">{{ workstreamform.user_workstreamsponsor.errors|first }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-sm-6">
+                        <div class="col-sm-12">
+                            <label for="{{ workstreamform.user_workstreamlead.id_for_label }}" class="form-label"><small>*Workstream Lead</small></label>
+                        </div>
+                        <div class="col-sm-12">
+                            {% render_field workstreamform.user_workstreamlead class="select2-workstream select select-contol select2" %}
+                        </div>
+                        <div class="invalid-feedback">{{ workstreamform.user_workstreamlead.errors|first }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-sm-6">
+                        <div class="col-sm-12">
+                            <label for="{{ workstreamform.user_financesponsor.id_for_label }}" class="form-label"><small>*Finance Sponsor</small></label>
+                        </div>
+                        <div class="col-sm-12">
+                            {% render_field workstreamform.user_financesponsor class="select2-workstream select select select2" %}
+                        </div>
+                        <div class="invalid-feedback">{{ workstreamform.user_financesponsor.errors|first }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-sm-6">
+                        <div class="col-sm-12">
+                            <label for="{{ workstreamform.workstreamtarget.id_for_label }}" class="form-label"><small>Workstream Target</small></label>
+                        </div>
+                        <div class="col-sm-12">
+                            {% render_field workstreamform.workstreamtarget class="form-control" placeholder="" %}
+                        </div>
+                        <div class="invalid-feedback">{{ workstreamform.workstreamtarget.errors|first }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-sm-6">
+                        <div class="col-sm-12">
+                            <label for="{{ workstreamform.workstreamambition.id_for_label }}" class="form-label"><small>Workstream Ambition</small></label>
+                        </div>
+                        <div class="col-sm-12">
+                            {% render_field workstreamform.workstreamambition class="form-control" placeholder="" %}
+                        </div>
+                        <div class="invalid-feedback">{{ workstreamform.workstreamambition.errors|first }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-sm-12">
+                        <label for="{{ workstreamform.workstreamdescription.id_for_label }}" class="form-label"><small>Workstream Description</small></label>
+                    </div>
+                    <div class="col-sm-12">
+                        {% render_field workstreamform.workstreamdescription class="form-control" placeholder="" %}
+                        {% comment %} {{ workstreamform.workstreamdescription|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:5" }} {% endcomment %}
+                    </div>
+                    <div class="invalid-feedback">{{ workstreamform.workstreamdescription.errors|first }}</div>
+                </div>
+                {% comment %} {% crispy form %} {% endcomment %}
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+{% if workstreamform.errors %}
+    <ul>
+        {% for key,value in workstreamform.errors.items %} 
+            <li>{{ key|escape }} : {{ value|escape }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}

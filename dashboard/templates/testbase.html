@@ -1,0 +1,55 @@
+{% load i18n %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+    
+    <title> {% block title %} {% endblock %} </title>
+
+  </head>
+
+  <body>
+    {% include "Fit4/header.html" %}
+
+    <div class="container-fluid">
+      {% block body %}
+
+      {% endblock %}
+    </div>
+
+    <!-- Toast template -->
+    <div class="position-fixed top-0 end-0 p-3" data-bs-autohide="false" style="z-index: 99998; left: 50%; transform: translate(-50%, 0px); ">
+      <div id="toast-t" class="toast align-items-center text-white bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="toast-body-t" class="toast-body"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+
+    {% include "Fit4/footer.html" %}
+
+    <!--  JAVA Scripts  -->
+    {% comment %} <script src="{% static 'bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://unpkg.com/htmx.org@1.6.1/dist/htmx.min.js"></script>
+    <script src="{% static 'js/dialog.js' %}"></script>
+    <script src="{% static 'js/site.js' %}"></script>
+    <script src="{% static 'js/toast.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script> {% endcomment %}
+
+    <script type="text/javascript" src="../static/dashboard/fusioncharts.js"></script>
+    <script type="text/javascript" src="../static/dashboard/fusioncharts.charts.js"></script>
+    <script type="text/javascript" src="../static/dashboard/themes/fusioncharts.theme.fusion.js"></script>
+
+
+    {% block js %}
+
+    {% endblock %}
+
+  </body>
+</html>

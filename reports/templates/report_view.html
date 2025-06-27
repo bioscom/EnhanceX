@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load BankNumber_tags %}
+{% load static %}
+{% load table_tags %}
+{% load humanize %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load tz %}  {# if using timezone support #}
+
+{% block title %} {{oReport.name}} {% endblock %}
+
+{% block body %}
+
+<!-- Modal -->
+{% comment %} <form action="{% url 'Fit4:add_actions' initiative.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="saveAsModal" tabindex="-1" aria-labelledby="saveAsModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="saveAsModalLabel">Save Report As</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  {% include "partial_save_report_as.html" %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form> {% endcomment %}
+
+<form action="{% url 'reports:edit_filter' oReport.unique_name %}" method="POST">
+  {% csrf_token %}
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="editModalLabel">Update Report</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  {% include 'partial_edit_report.html' %}
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+          </div>
+      </div>
+  </div>
+</form>
+
+<form action="{% url 'reports:save_as' oReport.unique_name %}" method="POST">
+  {% csrf_token %}
+  <div class="modal fade" id="saveAsModal" tabindex="-1" aria-labelledby="saveAsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="saveAsModalLabel">Save Report As</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <b>Report Name</b><br>
+              {% render_field reportForm.name class="form-control required" placeholder="" %}
+              <br>
+              <b>Description</b><br>
+              <textarea id="desc" name="description" class="form-control"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+  </div>
+</form>
+
+<form action="{% url 'reports:add_savedfilter_todashboard' oReport.unique_name %}" method="POST">
+  {% csrf_token %}
+  <div class="modal fade" id="addtoDashboardModal" tabindex="-1" aria-labelledby="addtoDashboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addtoDashboardModalLabel">Add Report to Dashboard</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <b>Dashboard Title</b><br>
+              {% render_field reportForm.name class="form-control required" placeholder="" %}
+              <br>
+              <b>Description</b><br>
+              <textarea id="desc" name="description" class="form-control"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+  </div>
+</form>
+
+<style>
+  th {
+    white-space: nowrap;
+  }
+
+  td {
+    white-space: nowrap;
+  }
+</style>
+
+<div class="card">
+    <div class="card-header">
+      <div class="row col-sm-12">
+        <div class="col-sm-8">
+          <table>
+            <tr>
+                <td>
+                    <img src="/media/logo/report_img.png" alt="" loading="lazy"/>
+                </td>
+                <td>
+                  <div>Report: {{oReport.category.category}}</div>
+                  <div class="h5">{{oReport.name}}</div>
+                </td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-sm-4 text-end">
+          <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="submit" class="btn btn-light border border-2 border-secondary"><a href="{% url 'reports:edit_filter' oReport.unique_name %}">Edit</a></button>
+            <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#saveAsModal">Save As</button>
+            <button type="submit" class="btn btn-light border border-2 border-secondary">Save</button>
+            <button type="button" class="btn btn-light border border-2 border-secondary">Delete</button>
+            <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#addtoDashboardModal">Add to Dashboard</button>
+          </div>
+          {% comment %} <a type="button" class="btn btn-primary pull-right" href="{% url 'reports:get_report_header' %}">Report Header</a> {% endcomment %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body" style="height: 75vh; overflow-y: auto;">
+      <div class="ms-3">Total Records<br> <div class="h4">{{RecordCount}}</div><div>
+        <div class="col-sm-12 rounded border border-2">
+          <!-- Javascript for this table is on Fit4/templates/base.html -->
+          <div id="demo-output" style="margin-bottom: 1em;" class="chart-display"></div>
+          <table id="rptTable" class="cell-border table table-hover" style="width:100%; font:small">
+            <thead>
+              {% comment %} <th></th> {% endcomment %}
+              <th>Workstream Name</th>
+              <th>Initiative Name</th>
+              <th>Idn</th>
+              <th>Yearly Planned Value(USD)</th>
+              <th>Yearly Forecast Value(USD)</th>
+              <th>Yearly Actual Value(USD)</th>
+              <th>MTO Score</th>
+              <th>Owner: Full Name</th>
+              <th>Workstream Sponsor</th>
+              <th>Workstream Lead: Full Name</th>
+              <th>Finance Sponsor: Full Name</th>
+              <th>Planned Date</th>
+              <th>Plan Relevance</th>
+              <th>Actual L-Gate</th>
+              <th>HashTag #</th>
+              <th>L0 Completion Date (Planned)</th>
+              <th>L1 Completion Date (Planned)</th>
+              <th>L2 Completion Date (Planned)</th>
+              <th>L3 Completion Date (Planned)</th>
+              <th>L4 Completion Date (Planned)</th>
+              <th>L5 Completion Date (Planned)</th>
+              <th>Function</th>
+              <th>Saving Type</th>
+              <th>Discipline</th>
+              <th>Approval Status</th>
+              <th>Benefit Type</th>
+              <th>Year</th>
+              <th>Created Date</th>
+              <th>Date Downloaded</th>
+            </thead>
+            {% comment %} {% if filter %} {% endcomment %}
+            <tbody>
+              {% for obj in duped %}
+                  <tr>
+                    {% comment %} <td>{{ forloop.counter }}</td> {% endcomment %}
+                    <td><a href="{% url 'Fit4:workstream_details' obj.initiative.Workstream.id %}">{{ obj.initiative.Workstream }}</a></td>
+                    <td><a href="{% url 'Fit4:initiative_details' obj.initiative.slug %}">{{ obj.initiative.initiative_name }}</a></td>
+                    <td>{{ obj.initiative.initiative_id }}</td>
+                    <td class="amountPlan">{{ obj.sum_plan|currency }}</td>
+                    <td class="amountForecast">{{ obj.sum_forecast|currency }}</td>
+                    <td class="amountActual">{{ obj.sum_actual|currency }}</td>
+                    <td class="amountPlan">{{ obj.initiative.mto_score|currency|default_if_none:"" }}</td>
+                    <td>
+                      <a href="{% url 'account:user_detailed' obj.initiative.author.id %}">{{ obj.initiative.author.get_full_name }}</a>
+                    </td>
+                    <td>
+                      {% if obj.initiative.workstreamsponsor %}
+                        <a href="{% url 'account:user_detailed' obj.initiative.workstreamsponsor.id %}">{{ obj.initiative.workstreamsponsor.get_full_name }}</a>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if obj.initiative.workstreamlead %}
+                        <a href="{% url 'account:user_detailed' obj.initiative.workstreamlead.id %}">{{ obj.initiative.workstreamlead.get_full_name }}</a>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if obj.initiative.financesponsor %}
+                        <a href="{% url 'account:user_detailed' obj.initiative.financesponsor.id %}">{{ obj.initiative.financesponsor.get_full_name }}</a>
+                      {% endif %}
+                    </td>
+                    <td>{{ obj.initiative.Planned_Date|default_if_none:""|date:"d-M-Y" }}</td>
+                    <td>  
+                        {% for o in obj.initiative.Plan_Relevance.all %}
+                          {{ o.title }}; 
+                        {% endfor %}
+                    </td>
+                    <td>{{ obj.initiative.actual_Lgate }}</td>
+                    <td>{{ obj.initiative.HashTag }}</td>
+                    <td>{{ obj.initiative.L0_Completion_Date_Planned|default_if_none:""|date:'d-M-Y' }}</td>
+                    <td>{{ obj.initiative.L1_Completion_Date_Planned|default_if_none:""|date:'d-M-Y' }}</td>
+                    <td>{{ obj.initiative.L2_Completion_Date_Planned|default_if_none:""|date:'d-M-Y' }}</td>
+                    <td>{{ obj.initiative.L3_Completion_Date_Planned|default_if_none:""|date:'d-M-Y' }}</td>
+                    <td>{{ obj.initiative.L4_Completion_Date_Planned|default_if_none:""|date:'d-M-Y' }}</td>
+                    <td>{{ obj.initiative.L5_Completion_Date_Planned|default_if_none:""|date:'d-M-Y' }}</td>
+                    <td>{{ obj.initiative.functions|default_if_none:"" }}</td>
+                    <td>{{ obj.initiative.SavingType|default_if_none:"" }}</td>
+                    <td>{{ obj.initiative.discipline|default_if_none:"" }}</td>
+                    <td>{{ obj.initiative.Approval_Status|default_if_none:"" }}</td>
+                    <td>{{ obj.benefittype|default_if_none:"" }}</td>
+                    <td>{{ obj.YYear|default_if_none:"" }}</td>
+                    <td>{{ obj.initiative.Created_Date|default_if_none:""|date:'d-M-Y' }}</td>
+                    <td>{% now "d-m-Y" %}</td>
+                  </tr>
+                
+              {% endfor %}
+            </tbody>
+            {% comment %} {% endif %} {% endcomment %}
+            <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td id="totalPlan" class="fw-bold"></td>
+                <td id="totalForecast" class="fw-bold"></td>
+                <td id="totalActual" class="fw-bold"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+    </div><br>
+{% endblock %}

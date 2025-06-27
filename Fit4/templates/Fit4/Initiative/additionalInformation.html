@@ -1,0 +1,17 @@
+<ul class="nav nav-tabs mb-2" id="myTab">
+    <li class="nav-item">
+        <a href="#history" class="nav-link active" data-bs-toggle="tab"><b>History</b></a>
+    </li>
+    <li class="nav-item">
+        <a href="#systeminformation" class="nav-link" data-bs-toggle="tab"><b>System Information</b></a>
+    </li>
+</ul>
+
+<div class="tab-content ms-2">
+    <div class="tab-pane fade show active" id="history">
+        {% include "Fit4/Information/history.html" %}
+    </div>
+    <div class="tab-pane fade" id="systeminformation">
+        {% include "Fit4/Information/systeminformation.html" %}
+    </div>
+</div>

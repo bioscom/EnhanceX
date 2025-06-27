@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load table_tags %}
+{% load i18n %}
+{% load humanize %}
+
+{% block title %} FCF Calculator | Renaissance {% endblock %}
+
+{% block body %}
+
+<form action="{% url 'Fit4:add_fcf_multiplier' %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="fcfcalculatorModal" aria-labelledby="fcfcalculatorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fcfcalculatorModalLabel">New FCF calculator Configuration</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include 'Fit4/FCF/partial_fcfcalculator.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="save_changes" type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="card">
+    <div class="card-header">
+        <div class="col-sm-12 row">
+            <div class="col-sm">
+                <table>
+                    <tr>
+                        <td>
+                            <img src="/media/logo/initiative_img.png" alt="" loading="lazy"/>
+                        </td>
+                        <td>
+                            <small>FCF Calculators</small>
+                            <div class="col-sm row">
+                                {% comment %} <div class="col-sm"><h5>{{initiative.initiative_name}}</h5></div> {% endcomment %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm">
+                <div class="btn-group pull-right" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#fcfcalculatorModal">New</button>
+                    <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#ownerModal">Change Owner</button>
+                </div>
+            </div>
+          </div>
+    </div>
+    <div class="card-body">
+        <table id="rptTable" class="table table-hover">
+            <thead>
+                <tr>
+                    <th>...</th>
+                    <th>FCF Multiplier Name</th>
+                    <th>Banefit Type</th>
+                    <th>Actual Volume Multiplier</th>
+                    <th>Forcast Volume Multiplier</th>
+                    <th>Planned Volume Multiplier</th>
+                    <th>FCF Multiplier</th>
+                    <th>Year</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in fcfmultipliers %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><a href="{% url 'Fit4:fcf_calculator_details' o.id %}">{{o.name}}</a></td>
+                        <td>{{o.benefittype}}</td>
+                        <td>{{o.actual_volume_multiplier}}</td>
+                        <td>{{o.forecast_volume_multiplier}}</td>
+                        <td>{{o.planned_volume_multiplier}}</td>
+                        <td>{{o.fcf_multiplier}}</td>
+                        <td>{{o.YYear}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block js %}
+
+{% endblock %}

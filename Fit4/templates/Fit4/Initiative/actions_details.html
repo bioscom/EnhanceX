@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{form.action_name}}{% endblock %}
+
+{% block css %}
+    
+{% endblock %}
+
+{% block body %}
+
+    {% comment %} {% with WIDGET_ERROR_CLASS='is-invalid' %} {% endcomment %}
+        {{ form.media }} {#  Adds widget's JS/CSS files from CDN #}
+        <form action="{% url 'Fit4:edit_actions' form.id %}" method="POST">
+            {% csrf_token %}
+            <div class="modal fade" id="editActionsModal" tabindex="-1" aria-labelledby="editActionsModalLabel" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editActionsModalLabel">Update Initiative Action</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {% include 'partials/partial_edit_actions.html' %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% comment %} {% endwith %} {% endcomment %}
+
+<div class="container-flux mb-2">
+    <div class="card">
+        <div class="card-header">
+            <div class="col-sm-12">
+                <ul class="nav" id="myTab">
+                    <div class="col-sm-8">
+                        <div><small>Initiative Action</small></div>
+                        <div><h5>{{form.action_name}}</h5></div>
+                    </div>
+                    <div class="col-sm-4 text-end">
+                        <div class="btn-group pull-right" role="group">
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal" class="btn btn-light border border-2 border-secondary">Edit</button>
+                            <button type="button" hx-get="{% url 'Fit4:add_initiative' %}" hx-target="#dialog" class="btn btn-light border border-2 border-secondary">Clone</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-light border border-2 border-secondary">Delete</button>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row col-sm-12">
+                <div class="col-sm-3"><small>Initiative</small></div>
+                <div class="col-sm-2"><small>Status</small></div>
+                <div class="col-sm-2"><small>Due Date</small></div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-3"><a href="{% url 'Fit4:initiative_details' form.initiative.slug %}">{{form.initiative.initiative_name}}</a></div>
+                <div class="col-sm-2">{{form.status}}</div>
+                <div class="col-sm-2">{{form.due_date|date:"d-m-Y"}}</div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+
+<div class="col-sm-8 shadow p-3 mb-2 bg-body rounded">
+    <div class="row">
+        <ul class="nav">
+            <span class="flex-grow-1"></span>
+            <b style="color:Red">*</b> = Required Information
+        </ul>
+    </div>
+    <div class="card mb-2">
+        <div class="card-body" style="background-color:#DCDCDC">
+            Information
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <small>Action Name*</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11">{{form.action_name}}</div>
+                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                <hr>
+            </div>
+            
+            <div class="col-sm-12">
+                <small>Action Type*</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11">{{ form.action_type }}</div>
+                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                <hr>
+            </div>
+
+            <div class="col-sm-12">
+                <small>Complete By Phase</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11">{{form.complete_by_phase}}</div>
+                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                <hr>
+            </div>
+
+            <div class="col-sm-12">
+                <small>Description</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11">{{ form.description }}</div>
+                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                <hr>
+            </div>
+
+            <div class="col-sm-12">
+                <small>Start Date</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11">{{form.start_date|date:"d-m-Y"}}</div>
+                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                <hr>
+            </div>
+
+            <div class="col-sm-12">
+                <small>Commentary</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11">{{ form.commentary }}</div>
+                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                <hr>
+            </div>
+            
+        </div>
+
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <small>Initiative</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11"><a href="{% url 'Fit4:initiative_details' form.initiative.slug %}">{{form.initiative.initiative_name}}</a></div>
+                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                <hr>
+            </div>
+
+            <div class="col-sm-12">
+                <small>Assigned to Contact</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11">{{form.assigned_to}}</div>
+                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                <hr>
+            </div>
+
+            <div class="col-sm-12">
+                <small>Status</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11">{{form.status}}</div>
+                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                <hr>
+            </div>
+
+            <div class="col-sm-12">
+                <small>Due Date</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11">{{form.due_date|date:"d-m-Y"}}</div>
+                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                <hr>
+            </div>
+
+            <div class="col-sm-12">
+                <small>Completion Date</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11">{{actions.due_date|date:"d-m-Y"}}</div>
+                <br>
+                {% comment %} <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div> {% endcomment %}
+                <hr>
+            </div>
+
+            <div class="col-sm-12">
+                <small>Send notification email</small>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-11"></div>
+                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#editActionsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-2">
+        <div class="card-body" style="background-color:#DCDCDC">
+            System Information
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <small>Created By</small>
+            </div>
+            <div class="col-sm-12">
+                {{form.created_by.first_name}} {{form.created_by.last_name}}, {{form.date_created|date:"d-m-Y"}}
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <small>Last Modified By</small>
+            </div>
+            <div class="col-sm-12">
+                {{form.last_modified_by.first_name}} {{form.last_modified_by.last_name}}, {{form.date_updated|date:"d-m-Y"}}
+            </div>
+        </div>
+    </div>
+</div>
+<br><br><br>
+
+{% endblock %}
+
+
+{% block js %}
+
+
+<script>
+    $(document).ready(function() {
+        //$('#assignedToSelect').select2({ theme:'classic', width:'100%', dropdownParent: $('#actionsModal')});
+        $('#assignedToContact').select2({ theme:'classic', width:'100%', dropdownParent: $('#actionsModal')});
+    });
+</script>
+
+{% endblock %}
+
+
+{% comment %} 
+    {% if form.errors %}
+        <ul>
+            {% for key,value in form.errors.items %} 
+                <li>{{ key|escape }} : {{ value|escape }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endcomment %}
+

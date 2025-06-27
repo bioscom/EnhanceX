@@ -1,0 +1,23 @@
+<div class="card">
+    <div class="card-header">
+        <h6>Initiative ({{initCount}})</h6>
+    </div>
+    <div class="card-body">
+        <table id="rptTable" class="table table-hover">
+            <thead>
+                <th>Id</th>
+                <th>Initiative Name</th>
+                <th>Actual L-Gate</th>
+            </thead>
+            <tbody>
+            {% for o in initiatives %}
+                <tr>
+                    <td>{{o.initiative_id}}</td>
+                    <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                    <td>{{o.actual_Lgate}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

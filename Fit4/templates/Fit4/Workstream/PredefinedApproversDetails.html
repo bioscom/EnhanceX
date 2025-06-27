@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+
+{% block title %}Workstreams | Renaissance {% endblock %}
+{% load humanize%}
+
+
+{% block body %}
+
+<form action="{% url 'Fit4:update_predefinedApprovers' approvers.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="approversModal" tabindex="-1" aria-labelledby="approversModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="approversModalLabel">Edit ({{approvers.actual_Lgate.LGate}}) L-Gate</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                {% include 'partials/partial_edit_Lgate.html' %}
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+          </div>
+      </div>
+    </div>
+</form>
+
+<div class="card shadow mb-3 bg-body rounded">
+    <div class="card-header">
+        <div class="col-sm-12 row">
+            <div class="col-sm">
+                <table>
+                    <tr>
+                        <td>
+                            <img src="/media/logo/initiative_img.png" alt="" loading="lazy"/>
+                        </td>
+                        <td>
+                            <small>Pre-Defined approvers</small>
+                            <div class="col-sm row">
+                                <div class="col-sm"><h5>{{approvers.actual_Lgate.LGate}}</h5></div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm">
+                <div class="btn-group pull-right" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#initiativeModal">Edit</button>
+                    <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#ownerModal">Change Owner</button>
+                    <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#nextLgateModal">Change Record Type</button>
+                    <button class="btn btn-secondary border border-2 border-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteModal">Printable View</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="row col-sm-12">
+        <div class="col-sm-9">
+            <div class="accordion" id="accordionPanelsStayOpenExample">
+                <div class="accordion-item">
+                    <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                        <div class="accordion-body">
+                            <div class="row col-sm-12">
+                                <div class="col-sm-6">
+                                    <small>Pre-Defined approvers Name</small>
+                                    <div class="row col-sm-12">
+                                        <div class="col-sm-11">{{approvers.actual_Lgate.LGate}}</div>
+                                        <div class="text-end col-sm-1"></div>
+                                        <hr>
+                                    </div>
+
+                                    <small>L Gate</small>
+                                    <div class="row col-sm-12">
+                                        <div class="col-sm-11">{{approvers.actual_Lgate.LGate}}</div>
+                                        <div class="text-end col-sm-1"></div>
+                                        <hr>
+                                    </div>
+                                    <small>Override Approvers?</small>
+                                    <hr>
+                                </div>
+                                <div class="col-sm-6">
+                                    <small>Owner</small>
+                                    <div class="row col-sm-12">
+                                        <div class="col-sm-11">
+                                            <div class="col-sm"><img src="/media/logo/user_img.png" alt="" loading="lazy" /> <a href="{% url 'Fit4:workstream_details' approvers.Workstream.id %}">{{approvers.created_by.get_full_name}}</a></div>
+                                            {% comment %} <a href="{% url 'Fit4:workstream_details' approvers.Workstream.id %}">{{approvers.created_by.get_full_name}}</a> {% endcomment %}
+                                        </div>
+                                        <div class="text-end col-sm-1"> <a data-bs-toggle="modal" data-bs-target="#ownerModal"><img src="/media/logo/change_owner_img.png" alt="" loading="lazy" /></a></div>
+                                        <hr>
+                                    </div>
+                                    <small>Workstream</small>
+                                    <div class="row col-sm-12">
+                                        <div class="col-sm-11"><a href="{% url 'Fit4:workstream_details' approvers.Workstream.id %}">{{approvers.Workstream.workstreamname}}</a></div>
+                                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#approversModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                                        <hr>
+                                    </div>
+                                    <small>Threshold Tier</small>
+                                    <hr>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="accordion-item">
+                    <h1 class="accordion-header" id="panelsStayOpen-headingTwo">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="true" aria-controls="panelsStayOpen-collapseTwo">
+                            <b>Workstream Lead</b>
+                        </button>
+                    </h1>
+                    <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingTwo">
+                        <div class="accordion-body">
+                            <div class="col-sm-6">
+                                <div class="col-sm-12">
+                                    <small>Workstream Lead</small>
+                                </div>
+                                <div class="row col-sm-12">
+                                    
+                                    <div class="col-sm-11">
+                                        {% if approvers.workstreamlead %}
+                                        <img src="/media/logo/user_img.png" alt="" loading="lazy" /> <a href="{% url 'account:user_detailed' approvers.workstreamlead.id %}">{{approvers.workstreamlead.get_full_name}}</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#approversModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                                    <hr>
+                                </div>
+                                
+                                <div class="col-sm-12">
+                                    <small>Workstream Lead 2</small>
+                                </div>
+                                <div class="row col-sm-12">
+                                    <div class="col-sm-11">
+                                        {% if approvers.workstreamlead2 %}
+                                        <img src="/media/logo/user_img.png" alt="" loading="lazy" /> <a href="{% url 'account:user_detailed' approvers.workstreamlead2.id %}">{{approvers.workstreamlead2.get_full_name}}</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#approversModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                                    <hr>
+                                </div>
+                                
+                                <div class="col-sm-12">
+                                    <small>Workstream Lead 3</small>
+                                </div>
+                                <div class="row col-sm-12">
+                                    <div class="col-sm-11">
+                                        {% if approvers.workstreamlead3 %}
+                                        <img src="/media/logo/user_img.png" alt="" loading="lazy" /> <a href="{% url 'account:user_detailed' approvers.workstreamlead3.id %}">{{approvers.workstreamlead3.get_full_name}}</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#approversModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                                    <hr>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="accordion-item">
+                    <h1 class="accordion-header" id="panelsStayOpen-headingThree">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="true" aria-controls="panelsStayOpen-collapseThree">
+                            <b>Workstream Sponsor</b>
+                        </button>
+                    </h1>
+                    <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingThree">
+                        <div class="accordion-body">
+                            <div class="col-sm-6">
+                                <div class="col-sm-12">
+                                    <small>Workstream Sponsor</small>
+                                </div>
+                                <div class="row col-sm-12">
+                                    
+                                    <div class="col-sm-11">
+                                        {% if approvers.workstreamsponsor %}
+                                        <img src="/media/logo/user_img.png" alt="" loading="lazy" /> <a href="{% url 'account:user_detailed' approvers.workstreamsponsor.id %}">{{approvers.workstreamsponsor.get_full_name}}</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#approversModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                                    <hr>
+                                </div>
+                                
+                                <div class="col-sm-12">
+                                    <small>Workstream Sponsor 2</small>
+                                </div>
+                                <div class="row col-sm-12">
+                                    <div class="col-sm-11">
+                                        {% if approvers.workstreamsponsor2 %}
+                                        <img src="/media/logo/user_img.png" alt="" loading="lazy" /> <a href="{% url 'account:user_detailed' approvers.workstreamsponsor2.id %}">{{approvers.workstreamsponsor2.get_full_name}}</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#approversModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                                    <hr>
+                                </div>
+                                
+                                <div class="col-sm-12">
+                                    <small>Workstream Sponsor 3</small>
+                                </div>
+                                <div class="row col-sm-12">
+                                    <div class="col-sm-11">
+                                        {% if approvers.workstreamsponsor3 %}
+                                        <img src="/media/logo/user_img.png" alt="" loading="lazy" /> <a href="{% url 'account:user_detailed' approvers.workstreamsponsor3.id %}">{{approvers.workstreamsponsor3.get_full_name}}</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#approversModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                                    <hr>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="accordion-item">
+                    <h1 class="accordion-header" id="panelsStayOpen-headingFour">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="true" aria-controls="panelsStayOpen-collapseFour">
+                        <b>Finance Sponsor</b>
+                    </button>
+                    </h1>
+                    <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingFour">
+                    <div class="accordion-body">
+                        <div class="col-sm-6">
+                            <div class="col-sm-12">
+                                <small>Finance Sponsor</small>
+                            </div>
+                            <div class="row col-sm-12">
+                                <div class="col-sm-11">
+                                    {% if approvers.financesponsor %}
+                                    <img src="/media/logo/user_img.png" alt="" loading="lazy" /> <a href="{% url 'account:user_detailed' approvers.financesponsor.id %}">{{approvers.financesponsor.get_full_name}}</a>
+                                    {% endif %}
+                                </div>
+                                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#approversModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                                <hr>
+                            </div>
+                            
+                            <div class="col-sm-12">
+                                <small>Finance Sponsor 2</small>
+                            </div>
+                            <div class="row col-sm-12">
+                                <div class="col-sm-11">
+                                    {% if approvers.financesponsor2 %}
+                                    <img src="/media/logo/user_img.png" alt="" loading="lazy" /> <a href="{% url 'account:user_detailed' approvers.financesponsor2.id %}">{{approvers.financesponsor2.get_full_name}}</a>
+                                    {% endif %}
+                                </div>
+                                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#approversModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                                <hr>
+                            </div>
+                            
+                            <div class="col-sm-12">
+                                <small>Finance Sponsor 3</small>
+                            </div>
+                            <div class="row col-sm-12">
+                                <div class="col-sm-11">
+                                    {% if approvers.financesponsor3 %}
+                                    <img src="/media/logo/user_img.png" alt="" loading="lazy" /> <a href="{% url 'account:user_detailed' approvers.financesponsor3.id %}">{{approvers.financesponsor3.get_full_name}}</a>
+                                    {% endif %}
+                                </div>
+                                <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#approversModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                                <hr>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h1 class="accordion-header" id="panelsStayOpen-heading5">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse5" aria-expanded="true" aria-controls="panelsStayOpen-collapse5">
+                        <b>System Information</b>
+                        </button>
+                    </h1>
+                    <div id="panelsStayOpen-collapse5" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-heading5">
+                        <div class="accordion-body">
+                            <div class="row col-sm-12">
+                                <div class="col-sm-6">
+                                    <small>Created By</small><br>
+                                    <a href="{% url 'account:user_detailed' approvers.created_by.id %}">{{approvers.created_by.get_full_name}}</a>, {{approvers.Created_Date|date:'d-m-y H:m'}}
+                                    <hr>
+                                </div>
+                                <div class="col-sm-6">
+                                    <small>Last Modified By</small><br>
+                                    <a href="{% url 'account:user_detailed' approvers.created_by.id %}">{{approvers.last_modified_by.get_full_name}}</a>, {{approvers.last_modified_date|date:'d-m-y H:m'}}
+                                    <hr>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card text-center">
+                <button type="submit" class="btn btn-primary border border-1 w-30 mx-auto">Update All Related Initiative</button>
+            </div>
+        </div>
+    </div>
+    <br><br><br>
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

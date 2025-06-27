@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block body %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-7">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <div class="col-sm-12 row">
+                        <div class="col-sm"><h5>Manage Permissions for {{ user_obj.username }}</h5></div>
+                    </div>
+                </div>
+                <form method="post">
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="table-responsive shadow p-3" style="max-height: 720px; overflow-y; auto;">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label>Groups:</label>
+                                    {{ form.groups }}
+                                </div>
+                                <div class="mb-3">
+                                    <label>Permissions:</label>
+                                    {{ form.user_permissions }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-success">Save</button>
+                        <a class="btn btn-secondary" href="{% url 'account:user_list' %}">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

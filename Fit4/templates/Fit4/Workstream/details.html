@@ -1,0 +1,201 @@
+<!-- Modal -->
+
+{% load humanize%}
+{% comment %} {% with WIDGET_ERROR_CLASS='is-invalid' %} {% endcomment %}
+    <form action="{% url 'Fit4:edit_workstream' form.slug %}" method="POST">
+        {% csrf_token %}
+        <div class="modal fade" id="workstreamModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Update Workstream: Workstream - Update</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% include 'partials/partial_edit_workstream.html' %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% comment %} {% endwith %} {% endcomment %}
+
+<div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item">
+      <h1 class="accordion-header" id="panelsStayOpen-headingThree">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="true" aria-controls="panelsStayOpen-collapseThree">
+            <b>Information</b>
+        </button>
+      </h1>
+      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingThree">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                       <small>Workstream Name</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-12">{{form.workstreamname}}</div>
+                       <hr>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>Owner</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-12">{{form.author.get_full_name}}</div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>Workstream Sponsor</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{form.user_workstreamsponsor.get_full_name}}</div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#workstreamModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        
+                    </div>
+                    <div class="col-sm-12">
+                       
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>Workstream Lead</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{form.user_workstreamlead.get_full_name}}</div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#workstreamModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        
+                    </div>
+                    <div class="col-sm-12">
+                       
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>Finance Sponsor</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{form.user_financesponsor.get_full_name}}</div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#workstreamModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        
+                    </div>
+                    <div class="row col-sm-12">
+                       
+                    </div>
+                </div>
+               
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <small>Workstream Target</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">USD {{form.workstreamtarget|default_if_none:""|intcomma}}</div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#workstreamModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <small>Workstream Ambition</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">USD {{form.workstreamambition|default_if_none:""|intcomma}}</div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#workstreamModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-sm-12">
+                    <small>Workstream Description</small>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-11">{{ form.workstreamdescription|safe }}</div>
+                    <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#workstreamModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+        <h1 class="accordion-header" id="panelsStayOpen-headingTwo">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="true" aria-controls="panelsStayOpen-collapseTwo">
+              <b>System Information</b>
+          </button>
+        </h1>
+        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingTwo">
+          <div class="accordion-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>Last Modified By</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11"><a href="#">{{form.last_modified_by.first_name}} {{form.last_modified_by.last_name}}</a>, {{form.date_updated}}</div>
+                        
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <small>Created By</small>
+                    </div>
+                    <div class="row col-sm-12">
+                       <div class="col-sm-11"><a href="#">{{form.last_modified_by.first_name}} {{form.last_modified_by.last_name}}</a>, {{form.date_created}}</div>
+                       <hr>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>

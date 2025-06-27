@@ -1,0 +1,80 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+<form action="{% url 'Fit4:update_assethierarchy' initiative.slug %}" method="POST">
+    {% csrf_token %}
+    <div class="card shadow mb-2 bg-body rounded">
+        <div class="card-header">
+            <table>
+                <tr>
+                    <td>
+                        <img src="/media/logo/Asset_Hierarchy.png" alt="" loading="lazy"/>
+                    </td>
+                    <td>
+                        <b>Asset Hierarchy</b>
+                    </td>
+                </tr>
+            </table>
+        </div>   
+        <div class="card-body">
+            <div class="col-sm-12 row">
+                <div class="col-sm">
+                    <div class="col-sm">
+                        Level 1
+                    </div>
+                    <div class="col-sm">
+                        {% render_field assetHierarchyForm.formula_Level_1 class="select form-select" placeholder="" %}
+                    </div>
+                </div>
+
+                <div class="col-sm">
+                    <div class="col-sm">
+                        Level 2
+                    </div>
+                    <div class="col-sm">
+                        {% render_field assetHierarchyForm.formula_Level_2 class="select form-select" placeholder="" %}
+                    </div>
+                </div>
+
+                <div class="col-sm">
+                    <div class="col-sm">
+                        Level 3
+                    </div>
+                    <div class="col-sm">
+                        {% render_field assetHierarchyForm.formula_Level_3 class="select form-select" placeholder="" %}
+                    </div>
+                </div>
+
+                <div class="col-sm">
+                    <div class="col-sm">
+                        Level 4
+                    </div>
+                    <div class="col-sm">
+                        {% render_field assetHierarchyForm.formula_Level_4 class="select form-select" placeholder="" %}
+                    </div>
+                </div>
+
+                <div class="col-sm">
+                    <div class="col-sm">
+                        Functions (Data Filter 1)
+                    </div>
+                    <div class="col-sm">
+                        {% render_field assetHierarchyForm.functions class="select form-select" placeholder="" %}
+                    </div>
+                </div>
+
+                <div class="col-sm">
+                    <div class="col-sm">
+                        Saving Type (Data Filter 2)
+                    </div>
+                    <div class="col-sm">
+                        {% render_field assetHierarchyForm.SavingType class="select form-select" placeholder="" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <button id="save_changes" type="submit" class="btn btn-primary">  <i class="fa fa-save"></i>   Save  </button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,521 @@
+{% load humanize %}
+{% load static %}
+
+<!-- Modal -->
+
+<div class="modal fade" id="snagModal" tabindex="-1" aria-labelledby="snagModalLabel" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-light">
+                <h5 class="modal-title" id="snagModalLabel">We hit a snag.</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <b>Review the errors on this page.</b>
+                <ul>
+                    <div class="row">
+                        <div class="col-auto"><i class="fas fa-exclamation-triangle text-danger" style="font-size: 2rem;"></i></div>
+                        <div class="col"><li>This record is pending approval and it is locked. If you need to edit it, contact your admin.</li></div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item">
+        <h1 class="accordion-header" id="panelsStayOpen-headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+            <b>Details</b>
+            </button>
+        </h1>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+            <div class="accordion-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="col-sm-12">
+                            <small>Workstream</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.Workstream}}</div>
+                            {% comment %}<div class="text-end col-sm-1"><a type="button" href="{% url 'Fit4:edit_initiative' initiative.slug %}"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div> {% endcomment %}
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Initiative Name</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.initiative_name}}</div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Description</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.description|safe|default_if_none:""}}</div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Hashtag #</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.HashTag|default_if_none:""}}</div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>L-Gate</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.actual_Lgate}}</div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Enabled by:</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">
+                                {% if oEnabledBy %}
+                                    {% for o in oEnabledBy %}
+                                        {{ o.enabledby }}; 
+                                    {% endfor %}
+                                {% endif %} 
+                            </div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Functions:</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.Function|default_if_none:""}}</div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Savings Type:</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.SavingType|default_if_none:""}}</div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-6">
+                        <div class="col-sm-12">
+                            <small>Id</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.initiative_id}}</div>
+                            <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Problem statement</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.problem_statement|default_if_none:""|safe}}</div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Overall status</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.overall_status}}</div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Overrall Status Commentary</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.overallstatuscommentary|default_if_none:""|safe}}</div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Discipline</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">{{initiative.discipline.title|default_if_none:""}}</div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Marked as Confidential</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11"><input type="checkbox" id="confidential" {% if initiative.mark_as_confidential %} checked{% endif %}></div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Plan Relevance</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">
+                                {% if oPlanRelevance %}
+                                    {% for o in oPlanRelevance %}
+                                        {{ o.title }}; 
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <small>Note</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11">
+                                {{ initiative.note|default_if_none:"" }}
+                            </div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+      <h1 class="accordion-header" id="panelsStayOpen-headingTwo">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="true" aria-controls="panelsStayOpen-collapseTwo">
+            <b>Default Workstream Approvers</b>
+        </button>
+      </h1>
+      <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingTwo">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <small>Workstream Lead (From workstream)</small>
+                    </div>
+                    <div class="col-sm-12">
+                        {{workstream.user_workstreamlead.first_name}} {{workstream.user_workstreamlead.last_name}}
+                    </div>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>Workstream sponsor (From workstream)</small>
+                    </div>
+                    <div class="col-sm-12">
+                        {{workstream.user_workstreamsponsor.first_name}} {{workstream.user_workstreamsponsor.last_name}}
+                    </div>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                       <small>Finance sponsor (From workstream)</small>
+                    </div>
+                    <div class="col-sm-12">
+                        {{workstream.user_financesponsor.first_name}} {{workstream.user_financesponsor.last_name}}
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h1 class="accordion-header" id="panelsStayOpen-headingThree">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="true" aria-controls="panelsStayOpen-collapseThree">
+            <b>Intiative Approvers</b>
+        </button>
+      </h1>
+      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingThree">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        Activate Initiative Approvers
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11"><input type="checkbox" id="approvers" {% if initiative.activate_initiative_approvers %} checked{% endif %}></div>
+                       <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                       <hr>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>Initiative Sponsor</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">
+                            <img src="/media/logo/user_img.png" alt="" loading="lazy" /> 
+                            {% if initiative.initiativesponsor.id %}
+                                <a href="{% url 'account:user_detailed' initiative.initiativesponsor.id %}"> {{initiative.initiativesponsor.first_name}} {{initiative.initiativesponsor.last_name}}</a> 
+                            {% endif %}
+                        </div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        
+                    </div>
+                    <div class="col-sm-12">
+                       
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>Workstream Sponsor - approver</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">
+                            <img src="/media/logo/user_img.png" alt="" loading="lazy" /> 
+                            {% if initiative.workstreamsponsor.id %}
+                                <a href="{% url 'account:user_detailed' initiative.workstreamsponsor.id %}"> {{initiative.workstreamsponsor.first_name}} {{initiative.workstreamsponsor.last_name}}</a> 
+                            {% endif %}
+                        </div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div> 
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        
+                    </div>
+                    <div class="col-sm-12">
+                       
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>Workstream Lead - approver</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">
+                            <img src="/media/logo/user_img.png" alt="" loading="lazy" /> 
+                            {% if initiative.workstreamlead.id %}
+                            <a href="{% url 'account:user_detailed' initiative.workstreamlead.id %}"> {{initiative.workstreamlead.first_name}} {{initiative.workstreamlead.last_name}}</a> 
+                            {% endif %}
+                        </div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        
+                    </div>
+                    <div class="row col-sm-12">
+                       
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>Finance Sponsor - approver</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">
+                            <img src="/media/logo/user_img.png" alt="" loading="lazy" /> 
+                            {% if initiative.financesponsor.id %}
+                            <a href="{% url 'account:user_detailed' initiative.financesponsor.id %}"> {{initiative.financesponsor.first_name}} {{initiative.financesponsor.last_name}}</a> 
+                            {% endif %}
+                        </div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+        <h1 class="accordion-header" id="panelsStayOpen-headingFour">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="true" aria-controls="panelsStayOpen-collapseFour">
+            <b>Schedule</b>
+          </button>
+        </h1>
+        <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingFour">
+          <div class="accordion-body">
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <small>L0 Completion Date (Planned)</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{initiative.L0_Completion_Date_Planned|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>L0 Completion Date (Actual)</small>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="col-sm-11">{{initiative.L0_Completion_Date_Actual|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"></div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <small>L1 Completion Date (Planned)</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{initiative.L1_Completion_Date_Planned|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>L1 Completion Date (Actual)</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{initiative.L1_Completion_Date_Actual|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"></div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <small>L2 Completion Date (Planned)</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{initiative.L2_Completion_Date_Planned|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>L2 Completion Date (Actual)</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{initiative.L2_Completion_Date_Actual|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"></div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <small>L3 Completion Date (Planned)</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{initiative.L3_Completion_Date_Planned|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>L3 Completion Date (Actual)</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{initiative.L3_Completion_Date_Actual|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"></div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <small>L4 Completion Date (Planned)</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{initiative.L4_Completion_Date_Planned|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>L4 Completion Date (Actual)</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{initiative.L4_Completion_Date_Actual|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"></div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <small>L5 Completion Date (Planned)</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{initiative.L5_Completion_Date_Planned|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-12">
+                        <small>L5 Completion Date (Actual)</small>
+                    </div>
+                    <div class="row col-sm-12">
+                        <div class="col-sm-11">{{initiative.L5_Completion_Date_Actual|date:"d-m-Y"}}</div>
+                        <div class="text-end col-sm-1"></div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+          </div>
+        </div>
+    </div>
+  </div>

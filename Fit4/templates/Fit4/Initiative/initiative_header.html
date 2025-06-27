@@ -1,0 +1,76 @@
+<div class="container-flux">
+    <div class="card shadow mb-2 bg-body rounded">
+        <div class="card-header">
+            <div class="col-sm-12 row">
+                <div class="col-sm">
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="/media/logo/initiative_img.png" alt="" loading="lazy"/>
+                            </td>
+                            <td>
+                                <small>Initiative</small>
+                                <div class="col-sm row">
+                                    <div class="col-sm"><h5>{{initiative.initiative_name}}</h5></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-sm text-end">
+                    <div class="btn-group pull-right" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#initiativeModal">Edit</button>
+                        
+                        {% if initiative.Workstream.is_mto %}
+                            <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#cloneMTOModal">Clone</button>
+                        {% else %}
+                            <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#cloneModal">Clone</button>
+                        {% endif %}
+
+                        <button type="button" class="btn btn-light border border-2 border-secondary" hx-get="{% url 'Fit4:add_initiative' %}" hx-target="#dialog">Mark as Cancelled</button>
+                        <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#ownerModal">Change Owner</button>
+                        {% if initiative.approval_status_visual.id != 2 and initiative.actual_Lgate.GateIndex < 6 %} {% comment %} #TODO: Ensure the hardcode is taken care of  {% endcomment %}
+                            <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#nextLgateModal">Advance to Next L-Gate</button>
+                        {% else %}  {% endif %}
+                        <button class="btn btn-secondary border border-2 border-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a></li>
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Roll Back to Previous L-Gate</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% comment %} {{initiative.actual_Lgate.GateIndex}} {% endcomment %}
+
+        <div class="card-body">
+            <div class="container-flux">
+                <div class="row">
+                    <div class="col-sm"><small>Unit</small></div>
+                    <div class="col-sm"><small>Owner</small></div>
+                    <div class="col-sm"><small>Workstream</small></div>
+                    <div class="col-sm"><small>Threshold Tier</small></div>
+                    <div class="col-sm"><small>Record Type</small></div>
+                    <div class="col-sm"><small>Approval Status Visual</small></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm">{{initiative.unit.name}}</div>
+                    <div class="col-sm"><img src="/media/logo/user_img.png" alt="" loading="lazy" /> <a href="/en/user_detailed/{{initiative.author.id}}"> {{initiative.author.get_full_name}}</a> <a data-bs-toggle="modal" data-bs-target="#ownerModal"><img src="/media/logo/change_owner_img.png" alt="" loading="lazy" /></a></div>
+                    {% comment %} href="{% url 'account:user_detailed' initiative.author.id %}" {% endcomment %}
+                    <div class="col-sm"><a href="{% url 'Fit4:workstream_details' initiative.Workstream.slug %}">{{initiative.Workstream}}</a></div>
+                    {% comment %} <div class="col-sm-1"><a href="{% url 'Fit4:workstream'%}">{{initiative.Workstream}}</a></div> {% endcomment %}
+                    <div class="col-sm"></div>
+                    <div class="col-sm">{{initiative.recordType.name}} </div>
+                    
+                    {% if initiative.approval_status_visual.id == 2 %} {% comment %} # TODO: Ensure the hardcode is taken care of  {% endcomment %}
+                        <div class="col-sm">{{initiative.approval_status_visual.title}}({{ initiative.approval_status_visual.id }})<img src="/media/logo/padlock_img.png" alt="" loading="lazy" /></div>
+                    {% else %}
+                        <div class="col-sm">{{initiative.approval_status_visual.title}}({{ initiative.approval_status_visual.id }})</div>
+                    {% endif %}
+                    <div id="approvalStatus" value="{{ initiative.approval_status_visual.id }}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

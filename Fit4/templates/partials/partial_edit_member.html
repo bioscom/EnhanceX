@@ -1,0 +1,70 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <div class="col-sm-12">
+            <label for="{{ memberForm.member.id_for_label }}" class="form-label"><small>Name</small></label>
+        </div>
+        <div class="col-sm-12">
+            {% render_field memberForm.member class="select form-select select2 required" placeholder="" id="memberSelect" %}
+            <div class="invalid-feedback">{{ memberForm.member.errors|first }}</div>
+        </div>
+
+        <div class="col-sm-12">
+            <label for="{{ memberForm.resourcetimeallocation.id_for_label }}" class="form-label"><small>Resource Time Allocation</small></label>
+        </div>
+        <div class="col-sm-12">
+            {% render_field memberForm.resourcetimeallocation class="form-control" placeholder="" %}
+            <div class="invalid-feedback">{{ memberForm.resourcetimeallocation.errors|first }}</div>
+        </div>
+        
+        <div class="col-sm-12">
+            <label for="{{ memberForm.discipline.id_for_label }}" class="form-label"><small>Discipline</small></label>
+        </div>
+        <div class="col-sm-12">
+            {% render_field memberForm.discipline class="form-control" placeholder="" %}
+            <div class="invalid-feedback">{{ memberForm.discipline.errors|first }}</div>
+        </div>
+    </div>
+
+    <div class="col-sm-6"> 
+        <div class="col-sm-12">
+            <small>Initiative</small>
+        </div>
+        <div class="row col-sm-12">
+            <div class="col-sm-11"></div>
+            <hr>
+        </div>
+
+        <div class="col-sm-12">
+            <small>Team Member Name</small>
+        </div>
+        <div class="row col-sm-12">
+            <div class="col-sm-11">{{form.member}}</div>
+            <hr>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <div class="col-sm-12">
+            <small>Created By</small>
+        </div>
+        <div class="col-sm-12">
+            {{form.created_by.first_name}} {{form.created_by.last_name}}, {{form.date_created|date:"d-m-Y"}}
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="col-sm-12">
+            <small>Last Modified By</small>
+        </div>
+        <div class="col-sm-12">
+            {{form.last_modified_by.first_name}} {{form.last_modified_by.last_name}}, {{form.date_updated|date:"d-m-Y"}}
+        </div>
+    </div>
+</div>

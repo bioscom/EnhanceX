@@ -1,0 +1,48 @@
+{% comment %} <div class="card">
+    <div class="card-body"> {% endcomment %}
+        <table class="table table-hover">
+            <tr>
+                <th>...</th>
+                <th>Title</th>
+                <th>Text Preview</th>
+                <th>Created By</th>
+                <th>Last Modified</th>
+                <th>...</th>
+            </tr>
+            {% for o in notes %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>
+                        <a type="button" data-bs-toggle="modal" data-bs-target="#editNoteModal" href="#">{{o.title}}</a>
+                        <form action="{% url 'Fit4:edit_note' o.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editNoteModalLabel">Update Notes</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {% include "partials/partial_edit_notes.html" %}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Update Record</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+                    {% comment %} <button type="button" class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#noteModal">New</button>
+                    <td><a href="{% url 'Fit4:initiative_details' o.id %}">{{o.initiative_name}}</a></td> {% endcomment %}
+                    <td>{{o.Notes|safe}}</td>
+                    <td>{{o.created_by.first_name}}, {{o.created_by.last_name}}</td>
+                    <td>{{o.date_updated}}</td>
+                    <td>...</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% comment %} </div>
+</div> {% endcomment %}

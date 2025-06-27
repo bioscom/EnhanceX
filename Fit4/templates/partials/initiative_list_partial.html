@@ -1,0 +1,60 @@
+<div class="card">
+    <div class="card-body table-responsive">
+        <table id="rptTable" class="cell-border table table-hover" style="font:small">
+            <thead>
+                <tr>
+                    <th>...</th>
+                    <th>Initiative Id</th>
+                    <th>Old Id</th>
+                    <th>Initiative</th>
+                    <th>Owner</th>
+                    <th>Workstream</th>
+                    <th>Actual Gate</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Pending Actions</th>
+                    <th>Pending Approval</th>
+                    <th>Record Type</th>
+                    <th>Date Created</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for o in page_obj %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{o.initiative_id}}</td>
+                    <td>{{o.oldinitiative_id|default_if_none:""}}</td>
+                    {% if o.recordType.name == 'Opportunity' %}
+                        <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                    {% else %}
+                        <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                    {% endif %}
+                    <td><a href="{% url 'account:user_detailed' o.author.id %}">{{o.author.get_full_name}}</a></td>
+                    <td><a href="{% url 'Fit4:workstream_details' o.Workstream.slug %}">{{o.Workstream.workstreamname}}</a></td>
+                    <td>{{o.actual_Lgate}}</td>
+
+                    <td>{{o.overall_status}}</td>
+                    <td>{{o.Planned_Date|date:'d-m-Y'}}</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>{{o.recordType.name}}</td>
+                    <td>{{o.Created_Date|date:'d-m-Y'}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if next_page %}
+    <div id="scroll-trigger" hx-get="?page={{ next_page }}" hx-trigger="revealed" hx-target="#initiative-list" hx-swap="beforeend">
+        {% comment %} <div class="loader">Loading more...</div> {% endcomment %}
+    </div>
+{% endif %}
+
+{% if not next_page %}
+    <script>
+        document.getElementById('scroll-trigger')?.remove();
+    </script>
+{% endif %}
+

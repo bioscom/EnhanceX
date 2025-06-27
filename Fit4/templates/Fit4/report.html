@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            <div class="row col-sm-12">
+                <div class="col-sm-2">
+                    <form method="get">
+                        {% crispy filter.form %}
+                        <input type="submit" />
+                    </form>
+                </div>
+                <div class="col-sm-10">
+                    {% for obj in filter.qs %}
+                        {{ obj.Workstream }}<br />
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div><br><br><br><br>
+{% endblock %}

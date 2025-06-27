@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %} Home | Renaissance {% endblock %}
+
+{% block body %}
+
+    <form method="POST" action="{% url 'Fit4:add_banner' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal fade" id="newBannerModal" aria-labelledby="newBannerModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newBannerModalLabel">Upload a New Banner</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-sm-12">
+                            {% comment %} {{ form.as_table }} {% endcomment %}
+                            <div class="col-sm mb-2">
+                                Title:<br>
+                                {% render_field form.title class="form-control" placeholder="" %}
+                            </div>
+                            <div class="col-sm mb-2">
+                                Image:<br>
+                                {% render_field form.image class="form-control" placeholder="" %}
+                            </div>
+                            <div class="col-sm mb-2">
+                                Any assocated Url:<br>
+                                {% render_field form.url class="form-control" %}
+                            </div>
+                            <div class="col-sm">
+                                Is active:<br>
+                                {% render_field form.is_active class="form-check" placeholder="" %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {% comment %} <form method="POST" enctype="multipart/form-data">
+        <div class="card mb-2">
+            <div class="card-header">
+                <b>Upload a New Banner</b>
+            </div>
+            <div class="card-body">
+                {% csrf_token %}
+                <div class="row col-sm-12">
+                    <div class="col-sm-3">
+                        Title:<br>
+                        {% render_field form.title class="form-control" placeholder="" %}
+                    </div>
+                    <div class="col-sm-2">
+                        Image:<br>
+                        {% render_field form.image class="form-control" placeholder="" %}
+                    </div>
+                    <div class="col-sm-1">
+                        Is active:<br>
+                        {% render_field form.is_active class="form-check" placeholder="" %}
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+        </div>
+    </form> {% endcomment %}
+
+
+    <div class="card">
+        <div class="card-header">
+            <b>Banners</b>
+        </div>
+        <div class="card-body">
+            <div class="col-sm-12 shadow">
+                <button type="button" class="btn btn-primary pull-right" data-bs-toggle="modal" data-bs-target="#newBannerModal">Add Banner</button>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                        </th>
+                        <th>
+                            Is Active
+                        </th>
+                        <th>
+                            Banner
+                        </th>
+                        <th>
+                            ...
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% comment %} {% for banner in banners %} {% endcomment %}
+                    {% for banner, bannerForm in bannerFormset %}
+                        <tr>
+                            <td>
+                                <form method="POST" action="{% url 'Fit4:update_banner' banner.id %}">
+                                    {% csrf_token %}
+                                    <div class="modal fade" id="banner{{banner.id}}Modal" aria-labelledby="bannerModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="bannerModalLabel">Update Banner</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="col-sm-12">
+                                                        <div class="col-sm mb-2">
+                                                            Title:<br>
+                                                            {% render_field bannerForm.title class="form-control" %}
+                                                        </div>
+                                                        <div class="col-sm mb-2">
+                                                            Image:<br>
+                                                            {% render_field bannerForm.image class="form-control" %}
+                                                        </div>
+                                                        <div class="col-sm mb-2">
+                                                            Any assocated Url:<br>
+                                                            {% render_field bannerForm.url class="form-control" %}
+                                                        </div>
+                                                        <div class="col-sm">
+                                                            Is active:<br>
+                                                            {% render_field bannerForm.is_active class="form-check" %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#banner{{banner.id}}Modal">Save changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#banner{{banner.id}}Modal">Update</button>
+                            </td>
+                            <td>
+                                <input type="checkbox" {% if banner.is_active %} checked{% endif %}></div>
+                            </td>
+                            <td>
+                                <img src="{{ banner.image.url }}" alt="{{ banner.title }}" height="150px" loading="lazy">
+                            </td>
+                            <td>
+                                <a class="btn btn-primary" href="{% url 'Fit4:delete_banner' banner.id %}">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block js %}
+
+  
+{% endblock %}

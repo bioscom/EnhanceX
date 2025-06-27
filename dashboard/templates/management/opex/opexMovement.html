@@ -1,0 +1,88 @@
+{% load humanize %}
+
+
+    <div class="row p-2 bg-success">
+        <div class="card col-md-6">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Banked This Week</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive shadow" style="height: 40vh; overflow-y; auto;">
+                    <table class="table table-bordered table-hover table-font">
+                        <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
+                            <tr>
+                                <th></th>
+                                <th>Function</th>
+                                <th>Initiative Name</th>
+                                <th>Actual Opex LW</th>
+                                <th>Actual Opex TW</th>
+                                <th>Banked Opex</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if opex_movement %}
+                                {% for row in opex_movement %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{row.function}}</td>
+                                        <td>{{row.Initiative_Name}}</td>
+                                        <td class="text-end">{{row.Yearly_Actual_Last_Week|floatformat:2|intcomma}}</td>
+                                        <td class="text-end">{{row.Yearly_Actual_This_Week|floatformat:2|intcomma}}</td>
+                                        <td class="text-end">{{ row.Difference|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <b class="small text-danger">No Value Banked This week</b>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card col-md-6">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Funnel This week</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive shadow" style="height: 40vh; overflow-y; auto;">
+                    <table class="table table-bordered table-hover table-font">
+                        <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
+                            <tr>
+                                <th></th>
+                                <th>Function</th>
+                                <th>Initiative Name</th>
+                                <th>Funnel Opex LW</th>
+                                <th>Funnel Opex TW</th>
+                                <th>Funnel Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if funnel_movement %}
+                                {% for row in funnel_movement %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{row.function}}</td>
+                                        <td>{{row.Initiative_Name}}</td>
+                                        <td class="text-end">{{row.Yearly_Plan_Last_Week|floatformat:2|intcomma}}</td>
+                                        <td class="text-end">{{row.Yearly_Plan_This_Week|floatformat:2|intcomma}}</td>
+                                        <td class="text-end">{{ row.Difference|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <p><b class="small text-danger">No Funnel Change This week</b></p>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>

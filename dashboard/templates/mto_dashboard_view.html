@@ -1,0 +1,704 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% load humanize %}
+
+{% load static %}
+{% load table_tags %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %} MTO - Dashboards {% endblock %}
+
+{% block body %}
+
+    <style>
+        .zoom-card {
+            transition: transform 0.4s ease, top 0.4s ease, left 0.4s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .zoomed-in {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 1050; /* above Bootstrap modals */
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+            background-color: white;
+        }
+
+        .zoom-toggle-icon {
+            float: right;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .table-font{
+            font-size: 14px
+        }
+
+    </style> 
+
+    <div class="container-flux">
+        <div class="card shadow mb-2 bg-body rounded">
+            <div class="card-header">
+                <div class="col-sm-12 row mb-2">
+                    <div class="col-sm">
+                        <table>
+                            <tr>
+                                <td>
+                                    <img src="/media/logo/Dashboard.png" alt="" loading="lazy"/>
+                                </td>
+                                <td>
+                                    <small>Dashboard</small>
+                                    <div class="col-sm row">
+                                        <div class="col-sm"><h5>Renaissance PU MTO Meeting Custom EnhanceX Dashboard</h5></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        As of {% now "l, j F Y" %} at {% now "h:i A" %} Viewing as {{request.user.get_full_name}}
+                    </div>
+                    <div class="col-sm text-end">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#initiativeModal">Refresh</button>
+                            <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#cloneModal">Edit</button>
+                            <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#ownerModal">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+                <form action="{% url 'dashboard:dashboards_mto' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="col-sm-12 row">
+                        <div class="col-sm-2">
+                            <small>Asset / Site Name</small><br>
+                            <select name="unit_select" class="select form-select">
+                                <option value="">All</option>
+                                {% for o in units %}
+                                    <option value="{{o.id}}" {% if request.GET.unit_select == o.id|stringformat:"s" %}selected{% endif %}>{{ o.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <b>{{unit|default_if_none:""}}</b>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <small>Record Type</small><br>
+                            <select name="recordType_select" class="select form-select">
+                                <option value="">All</option>
+                                {% for o in rectType %}
+                                    <option value="{{o.id}}" {% if request.GET.recordType_select == o.id|stringformat:"s" %}selected{% endif %}>{{ o.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <b>{{recordType|default_if_none:""}}</b>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <small>Workstream</small><br>
+                            <select name="workstream_select" class="select form-select">
+                                <option value="">All</option>
+                                {% for o in oWorkstream %}
+                                    <option value="{{o.id}}" {% if request.GET.workstream_select == o.id|stringformat:"s" %}selected{% endif %}>{{ o.workstreamname }}</option>
+                                {% endfor %}
+                            </select>
+                            <b>{{workstream|default_if_none:""}}</b>
+                        </div>
+
+                        <div class="col-sm-1">
+                            <small>Year</small><br>
+                            <select name="year_select" class="select form-select">
+                                <option value="">All</option>
+                                {% for o in selectedYears %}
+                                    <option value="{{o}}" {% if request.GET.year_select == o|stringformat:"s" %}selected{% endif %}>{{ o }}</option>
+                                {% endfor %}
+                            </select>
+                            <b>{{yyear|default_if_none:""}}</b>
+                        </div>
+                        
+                        <div class="col-sm-1">
+                            <br>
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 mb-1 container-flux">
+        <div class="row g-1">
+            <div class="col-sm-4">
+                <div class="card zoom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6># of MTO Actions Overdue with summary</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                            <table class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1;">                    
+                                    <tr>
+                                        <th>...</th>
+                                        <th>Action Name</th>
+                                        <th>Initiative Name</th>
+                                        <th>Assigned To</th>
+                                        <th>Due Date</th>
+                                        <th>Commentary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% if overDueActions %}
+                                    {% for o in overDueActions %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td><a href="{% url 'Fit4:action_details' o.id %}">{{o.action_name }}</a></td>
+                                            <td><a href="{% url 'Fit4:initiative_details' o.initiative.slug %}">{{o.initiative.initiative_name}}</a></td>
+                                            <td>{{o.assigned_to.get_full_name}}</td>
+                                            <td>{{o.due_date|date:'d-m-Y'}}</td>
+                                            <td>{{o.initiative.overallstatuscommentary|default_if_none:""}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <p><b class="text-danger">No data found</b></p>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div  class="card zoom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>Open MTO Actions Due within 30 days</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                            <table class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1;">                    
+                                    <tr>
+                                        <th>...</th>
+                                        <th>Initiative Action: Action Name</th>
+                                        <th>Description</th>
+                                        <th>Assigned To</th>
+                                        <th>Complete By</th>
+                                        <th>Due Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% if actionsDueIn30Days %}  
+                                    {% for o in actionsDueIn30Days %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td><a href="{% url 'Fit4:action_details' o.id %}">{{o.action_name }}</a></td>
+                                            <td>{{o.description|default_if_none:""}}</td>
+                                            <td>{{o.assigned_to.get_full_name}}</td>
+                                            {% comment %} <td>{{o.complete_by_phase|default_if_none:""}}</td> {% endcomment %}
+                                            <td>{{o.due_date|date:'d-m-Y'}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <p><b class="text-danger">No data found</b></p>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 pull-right">
+                <div  class="card zoom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>Threats and Opportunities Due in 30 days</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                            <table class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
+                                    <tr>
+                                        <th>...</th>
+                                        <th>Level 1</th>
+                                        <th>Record Type</th>
+                                        <th>Id</th>
+                                        <th>Initiative: Initiative Name</th>
+                                        <th>Unit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if threatsIn30Days %}
+                                        {% for o in threatsIn30Days %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{o.formula_Level_1.name}}</td>
+                                                <td>{{o.recordType}}</td>
+                                                <td>{{o.initiative_id}}</td>
+                                                <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                                <td>{{o.unit.name}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="6" class="text-center">
+                                                <p><b class="text-danger">No data found</b></p>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 mb-1 container-flux">
+        <div class="row g-1">
+            <div class="col-sm-4">
+                <div  class="card zoom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>Overdue Threats and Opportunities</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                            <table class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
+                                    <tr>
+                                        <th>...</th>
+                                        <th>Id</th>
+                                        <th>Initiative: Record Type</th>
+                                        <th>Initiative: Initiative Name</th>
+                                        <th>Unit</th>
+                                        <th>MTO Score</th>
+                                        <th>Initiative Owner</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if overDueThreatsOpportunity %}
+                                        {% for o in overDueThreatsOpportunity %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{o.initiative_id}}</td>
+                                                <td>{{o.recordType}}</td>
+                                                <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                                <td>{{o.unit.name}}</td>
+                                                <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
+                                                <td>{{o.author.get_full_name}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="7" class="text-center">
+                                                <p><b class="text-danger">No data found</b></p>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div  class="card zoom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>Top 20 Threats & Opportunities (L3 - L5)</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                            <table class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
+                                    <tr>
+                                        <th>...</th>
+                                        <th>Initiative: Record Type</th>
+                                        <th>Formular Level 2</th>
+                                        <th>Initiative: Initiative Name</th>
+                                        <th>Unit</th>
+                                        <th>MTO Score</th>
+                                        <th>Initiative Owner</th>
+                                        <th>L-Gate</th>
+                                        <th>Overall Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if obj_top20Threats %}
+                                        {% for o in obj_top20Threats %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{o.recordType}}</td>
+                                                <td>{{o.formula_Level_2.name}}</td>
+                                                <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                                <td>{{o.unit.name}}</td>
+                                                <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
+                                                <td>{{o.author.get_full_name}}</td>
+                                                <td>{{o.actual_Lgate}}</td>
+                                                <td>{{o.overall_status}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="9" class="text-center">
+                                                <p><b class="text-danger">No data found</b></p>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 pull-right">
+                <div  class="card zoom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>Threats & Opportunities at L0 to L2</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                            <table class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
+                                    <tr>
+                                        <th>...</th>
+                                        <th>Initiative: Record Type</th>
+                                        <th>Formular Level 2</th>
+                                        <th>Initiative: Initiative Name</th>
+                                        <th>Unit</th>
+                                        <th>MTO Score</th>
+                                        <th>Initiative Owner</th>
+                                        <th>L-Gate</th>
+                                        <th>Overall Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if obj_top20Threats %}
+                                        {% for o in threatOpportunityatL2 %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{o.recordType}}</td>
+                                                <td>{{o.formula_Level_2.name}}</td>
+                                                <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                                <td>{{o.unit.name}}</td>
+                                                <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
+                                                <td>{{o.author.get_full_name}}</td>
+                                                <td>{{o.actual_Lgate}}</td>
+                                                <td>{{o.overall_status}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="9" class="text-center">
+                                                <p><b class="text-danger">No data found</b></p>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 mb-1 container-flux">
+        <div class="row g-1">
+            <div class="col-sm-3">
+                <div  class="card zoom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>KPI1: New Threats & Opportunity</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                            <table class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
+                                    <tr>
+                                        <th>...</th>
+                                        <th>Initiative: Record Type</th>
+                                        <th>Formular Level 2</th>
+                                        <th>Initiative: Initiative Name</th>
+                                        <th>Unit</th>
+                                        <th>MTO Score</th>
+                                        <th>Initiative Owner</th>
+                                        <th>L-Gate</th>
+                                        <th>Overall Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% if page_obj %}
+                                    {% for o in page_obj %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{o.recordType}}</td>
+                                            <td>{{o.formula_Level_2.name}}</td>
+                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                            <td>{{o.unit.name}}</td>
+                                            <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
+                                            <td>{{o.author.get_full_name}}</td>
+                                            <td>{{o.actual_Lgate}}</td>
+                                            <td>{{o.overall_status}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="9" class="text-center">
+                                            <p><b class="text-danger">No data found</b></p>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div  class="card zoom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>KPI3: Resolved Threats & Opportunity</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                            <table class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
+                                    <tr>
+                                        <th>...</th>
+                                        <th>Initiative: Record Type</th>
+                                        <th>Formular Level 2</th>
+                                        <th>Initiative: Initiative Name</th>
+                                        <th>Unit</th>
+                                        <th>MTO Score</th>
+                                        <th>Initiative Owner</th>
+                                        <th>L-Gate</th>
+                                        <th>Overall Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% if page_obj%}
+                                    {% for o in page_obj %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{o.recordType}}</td>
+                                            <td>{{o.formula_Level_2.name}}</td>
+                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                            <td>{{o.unit.name}}</td>
+                                            <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
+                                            <td>{{o.author.get_full_name}}</td>
+                                            <td>{{o.actual_Lgate}}</td>
+                                            <td>{{o.overall_status}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="9" class="text-center">
+                                            <p><b class="text-danger">No data found</b></p>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div  class="card zoom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>KPI4: Overdue Threats & Opportunity</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                            <table class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
+                                    <tr>
+                                        <th>...</th>
+                                        <th>Initiative: Record Type</th>
+                                        <th>Formular Level 2</th>
+                                        <th>Initiative: Initiative Name</th>
+                                        <th>Unit</th>
+                                        <th>MTO Score</th>
+                                        <th>Initiative Owner</th>
+                                        <th>L-Gate</th>
+                                        <th>Overall Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% if page_obj%}
+                                    {% for o in page_obj %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{o.recordType}}</td>
+                                            <td>{{o.formula_Level_2.name}}</td>
+                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                            <td>{{o.unit.name}}</td>
+                                            <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
+                                            <td>{{o.author.get_full_name}}</td>
+                                            <td>{{o.actual_Lgate}}</td>
+                                            <td>{{o.overall_status}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="9" class="text-center">
+                                            <p><b class="text-danger">No data found</b></p>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3 pull-right">
+                <div  class="card zoom-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>MTO KPI5 - Total Threats/Opportunity Score</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                            <table class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
+                                    <tr>
+                                        <th>...</th>
+                                        <th>Initiative: Record Type</th>
+                                        <th>Formular Level 2</th>
+                                        <th>Initiative: Initiative Name</th>
+                                        <th>Unit</th>
+                                        <th>MTO Score</th>
+                                        <th>Initiative Owner</th>
+                                        <th>L-Gate</th>
+                                        <th>Overall Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% if page_obj %}
+                                    {% for o in page_obj %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{o.recordType}}</td>
+                                            <td>{{o.formula_Level_2.name}}</td>
+                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                            <td>{{o.unit.name}}</td>
+                                            <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
+                                            <td>{{o.author.get_full_name}}</td>
+                                            <td>{{o.actual_Lgate}}</td>
+                                            <td>{{o.overall_status}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="9" class="text-center">
+                                            <p><b class="text-danger">No data found</b></p>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card zoom-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6>All Active Threats and Opportunities</h6>
+            <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+        </div>
+        <div class="card-body">
+            <div class="col-sm-12 row">
+                <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                    <table id="rptTable" class="table table-bordered table-hover table-font">
+                        <thead class="table-light" style="position: sticky; top:0; z-index:1";>                    
+                            <tr>
+                                <th>...</th>
+                                <th>Workstream</th>
+                                <th>Initiative: Record Type</th>
+                                <th>Formular Level 2</th>
+                                <th>Initiative: Initiative Name</th>
+                                <th>Unit</th>
+                                <th>MTO Score</th>
+                                <th>Initiative Owner</th>
+                                <th>L-Gate</th>
+                                <th>Overall Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% if page_obj %}
+                            {% for o in page_obj %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{o.Workstream.workstreamname}}</td>
+                                    <td>{{o.recordType}}</td>
+                                    <td>{{o.formula_Level_2.name}}</td>
+                                    <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                    <td>{{o.unit.name}}</td>
+                                    <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
+                                    <td>{{o.author.get_full_name}}</td>
+                                    <td>{{o.actual_Lgate}}</td>
+                                    <td>{{o.overall_status}}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center">
+                                    <p><b class="text-danger">No data found</b></p>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br><br><br>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const zoomIcons = document.querySelectorAll('[data-zoom-btn]');
+
+            zoomIcons.forEach(icon => {
+            icon.addEventListener('click', function (e) {
+                e.stopPropagation(); // prevent event bubbling
+                const card = icon.closest('.zoom-card');
+
+                // Remove zoom from all others
+                document.querySelectorAll('.zoom-card.zoomed-in').forEach(c => {
+                if (c !== card) c.classList.remove('zoomed-in');
+                });
+
+                // Toggle this card
+                card.classList.toggle('zoomed-in');
+            });
+            });
+        });
+    </script>
+{% endblock %}
+

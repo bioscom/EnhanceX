@@ -1,0 +1,66 @@
+<div class="card">
+    <div class="card-header">
+        <h5>Approval History ({{noOfApprovals}})</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <tr>
+                <th>...</th>
+                <th>Step Name</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actual L Gate</th>
+                <th>Assigned To</th>
+                <th>Actual Approver</th>
+                <th>Comments</th>
+            </tr>
+            {% for o in oApprovalHistory %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{o.rolePlayed}}</td>
+                    <td>{{o.last_modified_date|date:'d-m-Y H:m'}}</td>
+                    <td>
+                        {% comment %} class ApprovalStatus(Enum):
+                        Submitted = 1
+                        Rejected = 2
+                        Reassigned = 3
+                        Approved = 4 {% endcomment %}
+                        {% if o.status == 1 %}
+                            Submitted
+                        {% elif o.status == 2 %}
+                            Rejected
+                        {% elif o.status == 3 %}
+                            Reassigned
+                        {% elif o.status == 4 %}
+                            <b class="text-success">Approved</b>
+                        {% elif o.status == None %}
+                            <b class="text-warning">Pending</b>
+                        {% endif %}
+                    </td>
+                    <td>{{o.LGateId}}</td>
+                    <td><a href="{% url 'account:user_detailed' o.approver.id %}">{{o.approver.first_name}} {{o.approver.last_name}}</a></td>
+                    <td><a href="{% url 'account:user_detailed' o.actualApprover.id %}">{{o.actualApprover.first_name}} {{o.actualApprover.last_name}}</a></td>
+                    <td>{{o.comments|default_if_none:""|safe}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<br>
+<div class="card">
+    <div class="card-header">
+        <h5>Initiative History ()</h5>
+    </div>
+    <div class="card-body">
+        
+    </div>
+</div>
+<br>
+<div class="card">
+    <div class="card-header">
+        <h5>Initiative Benefit History ()</h5>
+    </div>
+    <div class="card-body">
+        
+    </div>
+</div>

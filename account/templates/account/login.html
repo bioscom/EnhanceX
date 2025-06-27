@@ -1,0 +1,105 @@
+{% extends "baselogin.html" %}
+{% load i18n static %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block css %}
+
+<script>
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</script>
+
+<style>
+    .parent {
+        position: relative;
+    }
+
+    .child {
+        color:white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -50px 0 0 -50px;
+    }
+</style>
+
+{% endblock %}
+
+
+{% block body %}
+    <div class="loader"></div>
+    <div class="row">
+        <div class="col-sm-6" style="background-color: #7CB9E8;height:100vh">
+            <div class="row col-sm-12 mb-3 text-center">
+                <a class="navbar-brand" href="/"><img src="/media/logo/LOGO.png" alt="" height="100" loading="lazy" /></a>
+            </div>
+            <form action="{% url 'account:login_page' %}" method="POST">
+                <div class="card w-50 mb-4 mx-auto">
+                    <div class="card-body">
+                        {% csrf_token %}
+                        {% comment %}{% crispy form %}{% endcomment %}
+
+                        {% render_field form.username class="form-control" placeholder="firstname.lastname" %}
+                        <div class="col-md-8 offset-md-2 text-danger">{{ form.username.errors|first }}</div>
+                        <br>
+                        {% render_field form.password class="form-control" placeholder="Password" %}
+                        <br>
+                        <div class="col-md-8 offset-md-2 text-danger">{{ form.password.errors|first }}</div> 
+
+                        {% comment %} <input type="hidden" name="text" value="{{ next }}"> {% endcomment %}
+                        <button type="submit" class="btn btn-primary w-100" style="height:50px">Log in</button>
+                    </div>
+                    <a href="mailto:isaac.bejide@raecafrica.com" class="p-4">Contact Admin to create your profile.</a> 
+                    {% comment %} <p class="text-center mt-3"><a href="{% url 'password_reset' %}">Forgot Password?</a></p> {% endcomment %}
+                </div>
+            </form>
+
+            
+
+            <div class="mb-4 text-center">
+                Or
+            </div>
+            <div class="mb-2 text-center">
+                <a href="{% url 'account:login_page' %}">
+                    <input type="submit" value="{% translate 'Log in With Single Sign On' %}" class="w-50" style="height:50px">
+                </a>
+            </div>
+
+            <h6 class="fixed-bottom">
+                © 2024 Renaissance, Inc. All rights reserved.
+            </h6>
+        </div>
+
+        <div class="col-12 col-sm-6 d-flex justify-content-center align-items-center" style="min-height:100vh;">
+            <img src="/media/FileUploads/welcome.png" alt="Welcome" loading="lazy" class="img-fluid" />
+        </div>
+    </div>
+
+    {% if form.errors %}
+        <ul>
+            {% for key,value in form.errors.items %} 
+                <li>{{ key|escape }} : {{ value|escape }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+{% endblock %}
+
+
+{% block js %}
+   
+{% endblock %}

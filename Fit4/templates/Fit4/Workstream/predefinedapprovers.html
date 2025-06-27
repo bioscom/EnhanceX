@@ -1,0 +1,32 @@
+
+
+
+
+
+<div class="card mb-2">
+    <div class="card-header">
+        <h6>Pre-Defined approvers</h6>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Predefined approvers Name</th>
+                    <th>Workstream Lead</th>
+                    <th>Workstream Sponsor</th>
+                    <th>Finance Sponsor</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in oApprovers  %}
+                    <tr>
+                        <td><a href="{% url 'Fit4:update_predefinedApprovers' o.id %}">{{o.actual_Lgate.LGate}}</a></td>
+                        <td>{{o.workstreamlead|default_if_none:""}}</td>
+                        <td>{{o.workstreamsponsor|default_if_none:""}}</td>
+                        <td>{{o.financesponsor|default_if_none:""}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+{% load humanize %}
+
+<ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a href="#details" class="nav-link active {% if active_tab == 'details' %}active{% endif %}" data-bs-toggle="tab" role="tab"><b>Details</b></a>
+    </li>
+    {% comment %} {% if initiative.unit.name %}  {% endcomment %}
+    {% if initiative.Workstream.is_mto %}
+        <li class="nav-item" role="presentation">
+            <a href="#RiskAssessment" class="nav-link {% if active_tab == 'RiskAssessment' %}active{% endif %}" data-bs-toggle="tab" role="tab"><b>Risk Assessment</b></a>
+        </li>
+    {% endif %}
+    <li class="nav-item" role="presentation">
+      <a id="impacto" href="#impact" class="nav-link {% if active_tab == 'impact' %}active{% endif %}" data-bs-toggle="tab" role="tab" click='checkApproval_Status_Visual()'><b>Initiative Impact</b></a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a href="#actions" class="nav-link {% if active_tab == 'actions' %}active{% endif %}" data-bs-toggle="tab" role="tab"><b>Actions</b></a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a href="#members" class="nav-link {% if active_tab == 'members' %}active{% endif %}" data-bs-toggle="tab" role="tab"><b>Team Members</b></a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a href="#documents" class="nav-link {% if active_tab == 'documents' %}active{% endif %}" data-bs-toggle="tab" role="tab"><b>Documents & Links</b></a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a href="#history" class="nav-link {% if active_tab == 'history' %}active{% endif %}" data-bs-toggle="tab" role="tab"><b>History/Audit Trail</b></a>
+    </li>
+</ul>
+
+<div class="tab-content ms-2">
+    <div class="tab-pane fade show active" id="details">
+        {% include "Fit4/Initiative/details.html" %}
+    </div>
+    {% comment %} {% if oInitiative.unit %} {% endcomment %}
+        <div class="tab-pane fade" id="RiskAssessment">
+            {% include "MTO/RiskAssessment.html" %}
+        </div>
+    {% comment %} {% endif %} {% endcomment %}
+    <div class="tab-pane fade" id="impact">
+        {% include "Fit4/Initiative/impact.html" %}
+    </div>
+    <div class="tab-pane fade" id="actions">
+        {% include "Fit4/Initiative/actions.html" %}
+    </div>
+    <div class="tab-pane fade" id="members">
+        {% include "Fit4/Initiative/members.html" %}
+    </div>
+    <div class="tab-pane fade" id="documents">
+        {% include "Fit4/Initiative/documents.html" %}
+    </div>
+    <div class="tab-pane fade" id="history">
+        {% include "Fit4/Information/history.html" %}
+    </div>
+</div>
+
+
+
+{% block js %}
+    
+{% endblock %}

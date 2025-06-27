@@ -1,0 +1,142 @@
+{% load BankNumber_tags %}
+
+<div class="row col-sm-12">
+    <div class="col-sm-8">
+        <div class="card shadow">
+            <div class="card-header text-center">
+                <h6>Threat Scoring Form</h6>
+            </div>
+            <div class="card-body">
+                <div class="row d-flex align-items-stretch col-sm-12">
+                    <div class="col-sm-6">
+                        <small>People Consequence</small><br>
+                        {{initiative.people_consequence.name}}
+                        <hr>
+                    </div>
+                    <div class="col-sm-6">
+                        <small>Likelihood of People Consequence</small><br>
+                            {{initiative.likelihood_people_consequence.name}}
+                        <hr>
+                    </div>
+                </div>
+
+                <div class="row d-flex align-items-stretch col-sm-12">
+                    <div class="col-sm-6">
+                        <small>Environmental Consequence</small><br>
+                        {{initiative.environmental_consequence.name}}
+                        <hr>
+                    </div>
+                    <div class="col-sm-6">
+                        <small>Likelihood of Environment Consequence</small><br>
+                            {{initiative.likelihood_environment_consequence.name}}
+                        <hr>
+                    </div>
+                </div>
+
+                <div class="row d-flex align-items-stretch col-sm-12">
+                    <div class="col-sm-6">
+                        <small>Community Consequence</small><br>
+                        {{initiative.community_consequence.name}}
+                        <hr>
+                    </div>
+                    <div class="col-sm-6">
+                        <small>Likelihood of Community Consequence</small><br>
+                            {{initiative.likelihood_community_consequence.name}}
+                        <hr>
+                    </div>
+                </div>
+
+                <div class="row d-flex align-items-stretch col-sm-12">
+                    <div class="col-sm-6">
+                        <small>Asset Consequence</small><br>
+                        {{initiative.asset_consequences}}
+                        <hr>
+                    </div>
+                    <div class="col-sm-6">
+                        <small>Likelihood of Asset Consequence</small><br>
+                            {{initiative.likelihood_asset_consequence.name}}
+                        <hr>
+                    </div>
+                </div>
+
+                <div class="row d-flex align-items-stretch col-sm-12">
+                    <div class="col-sm-6">
+                        <small>Severity/Impact Justification</small><br>
+                        {{initiative.impact_justification}}
+                        <hr>
+                    </div>
+                    <div class="col-sm-6">
+                        <small>Probability likelihood justification</small><br>
+                        {{initiative.likelihood_justification}}
+                        <hr>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card mb-2 shadow">
+            <div class="card-header text-center">
+                <h6>Asset Consequences</h6>
+            </div>
+            <div class="card-body">
+                <small>Potential Production Cost / Incident</small><br>
+                    {{initiative.PotentialProductionCost|currency}}
+                <hr>
+                <small>Potential Non Production Cost / Incident</small><br>
+                    {{initiative.PotentialNonProductionCost|currency}}
+                <hr>
+                <small>Calculates Asset Consequence</small><br>
+                    {{initiative.calculated_asset_consequences|currency}}
+                <hr>
+            </div>
+        </div>
+        <div class="card shadow">
+            <div class="card-header text-center">
+                <h6>Threat Score</h6>
+            </div>
+            <div class="card-body">
+                <small>MTO Score</small><br>
+                {{initiative.mto_score|currency}}
+                <hr>
+                <div class="row d-flex align-items-stretch col-sm-12">
+                    <div class="col-sm-6">
+                        <small>Primary RAM Box #</small><br>
+                        {{initiative.primary_ram_box}}
+                        <hr>
+                    </div>
+                    <div class="col-sm-6">
+                        <small>Second RAM Box #</small><br>
+                        {{initiative.second_ram_box}}
+                        <hr>
+                    </div>
+                </div>
+                <div class="row d-flex align-items-stretch col-sm-12">
+                    <div class="col-sm-6">
+                        <small>Primary RAM Color</small><br>
+                        {{initiative.primary_ram_color}}
+                        <hr>
+                    </div>
+                    <div class="col-sm-6">
+                        <small>Second RAM Color</small><br>
+                        {{initiative.second_ram_color}}
+                        <hr>
+                    </div>
+                </div>
+                <div class="row d-flex align-items-stretch col-sm-12">
+                    <div class="col-sm-6">
+                        <small>Highest Impact Category</small><br>
+                        {{initiative.highest_impact_category}}
+                        <hr>
+                    </div>
+                    <div class="col-sm-6">
+                        <small>Second Highest Impact Category</small><br>
+                        {{initiative.second_highest_impact_category}}
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <div class="col-sm-12">
+            <label for="{{ initiativeForm3.DocumentLink.id_for_label }}" class="form-label"><small>Document Links</small></label>
+        </div>
+        <div class="col-sm-12">
+            {% render_field initiativeForm3.DocumentLink class="form-control" placeholder="" %}
+            <div class="invalid-feedback">{{ initiativeForm3.DocumentLink.errors|first }}</div>
+        </div>
+
+        <div class="col-sm-12">
+            <label for="{{ initiativeForm3.SharepointUrl.id_for_label }}" class="form-label"><small>Sharepoint Url</small></label>
+        </div>
+        <div class="col-sm-12">
+            {% render_field initiativeForm3.SharepointUrl class="form-control" placeholder="" %}
+            <div class="invalid-feedback">{{ initiativeForm3.SharepointUrl.errors|first }}</div>
+        </div>
+    </div>
+
+    <div class="col-sm-6"> 
+        <div class="col-sm-12">
+            <small>Initiative</small>
+        </div>
+        <div class="row col-sm-12">
+            <div class="col-sm-11"></div>
+        </div>
+    </div>
+</div>

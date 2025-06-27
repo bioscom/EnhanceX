@@ -1,0 +1,93 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+<div class="row col-sm-12 mb-2">
+    <div class="col-sm-6">
+        <small>Pre-Defined approvers Name</small><br>
+        {{approvers.actual_Lgate.LGate}}
+        {% comment %} {% render_field  class="select form-select required" placeholder="" %} {% endcomment %}
+    </div>
+    <div class="col-sm-6">
+        <small>Owner</small><br>
+        {{approvers.created_by.get_full_name}}
+    </div>
+</div>
+
+<div class="row col-sm-12">
+    <div class="col-sm-6">
+        <small>L-Gate</small><br>
+        {{approvers.actual_Lgate.LGate}}
+    </div>
+    <div class="col-sm-6">
+        <small>Workstream</small>
+        {% render_field form.Workstream class="select form-select required" placeholder="" %}
+    </div>
+</div>
+
+<div class="accordion" id="accordionPanels">
+    <div class="accordion-item">
+        <h1 class="accordion-header" id="panelsStayOpen-heading1">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse1" aria-expanded="true" aria-controls="panelsStayOpen-collapse1">
+                <b>Workstream Lead</b>
+            </button>
+        </h1>
+        <div id="panelsStayOpen-collapse1" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-heading1">
+            <div class="accordion-body">
+                <div class="row col-sm-12">
+                    <div class="col-sm-6">
+                        <small>Workstream Lead</small>
+                        {% render_field form.workstreamlead class="select2-workstream2 select form-select required" %}<br>
+                        <small>Workstream Lead 2</small>
+                        {% render_field form.workstreamlead2 class="select2-workstream2 select form-select required" %}<br>
+                        <small>Workstream Lead 3</small>
+                        {% render_field form.workstreamlead3 class="select2-workstream2 select form-select required" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h1 class="accordion-header" id="panelsStayOpen-heading2">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse2" aria-expanded="true" aria-controls="panelsStayOpen-collapse2">
+                <b>Workstream Sponsor</b>
+            </button>
+        </h1>
+        <div id="panelsStayOpen-collapse2" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-heading2">
+            <div class="accordion-body">
+                <div class="row col-sm-12">
+                    <div class="col-sm-6">
+                        <small>Workstream Sponsor</small>
+                        {% render_field form.workstreamsponsor class="select2-workstream2 select form-select required" %}<br>
+                        <small>Workstream Sponsor 2</small>
+                        {% render_field form.workstreamsponsor2 class="select2-workstream2 select form-select required" %}<br>
+                        <small>Workstream Sponsor 3</small>
+                        {% render_field form.workstreamsponsor3 class="select2-workstream2 select form-select required" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h1 class="accordion-header" id="panelsStayOpen-heading3">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse3" aria-expanded="true" aria-controls="panelsStayOpen-collapse3">
+                <b>Finance Sponsor</b>
+            </button>
+        </h1>
+        <div id="panelsStayOpen-collapse3" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-heading3">
+            <div class="accordion-body">
+                <div class="row col-sm-12">
+                    <div class="col-sm-6">
+                        <small>Finance Sponsor</small>
+                        {% render_field form.financesponsor class="select2-workstream2 select form-select required" %}<br>
+                        <small>Finance Sponsor 2</small>
+                        {% render_field form.financesponsor2 class="select2-workstream2 select form-select required" %}<br>
+                        <small>Finance Sponsor 3</small>
+                        {% render_field form.financesponsor3 class="select2-workstream2 select form-select required" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

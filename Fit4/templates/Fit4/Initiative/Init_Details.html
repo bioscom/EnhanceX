@@ -1,0 +1,356 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load BankNumber_tags %}
+
+{% block title %}{{initiative.initiative_name}} | Renaissance {% endblock %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block body %}
+
+{% load humanize %}
+
+{% comment %} <form action="{% url 'Fit4:delete_initiative' initiative.id %}" method="POST"> {% endcomment %}
+<form method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="impactModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="impactModalLabel">Delete Initiative</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete the Initiative?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form action="{% url 'Fit4:clone_initiative' %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="cloneModal" aria-labelledby="cloneModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cloneModalLabel">Clone This Initiative</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include "partials/partial_clone_initiative.html" %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Clone Inititive</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form action="{% url 'Fit4:clone_MTO_initiative' initiative.slug %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="cloneMTOModal" aria-labelledby="cloneMTOModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cloneMTOModalLabel">Clone This Initiative</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include "partials/partial_clone_threat.html" %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Clone MTO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form action="{% url 'Fit4:change_owner' initiative.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="ownerModal" aria-labelledby="ownerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ownerModalLabel">Change Owner</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Search User:
+                    <select name="selected_user" class="select-users form-control select2" data-placeholder="Select a person...">
+                        <option disabled>Search Users...</option>
+                        {% for o in allUsers %}
+                            <option value="{{o.id}}">{{o.first_name}}, {{o.last_name}}</option>
+                        {% endfor %}
+                    </select><br><br>
+                    <input class="mb-5" type="checkbox" checked /> Send Notification email
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Change Owner</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form action="{% url 'Fit4:advance_to_next_LGate' initiative.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="nextLgateModal" aria-labelledby="nextLgateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nextLgateModalLabel">Advance to Next L-Gate</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12">
+                            <label for="{{ initiativeNextLGateForm.next_Lgate_Comment.id_for_label }}" class="form-label">Comment</label>
+                        </div>
+                        <div class="col-sm-12">
+                            {{ initiativeNextLGateForm.next_Lgate_Comment|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:3" }}
+                            {% comment %} {% render_field initiativeNextLGateForm.next_Lgate_Comment class="form-control" placeholder="" %} {% endcomment %}
+                        </div>
+                        <div class="invalid-feedback">{{ initiativeNextLGateForm.next_Lgate_Comment.errors|first }}</div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form action="{% url 'Fit4:edit_initiative' initiative.slug %}" method="POST">
+    {% csrf_token %}
+    {{ initiativeForm.media }}
+    <div class="modal fade" id="initiativeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 70%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Initiative: Initiative - Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="height: 75vh; overflow-y: auto;">
+                    {% include 'partials/partial_edit_initiative.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    {% comment %} class ApprovalVisualStatus(Enum):
+                        Approved = 1
+                        Pending = 2
+                        Recalled = 3 {% endcomment %}
+                    {% if request.user.is_staff or request.user.is_superuser %}
+                        <button id="save_changes" type="submit" class="btn btn-primary">Save changes...</button>
+                    {% else %}
+                        {% if initiative.approval_status_visual.id != 2 %} {#TODO: Check you remove the hard code #}
+                            <button id="save_changes" type="submit" class="btn btn-primary">Save changes</button>
+                        {% else %}
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#snagModal">Save changes</button>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form action="{% url 'Fit4:add_note' initiative.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noteModalLabel">Notes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include "partials/partial_add_notes.html" %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add to Records</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="ReditNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editNoteModalLabel">Update Notes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include "partials/partial_edit_notes.html" %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Record</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% comment %} <div id="onInitiative" hx-trigger="load, initiativeChanged from:body" hx-get="{% url 'Fit4:initiative_details' initiative.slug %}" hx-target="this"></div> {% endcomment %}
+    <!--To call up messages-->
+
+    {% include "Fit4/Initiative/initiative_header.html" %}
+
+    {% include "Fit4/Initiative/workflowIndicator.html" %}
+
+    {% include "Fit4/Initiative/asset_hierarchy.html" %}
+
+    {% include "Fit4/Initiative/initiative_validation.html" %}
+
+    <div class="container-flux">
+        <div class="card shadow mb-2 bg-body rounded">
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a href="#initiativeDetails" class="nav-link active" data-bs-toggle="tab"><b>Initiative Details</b></a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <a href="#additionalInformation" class="nav-link" data-bs-toggle="tab"><b>Additional Information</b></a>
+                    </li>
+                </ul>
+            
+                <div class="tab-content ms-2">
+                    <div class="tab-pane fade show active" id="initiativeDetails">
+                        {% include "Fit4/Initiative/initiative_details.html" %}
+                    </div>
+                    <div class="tab-pane fade" id="additionalInformation">
+                        {% include "Fit4/Initiative/additionalInformation.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-flux mb-2">
+        <form action="{% url 'Fit4:add_file' initiative.id %}" enctype="multipart/form-data" method="POST">
+            {% csrf_token %}
+            {{ form.media }}
+            <div class="card">
+                <div class="card-header">
+                    <div class="row col-sm-12">
+                        <div class="col-sm-6"><img src="/media/logo/file_img.png" alt="" loading="lazy" />  <strong>Files ({{noOfFiles}})</strong></div>
+                        <div class="col-sm-6 text-end">
+                            {{initiativeFilesForm.initiativeFiles}}
+                            <button type="submit" class="btn btn-light border border-dark"><small>Upload File</small></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Size</th>
+                                <th>Owner</th>
+                                <th>Last Modified</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for form in oInitiativeFiles.all %}
+                            <tr>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <img src="/media/logo/file2_img.png" alt="" loading="lazy" />
+                                            </td>
+                                            <td>
+                                                
+                                                <a href="{{form.initiativeFiles.url}}">{{form.initiativeFiles.name}}</a>
+                                            </td>
+                                            <td>
+                                                {% if form.filesize != None %}
+                                                    {{form.date_created|date:'d/m/Y'}} <b class="align-middle">.</b> {{form.filesize }} <b class="align-middle">.</b> {{form.extension}}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    {% if form.filesize != None %}
+                                        {{form.filesize }}
+                                    {% endif %}
+                                </td>
+                                <td>{{form.created_by.get_full_name}}</td>
+                                <td>{{form.last_modified_date|date:'d-M-Y H:m'}}</td>
+                                <td>
+                                      <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                          <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#runModal">Download</a></li>
+                                          <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Share</a></li>
+                                          <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">View File Details</a></li>
+                                          <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Upload New Version</a></li>
+                                          <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Edit File Details</a></li>
+                                          <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Delete</a></li>
+                                          <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Remove from Record</a></li>
+                                      </ul>
+                                </td>
+                            </tr> 
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </form> 
+    </div>
+
+    <div class="container-flux mb-10">
+        <div class="card">
+            <div class="card-header">
+                <div class="row col-sm-12">
+                    <div class="col-sm-6"><img src="/media/logo/notes_img.png" alt="" loading="lazy" />  <strong>Notes ({{noOfNotes}})</strong></div>
+                    <div class="col-sm-6 text-end">
+                        <button type="button" class="btn btn-light border border-dark" data-bs-toggle="modal" data-bs-target="#noteModal">New</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                {% include "Fit4/Initiative/noteLists.html" %}
+            </div>
+        </div>
+    </div>
+{% comment %} </div> {% endcomment %}
+<br><br><br>
+{% endblock %}
+
+
+{% block js %}
+    
+    <style type="text/css">
+        #alert {
+            display:none;
+            background:#ffc;
+            padding:5px;
+            border:1px solid red;
+        }
+    </style>
+
+{% endblock %}

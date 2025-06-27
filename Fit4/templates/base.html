@@ -1,0 +1,1726 @@
+{% load i18n %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0"> 
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- Please, jQuery must be loaded first -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- Include Bootstrap 5 and dual listbox scripts -->
+    <!-- Dual List Box for Many to Many relationship -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap5-duallistbox/dist/bootstrap-duallistbox.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Dual Listbox JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap5-duallistbox/dist/jquery.bootstrap-duallistbox.min.js"></script>
+
+    <!-- Plotly JavaScripts -->
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
+
+    <!-- SweetAlert2 CSS --> 
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <!-- Font Awesome CSS -->
+    {% comment %} <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"> {% endcomment %}
+    <script src="https://kit.fontawesome.com/5135d630a7.js" crossorigin="anonymous"></script>
+    
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>    
+
+    <!-- Select2 Core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Select2 Bootstrap 5 Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+
+
+    <!-- Simple DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/3.0.0/css/select.dataTables.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.2/css/buttons.dataTables.css" />
+
+    
+    <title> {% block title %} {% endblock %} </title>
+    <link rel="icon" type="media/bmp" href="/media/logo/RenaissanceIco.bmp"/>
+    
+    <style>
+        ul {
+            list-style: none;
+        }
+    
+      .highlight {
+        background-color: yellow;
+      }
+   
+      a {
+        color: navy;
+        text-decoration: none;
+      }
+
+      a:hover, a:focus {
+        color: darkblue;
+        text-decoration: underline;  /* optional: show underline on hover */
+      }
+    
+      .notification {
+          background-color: #0d6efd;
+          color: white;
+          text-decoration: none;
+          padding: 4px 24px;
+          margin-right: 20px;
+          margin-left: 20px;
+          position: relative;
+          display: inline-block;
+          border-radius: 2px;
+          font-size: 20px;
+      }
+
+      .notification:hover {
+          background: #0b5ed7;
+          color: #fff;
+      }
+
+      .notification .badge {
+          position: absolute;
+          top: -10px;
+          right: -10px;
+          padding: 8px 8px;
+          border-radius: 50%;
+          background: red;
+          color: white;
+      }
+
+      .notification-section .dropdown-toggle::after {
+          content: none;
+      }
+
+      .dropdown-toggle::after {
+          color: #fff;
+      }
+
+      #notifications-dropdown li {
+          max-width: 500px;
+          word-wrap: break-word;
+          display: inline-block;
+          white-space: normal;
+      }
+
+      #notifications-dropdown.dropdown-menu {
+          width: 15rem;
+      }
+    
+      /* Center the loader */
+      #loader {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        z-index: 1;
+        width: 150px;
+        height: 150px;
+        margin: -75px 0 0 -75px;
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 120px;
+        height: 120px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+      }
+      
+      @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Add animation to "page content" */
+      .animate-bottom {
+        position: relative;
+        -webkit-animation-name: animatebottom;
+        -webkit-animation-duration: 1s;
+        animation-name: animatebottom;
+        animation-duration: 1s
+      }
+      
+      @-webkit-keyframes animatebottom {
+        from { bottom:-100px; opacity:0 } 
+        to { bottom:0px; opacity:1 }
+      }
+      
+      @keyframes animatebottom { 
+        from{ bottom:-100px; opacity:0 } 
+        to{ bottom:0; opacity:1 }
+      }
+      
+      #myDiv {
+        display: none;
+        {% comment %} text-align: center; {% endcomment %}
+      }
+
+      .ck-editor__editable_inline {
+          max-height: 300px;
+          overflow-y: auto;
+      }
+    </style>  
+
+    
+
+    <!--  JAVA Scripts  -->
+
+    <!-- Please,place these 2 cripts together this way, so that htmx will work fine in the application -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.6/dist/htmx.min.js"></script>
+  </head>
+
+ <body class="bg-secondary" onload="myFunction()">
+    <div id="loader"></div>
+	  <div style="display:none;" id="myDiv" class="animate-bottom"></div>
+
+    {% include "Fit4/header.html" %}
+
+    <div class="container-fluid">
+      {% block body %}
+      
+
+      {% endblock %}
+    </div>
+
+     <!-- MODAL POPUP PLACEHOLDER tabindex="-1"-->
+     <div id="modal" class="modal fade" data-bs-focus="false">
+      <div id="dialog" class="modal-dialog modal-xl" hx-target="this" style="overflow-y: initial !important; max-width: 60%;">
+         <!--inject HTML here-->
+      </div>
+    </div>
+
+    <!-- Toast template -->
+    <div class="position-fixed top-0 end-0 p-3" data-bs-autohide="false" style="z-index: 99998; left: 50%; transform: translate(-50%, 0px); ">
+      <div id="toast-t" class="toast align-items-center text-white bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="toast-body-t" class="toast-body"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+
+    {% include "Fit4/footer.html" %}
+
+    <!-- Source: https://datatables.net/manual/installation  Kindly keep this for future reference-->
+    
+    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> {% endcomment %}
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/select/3.0.0/js/dataTables.select.js"></script>
+    <script src="https://cdn.datatables.net/select/3.0.0/js/select.dataTables.js"></script>
+
+    <script src="https://cdn.datatables.net/datetime/1.5.5/js/dataTables.dateTime.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.print.min.js"></script>
+
+    <!-- Please leave these lines below, used to manage like and unlike posts -->
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    
+
+    
+    <script>
+      lottie.loadAnimation({
+        container: document.getElementById('lottie-banner'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        //path: "{% static '/media/logo/banner.json' %}" // Your animation file
+      });
+    </script>
+    
+    <script>
+      var csrftoken = Cookies.get('csrftoken');
+      function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+      }
+      $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        }
+      });
+
+      $(document).ready(function(){
+        {% block domready %}
+
+        {% endblock %}
+      });
+    </script>
+
+    <!-- HTMX and TOAST scrips -->
+    <script>
+      ;(function(){
+        const modal = new bootstrap.Modal(document.getElementById('modal'))
+    
+        htmx.on('htmx:afterSwap', (e) => {
+          // Response targeting #dialog => show the modal
+          if (e.detail.target.id === "dialog"){
+            modal.show()
+          }
+        })
+    
+        htmx.on('htmx:beforeSwap', (e) => {
+          // Empty response targeting #dialog => hide the modal
+          if (e.detail.target.id === "dialog" && !e.detail.xhr.response){
+            modal.hide()
+            e.detail.shouldSwap = false
+          }
+        })
+    
+        // Remove dialog content after hiding
+        htmx.on("hidden.bs.modal", () => {
+          document.getElementById("dialog").innerHTML = ""
+        })
+      })()
+
+      //<!-- Toast -->
+      ;(function() {
+        const toastElement = document.getElementById("toast-t")
+        const toastBody = document.getElementById("toast-body-t")
+        const toast = new bootstrap.Toast(toastElement, { delay: 2000 })
+      
+        htmx.on("showMessage", (e) => {
+          toastBody.innerText = e.detail.value
+          toast.show()
+        })
+      })()
+    </script>
+
+    <!-- Script to show loading rolling image on every page -->
+    <script>
+        var myVar;
+        function myFunction() {
+          myVar = setTimeout(showPage, 1000);
+        }
+        
+        function showPage() {
+          document.getElementById("loader").style.display = "none";
+          document.getElementById("myDiv").style.display = "block";
+        }
+    </script>
+
+    <!-- Toast -->
+    {% comment %} <script>
+      document.getElementById("toastbtn").onclick = function() {
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        var toastList = toastElList.map(function(toastEl) {
+          return new bootstrap.Toast(toastEl)
+        })
+        toastList.forEach(toast => toast.show())
+      }
+    </script> {% endcomment %}
+
+    <!-- Works with all tables in the app to make them exportable to excel and searchable e.g. Reports/template/report.html -->
+    <script>
+      var table = $('#rptTable').DataTable(
+        {
+          scrollX: true,
+          scrollY: true,
+          order: [[1, 'desc']],
+          stateSave: true,
+          pageLength: 100,
+          layout: {
+            topStart: {
+                pageLength: {
+                   menu: [ 100, 250, 500, 1000 ]
+                }
+            },
+            topEnd: {
+                search: {
+                    placeholder: 'Type search here'
+                }, 
+                buttons: ['csv', 'excel', 'print'],
+            },
+            bottomEnd: {
+                paging: {
+                    buttons: 10
+                }
+            }
+          }
+        }
+      );
+
+      var table = $('#rptTable2').DataTable(
+        {
+          scrollX: true,
+          scrollY: true,
+          order: [[1, 'desc']],
+          stateSave: true,
+          pageLength: 100,
+          layout: {
+            topStart: {
+                pageLength: {
+                   menu: [ 100, 250, 500, 1000 ]
+                }
+            },
+            topEnd: {
+                search: {
+                    placeholder: 'Type search here'
+                }, 
+                buttons: ['csv', 'excel', 'print'],
+            },
+            bottomEnd: {
+                paging: {
+                    buttons: 10
+                }
+            }
+          }
+        }
+      );
+
+      var table = $('#rptTableNoExport').DataTable(
+        {
+          scrollX: true,
+          scrollY: true,
+          order: [[1, 'desc']],
+          stateSave: true,
+          pageLength: 100,
+          layout: {
+            topStart: {
+                pageLength: {
+                   menu: [ 100, 250, 500, 1000 ]
+                }
+            },
+            topEnd: {
+                search: {
+                    placeholder: 'Type search here'
+                }, 
+            },
+            bottomEnd: {
+                paging: {
+                    buttons: 10
+                }
+            }
+          }
+        }
+      );
+      
+      var table2 = $('#dashboardTable').DataTable(
+        {
+          scrollX: true,
+          order: [[1, 'desc']],
+          stateSave: true,
+        }
+      );
+
+      
+
+      $('#rptTable tbody').on('click', 'tr', function () {
+          var data = table.row(this).data();
+      });
+    </script>
+
+    <!-- Works with report_view.html file in report app, to sum the Plan, Forecast and Actual columns to the footer -->
+    <script>
+      $(document).ready(function(){
+        var PlanTotal = 0;
+        var ForecastTotal = 0;
+        var ActualTotal = 0;
+        $(".amountPlan").each(function(){
+          var value=$(this).text().trim().replace(/,/g,'')
+          PlanTotal+= parseFloat(value) || 0;
+        });
+        $("#totalPlan").text('USD ' + PlanTotal.toLocaleString('en-US', {minimumFractionDigits:2}));
+
+        $(".amountForecast").each(function(){
+          var value=$(this).text().trim().replace(/,/g,'')
+          ForecastTotal+= parseFloat(value) || 0;
+        });
+        $("#totalForecast").text('USD ' + ForecastTotal.toLocaleString('en-US', {minimumFractionDigits:2}));
+
+        $(".amountActual").each(function(){
+          var value=$(this).text().trim().replace(/,/g,'')
+          ActualTotal+= parseFloat(value) || 0;
+        });
+        $("#totalActual").text('USD ' + ActualTotal.toLocaleString('en-US', {minimumFractionDigits:2}));
+      });
+    </script>
+
+    <!-- Script to format decimal numbers to thousand separators, especially in Impact -->
+    <script>
+      function formatNumber(val) {
+        val = val.replace(/,/g, '');
+        let num = parseFloat(val);
+        if (!isNaN(num)) {
+          return num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+        return val;
+      }
+
+      function applyNumberFormatter(selector) {
+        document.querySelectorAll(selector).forEach(function(input) {
+          // Initial formatting
+          if (input.value) {
+            input.value = formatNumber(input.value);
+          }
+    
+          input.addEventListener('blur', function(e) {
+            e.target.value = formatNumber(e.target.value);
+          });
+    
+          input.addEventListener('focus', function(e) {
+            e.target.value = e.target.value.replace(/,/g, '');
+          });
+    
+          // Sanitize input on every change
+          input.addEventListener('input', function(e) {
+            let val = e.target.value;
+    
+            // Allow only digits and one decimal point
+            val = val.replace(/[^0-9.]/g, '');
+    
+            // Prevent multiple decimal points
+            const parts = val.split('.');
+            if (parts.length > 2) {
+              val = parts[0] + '.' + parts[1];
+            }
+    
+            e.target.value = val;
+          });
+    
+          // Optional: prevent invalid key presses (except ctrl/command keys)
+          input.addEventListener('keydown', function(e) {
+            const allowedKeys = [
+              'Backspace', 'ArrowLeft', 'ArrowRight', 'Delete', 'Tab', 'Escape', 'Enter',
+              'Home', 'End', '.', // allow decimal
+            ];
+    
+            // Allow Ctrl/Command shortcuts (copy, paste, etc.)
+            if (e.ctrlKey || e.metaKey) return;
+    
+            // Allow digits and allowed keys
+            if (!allowedKeys.includes(e.key) && !/^\d$/.test(e.key)) {
+              e.preventDefault();
+            }
+          });
+        });
+      }
+
+      applyNumberFormatter('[class*="_plan"]');
+      applyNumberFormatter('[class*="_forecast"]');
+      applyNumberFormatter('[class*="_actual"]');
+      applyNumberFormatter('#PotentialNonProductionCost');
+
+
+      // Attach listener to ALL forms on the page. 
+      // Remove commas before submitting to the database
+      document.querySelectorAll("form[id^='benefitForm_']").forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+          const inputs = form.querySelectorAll('[class*="_plan"], [class*="_forecast"], [class*="_actual"]');
+          inputs.forEach(function(input) {
+            input.value = input.value.replace(/,/g, '');
+          });
+        });
+      });
+
+      // ******** NOTE: For Modal popup ********
+      // Attach listener to ALL forms on the page.
+      // Remove commas before submitting to the database
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('#add_benefitForm');
+        if (form) {
+            form.addEventListener('submit', function () {
+                this.querySelectorAll('[class*="_plan_input"]').forEach(input => {
+                    input.value = input.value.replace(/,/g, '');
+                });
+            });
+        }
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('#costForm'); // or the appropriate form ID
+        if (form) {
+          form.addEventListener('submit', function (e) {
+            const input = form.querySelector('[name="PotentialNonProductionCost"]'); // or use '#potentialCostField'
+            if (input) {
+              input.value = input.value.replace(/,/g, '');
+            }
+          });
+        }
+      });
+    
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const hash = window.location.hash;
+        if (hash) {
+          const tabTrigger = document.querySelector(`a[href="${hash}"]`);
+          if (tabTrigger) {
+            new bootstrap.Tab(tabTrigger).show();
+          }
+        }
+      });
+    </script>
+
+    <!-- Script to help user to search and select people in the application -->
+    <script>
+        $(document).ready(function () {
+            // Initialize all select elements with class .select2-initiative
+            $('.select2-initiative').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                dropdownParent: $('#initiativeModal')
+            });
+
+            // Optional: Reinitialize if modal is dynamically loaded
+            $('#initiativeModal').on('shown.bs.modal', function () {
+                $('.select2-initiative').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    dropdownParent: $('#initiativeModal')
+                });
+            });
+        });
+    
+        
+        $(document).ready(function () {
+            // Initialize all select elements with class .select2-initiative
+            $('.select2-workstream').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                dropdownParent: $('#workstreamModal')
+            });
+
+            // Optional: Reinitialize if modal is dynamically loaded
+            $('#workstreamModal').on('shown.bs.modal', function () {
+                $('.select2-workstream').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    dropdownParent: $('#workstreamModal')
+                });
+            });
+
+            // Optional: Reinitialize if modal is dynamically loaded
+            $('#approversModal').on('shown.bs.modal', function () {
+                $('.select2-workstream').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    dropdownParent: $('#approversModal')
+                });
+            });
+        });
+    
+        
+        $(document).ready(function () {
+            // Initialize all select elements with class .select2-initiative
+            $('.select2-workstream2').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                dropdownParent: $('#approversModal')
+            });
+
+            // Optional: Reinitialize if modal is dynamically loaded
+            $('#approversModal').on('shown.bs.modal', function () {
+                $('.select2-workstream').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    dropdownParent: $('#approversModal')
+                });
+            });
+        });
+    
+        
+        $(document).ready(function () {
+            // Initialize all select elements with class .select2-initiative
+            $('.select-users').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                dropdownParent: $('#ownerModal')
+            });
+
+            // Optional: Reinitialize if modal is dynamically loaded
+            $('#ownerModal').on('shown.bs.modal', function () {
+                $('.select-users').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    dropdownParent: $('#ownerModal')
+                });
+            });
+        });
+    
+        
+        $(document).ready(function () {
+            // Initialize all select elements with class .select2-initiative
+            $('.select-user2').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                dropdownParent: $('#reassignInitiativeModal')
+            });
+
+            // Optional: Reinitialize if modal is dynamically loaded
+            $('#reassignInitiativeModal').on('shown.bs.modal', function () {
+                $('.select-user2').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    dropdownParent: $('#reassignInitiativeModal')
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            // Initialize all select elements with class .select2-initiative
+            $('.select-report').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                dropdownParent: $('#addModal')
+            });
+
+            // Optional: Reinitialize if modal is dynamically loaded
+            $('#addModal').on('shown.bs.modal', function () {
+                $('.select-report').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    dropdownParent: $('#addModal')
+                });
+            });
+        });
+
+        
+        $(document).ready(function () {
+            // Initialize all select elements with class .select2-initiative
+            $('.select-user3').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                dropdownParent: $('#actionsModal')
+            });
+
+            // Optional: Reinitialize if modal is dynamically loaded
+            $('#actionsModal').on('shown.bs.modal', function () {
+                $('.select-user3').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    dropdownParent: $('#actionsModal')
+                });
+            });
+
+            $('#editActionsModal').on('shown.bs.modal', function () {
+                $('.select-user3').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    dropdownParent: $('#editActionsModal')
+                });
+            });
+        });
+    </script>
+
+    <!-- Script to Lock the Initiative Impact entries at some Gates -->
+    <script>
+        const actualLGate = document.getElementById('actual_Lgate');  // actual_Lgate a Div on \Fit4\templates\Fit4\Initiative\impact.html
+        if (actualLGate.getAttribute('value') < 3) {
+            // Select elements that contains "_Plan",  "_Actual" and "_Forecast"
+            const plans = document.querySelectorAll('[class*="_plan"]');
+            plans.forEach(element => {
+                element.readOnly = false;
+            });
+
+            const actuals = document.querySelectorAll('[class*="_actual"]');
+            actuals.forEach(element => {
+                element.readOnly = true;
+            });
+
+            const forecasts = document.querySelectorAll('[class*="_forecast"]');
+            forecasts.forEach(element => {
+                element.readOnly = true;
+            });
+        }
+        else if (actualLGate.getAttribute('value') == 3) {
+            // Select elements that contains "_Plan",  "_Actual" and "_Forecast"
+            const plans = document.querySelectorAll('[class*="_plan"]');
+            plans.forEach(element => {
+                element.readOnly = true;
+            });
+
+            const actuals = document.querySelectorAll('class*="_actual"]');
+            actuals.forEach(element => {
+                element.readOnly = false;
+            });
+
+            const forecasts = document.querySelectorAll('[class*="_forecast"]');
+            forecasts.forEach(element => {
+                element.readOnly = false;
+            });
+        }
+        else if (actualLGate.getAttribute('value') == 4) {
+            // Select elements that contains "_Plan",  "_Actual" and "_Forecast"
+            const plans = document.querySelectorAll('[class*="_plan"]');
+            plans.forEach(element => {
+                element.readOnly = true;
+            });
+
+            const actuals = document.querySelectorAll('class*="_actual"]');
+            actuals.forEach(element => {
+                element.readOnly = false;
+            });
+
+            const forecasts = document.querySelectorAll('[class*="_forecast"]');
+            forecasts.forEach(element => {
+                element.readOnly = false;
+            });
+        }
+        else if (actualLGate.getAttribute('value') == 5) {
+            // Select elements that contains "_Plan",  "_Actual" and "_Forecast"
+            const plans = document.querySelectorAll('[class*="_plan"]');
+            plans.forEach(element => {
+                element.readOnly = true;
+            });
+
+            const actuals = document.querySelectorAll('class*="_actual"]');
+            actuals.forEach(element => {
+                element.readOnly = false;
+            });
+
+            const forecasts = document.querySelectorAll('[class*="_forecast"]');
+            forecasts.forEach(element => {
+                element.readOnly = false;
+            });
+        }
+        else if (actualLGate.getAttribute('value') == 6) {
+            // Select elements that contains "_Plan",  "_Actual" and "_Forecast"
+            const plans = document.querySelectorAll('[class*="_plan"]');
+            plans.forEach(element => {
+                element.readOnly = true;
+            });
+
+            const actuals = document.querySelectorAll('[class*="_actual"]');
+            actuals.forEach(element => {
+                element.readOnly = true;
+            });
+
+            const forecasts = document.querySelectorAll('[class*="_forecast"]');
+            forecasts.forEach(element => {
+                element.readOnly = true;
+            });
+        }
+
+        //<==========================================================================================================================
+    </script>
+
+    <!-- actual_Lgate a Div on \Fit4\templates\Fit4\Initiative\impact.html -->
+    <!-- Script to select Initiative or Threat form-->
+    <script>
+      $(document).ready(function() {
+          $('#threatOption').hide();
+      })
+
+      $('#flexRadioDefault1').click(function()
+      { 
+          if ($(this).is(':checked')) {
+              $('#initiativeOption').show();
+              $('#threatOption').hide();
+          }
+      })
+
+      $('#flexRadioDefault2').click(function()
+      { 
+          if ($(this).is(':checked')) {
+              $('#initiativeOption').hide();
+              $('#threatOption').show();
+          }
+      })
+    </script>
+
+    <!-- Script to Monitor Session time out -->
+    <script>
+      (function () {
+        let inactivityTimer;
+        let warningTimer;
+        const warningTime = 25 * 60 * 1000; // 25 minutes
+        const logoutTime = 30 * 60 * 1000; // 30 minutes
+    
+        function resetTimers() {
+            clearTimeout(warningTimer);
+            clearTimeout(inactivityTimer);
+    
+            warningTimer = setTimeout(() => {
+                Swal.fire({
+                    title: "Inactivity Warning",
+                    text: "You will be logged out in 5 minutes due to inactivity.",
+                    icon: "warning",
+                    confirmButtonText: "OK"
+                });
+            }, warningTime);
+    
+            inactivityTimer = setTimeout(() => {
+                Swal.fire({
+                    title: "Logged Out",
+                    text: "You have been logged out due to inactivity.",
+                    icon: "info",
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    window.location.href = "{% url 'account:logout' %}";
+                });
+            }, logoutTime);
+        }
+    
+        ['mousemove', 'keydown', 'click', 'scroll'].forEach(evt => {
+            document.addEventListener(evt, resetTimers, false);
+        });
+    
+        resetTimers(); // initialize on load
+      })();
+
+      //document.addEventListener("DOMContentLoaded", function () {
+      //  if (window.location.pathname === "{% url 'account:logout' %}") {
+      //      document.cookie.split(";").forEach(function (c) {
+      //          document.cookie = c
+      //              .replace(/^ +/, "")
+      //              .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      //      });
+      //  }
+      //});
+    
+    </script>
+
+    <!-- For Fit4/Initiative/riskAssessmentScoringForm.html -->
+    <script> 
+      let activeInputId = null;
+    
+      function openModal(inputId) {
+        activeInputId = inputId;
+        document.getElementById("scoringModal").style.display = "block";
+      }
+    
+      function selectValue(value) {
+        if (activeInputId) {
+          document.getElementById(activeInputId).value = value;
+          document.getElementById("scoringModal").style.display = "none";
+        }
+      }
+    </script>
+
+    <!-- Script to validate date selection in -->
+    <Script>
+      document.addEventListener("DOMContentLoaded", function () {
+      const dateInputs = document.querySelectorAll(".date-selector");
+          dateInputs.forEach((input, index) => {
+              input.addEventListener("change", function () {
+                  if (index > 0) {
+                      const prevDate = new Date(dateInputs[index - 1].value);
+                      const currentDate = new Date(input.value);
+
+                      if (currentDate < prevDate) {
+                          alert("Each date must be equal to or later than the previous one.");
+                          input.value = ""; // Reset the incorrect date
+                      }
+                  }
+              });
+          });
+      });
+    </script>
+
+  <!-- region: MTO Scripts -->
+    <!-- MTO Impact Calculator Script -->
+    <script>
+        function calculateProduct(index) {
+            const ratedCapacity = parseFloat(document.getElementById(`rated_capacity_${index}`).dataset.value) || 0;
+            const margin = parseFloat(document.getElementById(`margin_${index}`).dataset.value) || 0;
+            const percent = parseFloat(document.getElementById(`impact_percent_${index}`).value) || 0;
+            const days = parseFloat(document.getElementById(`days_${index}`).value) || 0;
+            const impactDay = (percent/100) * ratedCapacity;
+            const financialImpact = impactDay * margin * days;
+            document.getElementById(`impact_day_${index}`).value = impactDay.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById(`financial_impact_${index}`).value = financialImpact.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const formatNumber = (id) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    const rawValue = element.value.replace(/[^0-9.]/g, '');
+                    const number = parseFloat(rawValue);
+                    if (!isNaN(number)) {
+                        element.value = number.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+                    }
+                }
+            };
+
+            ['calculated_asset_consequences', 'PotentialProductionCost', 'PotentialNonProductionCost'].forEach(formatNumber);
+        });
+    </script>
+
+    <!-- MTO Scoring Form Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const csrfToken = getCookie('csrftoken'); // or use server-side rendered value if safe
+          
+          //const initiativeId = {{ initiative_id }};
+          const initiativeId = JSON.parse(document.getElementById('initiative-id').textContent)
+
+          const modal = document.getElementById('info-modal');
+          const closeBtn = document.querySelector('.close');
+          const selectBox = document.querySelector('select[name="saving-select"]');
+          //console.log("SelectBox:" selectBox);
+          let selectedCell = null;
+
+          // Show modal and track selected cell
+          document.querySelectorAll('.clickable-cell').forEach(cell => {
+              cell.addEventListener('click', () => {
+                  selectedCell = cell;
+                  modal.style.display = 'block';
+              });
+          });
+
+          // Close modal on click of close button
+          closeBtn.addEventListener('click', () => {
+              modal.style.display = 'none';
+          });
+
+          // Close modal on click outside modal
+          window.addEventListener('click', (event) => {
+              if (event.target === modal) {
+                  modal.style.display = 'none';
+              }
+          });
+
+          if (selectBox) {
+              // When an option is selected
+              selectBox.addEventListener('change', function (event) {
+                  event.preventDefault(); //Prevent default form submission
+
+                  if (selectedCell && this.value !== "--Select--") {
+                    const selectedOptions = Array.from(this.selectedOptions).map(opt => opt.text);
+                    if (selectedOptions.length === 0) return;
+
+                    const displayText = selectedOptions.join(', ');
+                    selectedCell.innerText = displayText;
+                    modal.style.display = 'none';
+                    this.selectedIndex = -1; // Reset
+
+                    //const cellIndex = selectedCell.querySelector('[data-index]')?.dataset.index || selectedCell.dataset.index;
+                    const cellIndex = selectedCell.dataset.index
+                    const currentLangPrefix = window.location.pathname.split('/')[1]; // e.g., 'en', 'fr', etc.
+                    const saveUrl = `/${currentLangPrefix}/save-cell-selection/${initiativeId}/`;
+
+                    fetch(saveUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken // Only if you're using Django
+                        },
+                        body: JSON.stringify({
+                            cellIndex: cellIndex,
+                            value: selectedOptions, // sending array instead of string
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Saved:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error saving:', error);
+                    });
+                }
+              });
+          }
+
+          function getCookie(name) {
+              let cookieValue = null;
+              if (document.cookie && document.cookie !== '') {
+                  const cookies = document.cookie.split(';');
+                  for (let i = 0; i < cookies.length; i++) {
+                      const cookie = cookies[i].trim();
+                      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                          break;
+                      }
+                  }
+              }
+              return cookieValue;
+            }
+        });
+    </script>
+
+    <!-- MTO Scoring Form Load saved data --> 
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const rawElement = document.getElementById('saved-cell-data');
+        if (!rawElement) return;
+
+        let savedData = {};
+        try {
+          savedData = JSON.parse(rawElement.textContent);
+        } catch (e) {
+          console.error("Invalid JSON in saved-cell-data:", e);
+          return;
+        }
+
+        // Loop through each cell and match its data-index
+        document.querySelectorAll('.clickable-cell').forEach(cell => {
+          const cellIndex = cell.dataset.index;
+          const value = savedData[cellIndex];
+
+          if (value !== undefined) {
+            // ✅ Join array values safely to string
+            if (Array.isArray(value)) {
+              cell.innerText = value.join(', ');
+            } else {
+              cell.innerText = String(value);
+            }
+          }
+        });
+      });
+    </script>
+  <!--endregion-->
+
+
+  <!-- region: Management Dashboard Charts -->
+    <!-- Opex Funnel Chart -->
+    <script>
+      const actual = {{ actual|floatformat:1 }};
+      const plan = {{ plan|floatformat:1 }};
+
+      const ctxp = document.getElementById('funnelChart').getContext('2d');
+      Chart.register(ChartDataLabels);  // ✅ Register the plugin
+
+      // ✅ Custom plugin to draw total at the end of the bar
+      {% comment %} const drawTotalPlugin = {
+        id: 'drawTotalPlugin',
+        afterDatasetsDraw(chart, args, options) {
+          const { ctx, chartArea: { top, bottom }, scales } = chart;
+          const meta0 = chart.getDatasetMeta(0);
+          const lastBar = meta0.data[0];
+          if (!lastBar) return;
+
+          const barX = lastBar.x;
+          const barY = lastBar.y;
+          const barHeight = lastBar.height;
+
+          // Get total width of both bars
+          const totalWidth = chart.data.datasets.reduce((sum, ds, i) => {
+            return sum + (chart.getDatasetMeta(i).data[0]?.width || 0);
+          }, 0);
+
+          const xValue = actual + plan;
+          const xPos = scales.x.getPixelForValue(xValue);
+          const yPos = barY;
+
+          ctx.save();
+          ctx.font = 'bold 14px sans-serif';
+          ctx.fillStyle = 'black';
+          ctx.textAlign = 'left';
+          ctx.fillText(`Total: $${total.toFixed(1)}M`, xPos + 10, yPos + 6);
+          ctx.restore();
+        }
+      }; {% endcomment %}
+
+      new Chart(ctxp, {
+          type: 'bar',
+          data: {
+              labels: ['Funnel'],
+              datasets: [
+                  {
+                      label: 'Actual',
+                      data: [actual],
+                      backgroundColor: 'green',
+                      stack: 'Stack 0'
+                  },
+                  {
+                      label: 'Plan',
+                      data: [plan],
+                      backgroundColor: 'gold',
+                      stack: 'Stack 0'
+                  }
+              ]
+          },
+          options: {
+              indexAxis: 'y',
+              responsive: true,
+              plugins: {
+                  legend: {
+                    labels: {
+                        usePointStyle: true, // ⬅️ This makes legend use dots
+                        pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                        padding: 20
+                      },
+                      position: 'bottom',
+                      labels: {
+                          usePointStyle: true
+                      }
+                  },
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              return `$${context.dataset.label}: ${context.raw}M`;
+                          }
+                      }
+                  },
+                  datalabels: {
+                      anchor: 'center',
+                      align: 'center',
+                      color: 'black',
+                      font: { weight: 'bold' },
+                      formatter: value => `$${value}M`
+                  }
+              },
+              scales: {
+                  x: {
+                      stacked: true,
+                      display: false
+                  },
+                  y: {
+                      stacked: true
+                  }
+              }
+          },
+          plugins: [ChartDataLabels]
+          //plugins: [ChartDataLabels, drawTotalPlugin]  // ✅ Register custom plugin
+      });
+    </script>
+
+    <!-- Banked YTD by Function -->
+    <script>
+      //document.addEventListener('DOMContentLoaded', function () {
+        //const labelsElement = document.getElementById('chart-labels');
+        //const dataElement = document.getElementById('chart-data');
+
+        //const labels = JSON.parse(labelsElement.textContent);
+        //const data = JSON.parse(dataElement.textContent);
+
+          const ctxo = document.getElementById('bankedYTDChart').getContext('2d');
+          const charto = new Chart(ctxo, {
+              type: 'pie',
+              data: {
+                  labels: {{ labels|safe }},
+                  datasets: [{
+                      label: 'Banked YTD by Function (Million)',
+                      data: {{ data|safe }},
+                      backgroundColor: ['#f94144', '#f3722c', '#f8961e', '#90be6d', '#43aa8b', '#577590'],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+              responsive: true,
+              plugins: {
+                      legend: {
+                        labels: {
+                          usePointStyle: true, // ⬅️ This makes legend use dots
+                          pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                          padding: 20
+                        },
+                        position: 'right'
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                          return `${context.label}: ${context.raw}M`;
+                          }
+                        }
+                      }
+                  }
+              }
+          });
+      //});
+      //console.log("Labels:", {{ labels|safe }});
+      //console.log("Data:", {{ data|safe }});
+    </script>
+
+    <!-- Funnel Value by Functions/Assets Chart-->
+    <script>
+      const ctxx = document.getElementById('funnelValueChart').getContext('2d');
+
+      Chart.register(ChartDataLabels);  // ✅ Register the plugin
+
+      const chartx = new Chart(ctxx, {
+        type: 'bar',
+        data: {
+          labels: {{ functions_labels|safe }},
+          datasets: {{ functions_datasets|safe }}  // Must contain values in millions already
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              labels: {
+                usePointStyle: true, // ⬅️ This makes legend use dots
+                pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                padding: 20
+              },
+              position: 'bottom'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.dataset.label}: $${context.raw.toFixed(1)}M`;
+                }
+              }
+            },
+            datalabels: {
+              anchor: 'end',
+              align: 'end',
+              color: '#000',
+              //font: {
+              //  weight: 'bold'
+              //},
+              formatter: function(value) {
+                  return '$' + (value) + 'M';
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Value to L3+ ($M)'
+              },
+              ticks: {
+                callback: function(value) {
+                  return `$${value}M`;
+                }
+              }
+            }
+          }
+        },
+        plugins: [ChartDataLabels]  // ✅ Activate the plugin
+      });
+    </script>
+
+    {% comment %} <script>
+      const ctxx = document.getElementById('funnelValueChart').getContext('2d');
+
+      Chart.register(ChartDataLabels);  // ✅ Register the plugin
+
+      const chartx = new Chart(ctxx, {
+        type: 'bar',
+        data: {
+          labels: {{ functions_labels|safe}}, // Pass Python list directly
+          datasets:  {{ functions_datasets|safe}}  // Pass full dataset list directly
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.dataset.label}: $${context.raw.toFixed(1)}M`;
+                }
+              }
+            },
+            datalabels: {
+              anchor: 'end',
+              align: 'end',
+              color: '#000',
+              font: {
+                weight: 'bold'
+              },
+              formatter: function(value) {
+                  return '$' + (value / 1_000_000).toFixed(0) + 'M';
+              }
+              //formatter: function(value) {
+              //  return `$${value.toFixed(1)}M`;
+              //}
+            },
+          }
+        },
+        plugins: [ChartDataLabels]  // ✅ Activate the plugin
+      });
+    </script> {% endcomment %}
+
+    <!--Initiative Movement to L3+-->
+    <script>
+      const ctxq = document.getElementById('l3InitiativeMovementChart').getContext('2d');
+
+      Chart.register(ChartDataLabels);
+
+      new Chart(ctxq, {
+          type: 'bar',
+          data: {
+              labels: {{movement_labels|safe}},
+              datasets: [
+                  {
+                      label: 'Value to L3+',
+                      data: {{ value_to_l3|safe }},
+                      backgroundColor: 'green',
+                      yAxisID: 'y',
+                      datalabels: {
+                          anchor: 'end',
+                          align: 'end',
+                          color: '#000',
+                          formatter: function(value) {
+                              return '$' + (value / 1_000_000).toFixed(1) + 'M';
+                          }
+                      }
+                  },
+                  {
+                      label: 'Count to L3+',
+                      data: {{ count_to_l3|safe }},
+                      type: 'line',
+                      borderColor: 'orange',
+                      backgroundColor: 'orange',
+                      yAxisID: 'y1',
+                      tension: 0.4,
+                      fill: false,
+                      pointBackgroundColor: 'red'
+                  }
+              ]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                    labels: {
+                        usePointStyle: true, // ⬅️ This makes legend use dots
+                        pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                        padding: 20
+                      },
+                      position: 'bottom'
+                  },
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              if (context.dataset.label === 'Value to L3+') {
+                                  return context.dataset.label + ': $' + (context.raw / 1_000_000).toFixed(2) + 'M';
+                              }
+                              return context.dataset.label + ': ' + context.raw;
+                          }
+                      }
+                  },
+                  datalabels: {
+                      display: true
+                  }
+              },
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      title: {
+                          display: true,
+                          text: 'Value to L3+ ($M)'
+                      },
+                      ticks: {
+                          callback: function(value) {
+                              return '$' + (value / 1_000_000).toFixed(0) + 'M';
+                          }
+                      }
+                  },
+                  y1: {
+                      beginAtZero: true,
+                      position: 'right',
+                      title: {
+                          display: true,
+                          text: 'Count to L3+'
+                      },
+                      grid: {
+                          drawOnChartArea: false
+                      }
+                  }
+              }
+          },
+          plugins: [ChartDataLabels]
+      });
+
+    </script>
+
+    <!-- Total & New Initiative Count -->
+    <script>
+      const ctxt = document.getElementById('initiativeCountChart').getContext('2d');
+      Chart.register(ChartDataLabels);
+      new Chart(ctxt, {
+          type: 'bar',
+          data: {
+              labels: {{ initiative_count_labels|safe }},
+              datasets: [
+                  {
+                      label: 'Total Initiatives',
+                      data: {{ initiative_count_counts|safe }},
+                      backgroundColor: '#4aa6ff', // light blue
+                      borderWidth: 1
+                  },
+                  {
+                      label: 'New Initiatives',
+                      data: {{ initiative_count_diffs|safe }},
+                      backgroundColor: '#00008b', // dark blue
+                      borderWidth: 1
+                  }
+              ]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  //title: {
+                  //    display: true,
+                  //    text: 'Total & New Initiative Count per Function/Asset'
+                  //},
+                  legend: {
+                    labels: {
+                        usePointStyle: true, // ⬅️ This makes legend use dots
+                        pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                        padding: 20
+                      },
+                      position: 'bottom'
+                  },
+                  tooltip: {
+                      mode: 'index',
+                      intersect: false
+                  },
+                  datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: '#000',
+                    font: {
+                      weight: 'bold'
+                    },
+                  }
+              },
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      title: {
+                          display: true,
+                          text: 'Total Initiatives and New Initiatives'
+                      },
+                      ticks: {
+                          precision: 0
+                      }
+                  },
+                  x: {
+                      ticks: {
+                          autoSkip: false,
+                          maxRotation: 45,
+                          minRotation: 0
+                      }
+                  }
+              }
+          },
+          plugins: [ChartDataLabels]
+      });
+    </script>
+
+    <!-- Chart at the bottom of the Dashboard -->
+    <script>
+      const ctxy = document.getElementById('lgateChart').getContext('2d');
+      Chart.register(ChartDataLabels);
+
+      // Example data (Planned Value per L-Gate)
+      const lgateLabels = {{lgateLabels|safe}}; //['G0 Idea', 'G1 Identify', 'G2 Validate', 'G3 Plan', 'G4 Implement', 'G5 Track'];
+      const lgateValues = {{lgateValues|safe}};
+      const lgateColors = ['#57016E', '#EAC84C', '#DA5655', '#011C94', '#9EFF6E', '#038C3E'];
+
+      const lgateChartx = new Chart(ctxy, {
+        type: 'bar',
+        data: {
+          labels: ['Actual L-Gate'],
+          datasets: lgateValues.map((val, i) => ({
+            label: `${lgateLabels[i]}`,
+            data: [val],
+            backgroundColor: lgateColors[i],
+          }))
+        },
+        options: {
+          indexAxis: 'y', // Horizontal bar
+          responsive: true,
+          plugins: {
+            legend: {
+              labels: {
+                usePointStyle: true, // ⬅️ This makes legend use dots
+                pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                padding: 20
+              },
+              position: 'bottom'
+            },
+            tooltip: {
+              callbacks: {
+                label: context => `$${context.raw}M (${context.dataset.label})`
+              }
+            },
+            datalabels: {
+              display: true,
+              color: '#fff',
+              anchor: 'center',
+              align: 'center',
+              formatter: value => `$${value}M`,
+              font: {
+                weight: 'bold'
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Planned Value ($M)'
+              }
+            },
+            y: {
+              stacked: true
+            }
+          }
+        },
+        plugins: [ChartDataLabels] // enable datalabels plugin
+      });
+    </script>
+
+    <!-- Opex Monthly Banking Plan-->
+    <script>
+      const ctxmbp = document.getElementById('monthlyChart').getContext('2d');
+      //Chart.register(ChartDataLabels);
+      const chartmbp = new Chart(ctxmbp, {
+          type: 'bar',
+          data: {
+              labels: {{ opex_labels|safe }},
+              datasets: [
+                  {
+                      label: 'Planned Value',
+                      backgroundColor: '#FFD700',
+                      data: {{ opex_plan_data|safe }},
+                  },
+                  {
+                      label: 'Forecast Value',
+                      backgroundColor: '#800080',
+                      data: {{ opex_forecast_data|safe }},
+                  },
+                  {
+                      label: 'Actual Value',
+                      backgroundColor: '#228B22',
+                      data: {{ opex_actual_data|safe }},
+                  }
+              ]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                    labels: {
+                        usePointStyle: true, // ⬅️ This makes legend use dots
+                        pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                        padding: 20
+                      },
+                      position: 'bottom'
+                  },
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              let value = context.parsed.y || 0;
+                              return '$' + (value / 1_000_000).toFixed(1) + 'M';
+                          }
+                      }
+                  },
+                  datalabels: {
+                    display: true,
+                    color: '#000',
+                    anchor: 'end',
+                    align: 'end',
+                    formatter: value => `$${(value / 1_000_000).toFixed(1)}M`,
+                    font: {
+                      weight: 'bold'
+                    }
+                  }
+              },
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      ticks: {
+                          callback: function(value) {
+                              return '$' + (value / 1_000_000).toFixed(1) + 'M';
+                          }
+                      }
+                  }
+              }
+          }
+          //plugins: [ChartDataLabels]
+      });
+    </script>
+
+  <!-- endregion -->
+
+
+    <!-- Load CKEditor5 into Modal templates -->
+    <!-- Javascript for MTO Dashboards -->
+    {% comment %} <script>
+      document.getElementById('dashboardForm').addEventListener('submit', function(event) {
+          event.preventDefault(); // prevent normal form submission
+
+          const form = event.target;
+          const formData = new FormData(form);
+          
+          fetch(`{% url 'dashboard:dashboards_mto' %}`, {
+              method: 'POST',
+              headers: {
+                  'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                  'X-Requested-With': 'XMLHttpRequest'
+              },
+              body: formData
+          })
+          .then(response => response.text())
+          .then(html => {
+              // Replace content or inject into DOM
+              document.getElementById('dashboardResults').innerHTML = html;
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert('Something went wrong.');
+          });
+      });
+    </script> {% endcomment %}
+
+    <!-- Script to ensure a report is selected before trigger_data_copy in dashboard.views.py function is called -->
+    <script>
+        document.getElementById('checkboxForm').addEventListener('submit', function(event) {
+          // Get all checkboxes
+          const checkboxes = document.querySelectorAll('input[name="selected_id"]:checked');
+          
+          if (checkboxes.length === 0) {
+            event.preventDefault();  // Stop form submission
+
+            // Show SweetAlert2 instead of alert()
+            Swal.fire({
+              icon: 'warning',
+              title: 'No Selection',
+              text: 'Please select the report you want to Sync before submitting.',
+              confirmButtonText: 'OK',
+              draggable: true
+            });
+            //alert("Please select at least one item before submitting.");
+          }
+        });
+    </script>
+    
+
+    {% block js %}
+      
+    {% endblock %}
+  </body>
+</html>

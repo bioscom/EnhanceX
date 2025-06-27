@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{initiative.initiative_name}} | Renaissance {% endblock %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block body %}
+
+{% load humanize %}
+
+<!-- Modal -->
+
+<div class="modal fade" id="snagModal" tabindex="-1" aria-labelledby="snagModalLabel" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-light">
+                <h5 class="modal-title" id="snagModalLabel">We hit a snag.</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <b>Review the errors on this page.</b>
+                <ul><li>This record is locked. If you need to edit it, contact your admin.</li></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+     {#  Adds widget's JS/CSS files from CDN #}
+    <form action="{% url 'Fit4:edit_initiative' initiative.id %}" method="POST">
+        {% csrf_token %}
+        <div class="card mb-2">
+            {% comment %} <div class="card-header">
+                <h5 class="card-title">Update Initiative: Initiative - Update</h5>
+            </div> {% endcomment %}
+            <div class="card-body" style="overflow:hidden;">
+                {% include 'partials/partial_edit_Initiative.html' %}
+            </div>
+            <div class="card-footer text-center">
+                {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> {% endcomment %}
+                <a href="{% url 'Fit4:initiative_details' initiative.id %}" type="button" class="btn btn-secondary">Close</a>
+                {% if initiative.approval_status_visual.id != 2 %} {#TODO Check you remove the hard code #}
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                {% else %}
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#snagModal">Save changes</button>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+
+
+{% block js %}
+{% endblock %}
+
+
+
+
+{% if initiativeForm.errors %}
+    <ul>
+        {% for key,value in initiativeForm.errors.items %} 
+            <li>{{ key|escape }} : {{ value|escape }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}

@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load static %}
+{% load table_tags %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %} Report | Report Lists {% endblock %}
+
+{% block body %}
+
+    <style>
+        th {
+            white-space: nowrap;
+        }
+    
+        td {
+            white-space: nowrap;
+        }
+    </style>
+
+    
+
+    {% comment %} <form action="{% url 'reports:add_report' %}" method="POST"> {% endcomment %}
+    <form method="POST">
+        {% csrf_token %}
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addModalLabel">Create New Report</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% include 'partial_add_report.html' %}
+                    </div>
+                    {% comment %} <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div> {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm">
+                    <h5>Reports</h5>
+                </div>
+                <div class="col-sm text-end">
+                    <button type="button" class="btn btn-primary pull-right" data-bs-toggle="modal" data-bs-target="#addModal">New Report</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="col-sm-12 row">
+                <div class="col-sm-2">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action">REPORTS</a>
+                        <a href="{% url 'reports:created_by_me' %}" class="list-group-item list-group-item-action">Created by Me</a>
+                        <a href="{% url 'reports:created_by_others' %}" class="list-group-item list-group-item-action">Created by Others</a>
+                        <a href="{% url 'reports:home_report' %}" class="list-group-item list-group-item-action">All Reports</a>
+                    </div>
+                </div>
+                <div class="col-sm-10 border border-1" style="height: 75vh; overflow-y: auto;">
+                    <div class="col-sm-12">
+                        <table id="rptTable2" class="table table-hover" style="width:100%; font:small">
+                            <thead>
+                                <tr>
+                                    <th>Report Name</th>
+                                    <th>Description</th>
+                                    <th>Created By</th>
+                                    <th>Created On</th>
+                                    <th>Modified On</th>
+                                    <th>Subscribed</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for o in oReports %}
+                                <tr>
+                                    <td><a href="{% url 'reports:report_view' o.unique_name %}">{{o.name}}</a></td>
+                                    <td>{{o.description|safe|default_if_none:""}}</td>
+                                    <td>{{o.created_by.get_full_name}}</td>
+                                    <td>{{o.date_created|date:'d-M-Y H:m:s'}}</td>
+                                    <td>{{o.date_updated|date:'d-M-Y H:m:s'}}</td>
+                                    <td></td>
+                                    <td>
+                                        {% comment %} <ul class="dropdown pull-right"> {% endcomment %}
+                                            <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#runModal">Run</a></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Edit</a></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Subscribe</a></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Export</a></li>
+                                                {% if request.user.is_staff %}
+                                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#delete{{o.id}}Modal">Delete</a></li>
+                                                {% endif %}
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Add to Dashboard</a></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Favourite</a></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Move</a></li>
+                                            </ul>
+                                            {% if request.user.is_staff %}
+                                                <form action="{% url 'reports:delete_filter' o.id %}" method="POST">
+                                                    {% csrf_token %}
+                                                    <div class="modal fade" id="delete{{o.id}}Modal" tabindex="-1" aria-labelledby="deleteModalLabel" role="dialog" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="deleteModalLabel">Delete Report</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body text-wrap">
+                                                                    Are you sure you want to delete this Report ({{o.name}})?
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                    <button type="submit" class="btn btn-primary">Delete</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            {% endif %}
+                                        {% comment %} </ul> {% endcomment %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><br><br><br>
+
+{% endblock %}

@@ -1,0 +1,79 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load BankNumber_tags %}
+{% load humanize %}
+
+
+<form id="costForm" action="{% url 'Fit4:impact_entry' initiative.slug %}" method="POST">
+    {% csrf_token %}
+    <div class="table-responsive shadow" style="max-height: 500px; overflow-y; auto;">
+        <table class="table table-bordered table-hover">
+            <thead class="table-light" style="position: sticky; top:0; z-index:1; font-size: 13px";>
+                <tr>
+                    <th></th>
+                    <th>Unit Name</th>
+                    <th>Rated Capacity</th>
+                    <th>UOM</th>
+                    <th>Margin</th>
+                    <th>% Impact/Day</th>
+                    <th># Days</th>
+                    <th>Impact/Day</th>
+                    <th>Total production Financial Impact Per year ($)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for unit, unitimpact in ZipUnits %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{unit.name|default_if_none:""}}</td>
+                        <td><span class="pull-right" id="rated_capacity_{{ unit.id }}" data-value="{{ unit.rated_capacity|default_if_none:'' }}">{{ unit.rated_capacity|currency|default_if_none:'' }}</span></td>
+                        <td>{{unit.UOM|default_if_none:""}}</td>
+                        <td><span id="margin_{{ unit.id }}" data-value="{{ unit.margin|default_if_none:'' }}">{{ unit.margin|default_if_none:'' }}</span></td>
+                        <td><input type="number" id="impact_percent_{{ unit.id }}" name="impact_percent_{{ unit.id }}" value="{{unitimpact.percent_impact}}" class="form-control" onblur="calculateProduct({{ unit.id }})"></td>
+                        <td><input type="number" id="days_{{ unit.id }}" name="days_{{ unit.id }}" value="{{unitimpact.days}}" class="form-control" onblur="calculateProduct({{ unit.id }})"></td>
+                        <td><input type="text" id="impact_day_{{ unit.id }}" value="{{unitimpact.impact_day}}" class="form-control" readonly></td>
+                        <td><input type="text" id="financial_impact_{{ unit.id }}" value="{{unitimpact.financial_impact}}" class="form-control" readonly></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="row col-sm-12 mb-1">
+                <div class="col-sm-3">
+                    Potential production Cost/Incident ($):
+                </div>
+                <div class="col-sm-3">
+                    <input type="text" id="PotentialProductionCost" name="PotentialProductionCost" value="{{initiative.PotentialProductionCost}}" class="form-control" readonly>
+                </div>
+                <div class="col-sm-3">
+                    Potential Non Production Cost / Incident ($):
+                </div>
+                <div class="col-sm-3">
+                    <input type="text" id="PotentialNonProductionCost" name="PotentialNonProductionCost" class="form-control" value="{{initiative.PotentialNonProductionCost}}">
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-3">
+                    Total Asset Consequence:<br>
+                    <i><small>This will be calculated upon save</small></i>
+                </div>
+                <div class="col-sm-3">
+                    <input type="text" id="calculated_asset_consequences" value="{{initiative.calculated_asset_consequences}}" class="form-control" name="Consequence" readonly>
+                </div>
+                <div class="col-sm-3">
+                    
+                </div>
+                <div class="col-sm-3">
+                    <i><small class="pull-right text-danger">Note: To update the Units, click on More on the top right corner on the Menu and select "MTO - Units Management" </small></i>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <button id="save_changes" type="submit" class="btn btn-light border border-1 border-primary">  <i class="fa fa-save"></i>   Save  </button>
+        </div>
+    </div>
+</form>
+

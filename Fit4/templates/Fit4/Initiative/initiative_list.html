@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load table_tags %}
+{% load i18n %}
+{% load humanize %}
+
+{% block title %} Initiatives Lists | Renaissance {% endblock %}
+
+{% block body %}
+
+<style>
+    th {
+      white-space: nowrap;
+    }
+  
+    td {
+      white-space: nowrap;
+    }
+</style>
+
+
+<div id="initiative-list">
+    {% include "partials/initiative_list_partial.html" %}
+</div>
+
+<!-- HTMX infinite scroll trigger -->
+<div id="scroll-trigger" hx-get="?page=2" hx-trigger="revealed" hx-target="#initiative-list" hx-swap="beforeend">
+    {% comment %} <div class="loader">Loading more...</div> {% endcomment %}
+</div>
+
+<script>
+    let currentPage = 2;
+    const scrollTrigger = document.getElementById('scroll-trigger');
+
+    scrollTrigger.addEventListener('htmx:afterRequest', function () {
+        currentPage++;
+        scrollTrigger.setAttribute('hx-get', '?page=${currentPage}');
+    });
+</script>
+
+{% endblock %}
+
+
+{% block js %}
+
+{% endblock %}

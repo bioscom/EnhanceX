@@ -1,0 +1,91 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+    
+{% comment %} <div class="shadow p-3 mb-2 bg-body rounded"> {% endcomment %}
+    <div class="row">
+        <ul class="nav">
+            <span class="flex-grow-1"></span>
+            <b style="color:Red">*</b> = Required Information
+        </ul>
+    </div>
+    <div class="card mb-2">
+        <div class="card-body" style="background-color:#DCDCDC">
+            Information
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ membersForm.member.id_for_label }}" class="form-label">Name*:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field membersForm.member class="select form-select select2 required" placeholder="" id="memberSelect" %}
+                <div class="invalid-feedback">{{ membersForm.action_name.errors|first }}</div>
+            </div>
+            
+            <div class="col-sm-12">
+                <label for="{{ membersForm.resourcetimeallocation.id_for_label }}" class="form-label">Resource Time Allocation</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field membersForm.resourcetimeallocation class="form-control" placeholder="" %}
+                <div class="invalid-feedback">{{ membersForm.resourcetimeallocation.errors|first }}</div>
+            </div>
+
+            <div class="col-sm-12">
+                <label for="{{ membersForm.discipline.id_for_label }}" class="form-label">Discipline</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field membersForm.discipline class="form-control" placeholder="" %}
+                <div class="invalid-feedback">{{ membersForm.discipline.errors|first }}</div>
+            </div>
+            
+        </div>
+
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ initiatives_formset.id_for_label }}" class="form-label">Initiative</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiatives_formset.initiative_name class="select form-select required" placeholder="" %}
+                <div class="invalid-feedback">{{ initiatives_formset.initiative_name.errors|first }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-2">
+        <div class="card-body" style="background-color:#DCDCDC">
+            System Information
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                Created By
+            </div>
+            <div class="col-sm-12">
+                {{members.created_by.user.first_name}} {{members.created_by.user.last_name}}, {{members.date_created}}
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                Last Modified By
+            </div>
+            <div class="col-sm-12">
+                {{members.last_modified_by.user.first_name}} {{members.last_modified_by.user.last_name}}, {{members.date_updated}}
+            </div>
+        </div>
+    </div>
+{% comment %} </div> {% endcomment %}
+
+{% comment %} 
+    {% if actionsForm.errors %}
+        <ul>
+            {% for key,value in actionsForm.errors.items %} 
+                <li>{{ key|escape }} : {{ value|escape }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endcomment %}

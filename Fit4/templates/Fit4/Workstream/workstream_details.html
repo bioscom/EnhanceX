@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{{form.workstreamname}} | Worksream | Renaissance {% endblock %}
+
+{% block body %}
+
+<div class="container-flux">
+    <div class="card mb-2">
+        <div class="card-header">
+            <div class="col-sm-12 row">
+                <div class="col-sm-7">
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="/media/logo/workstream_img.png" alt="" loading="lazy" width="50" height="50" />
+                            </td>
+                            <td>
+                                <small>Workstream</small>
+                                <div class="col-sm row">
+                                    <div class="col-sm"><h5>{{form.workstreamname}}</h5></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                {% comment %} <div class="col-sm-7 text-left">
+                    <div class="col-sm-11"><h5>{{form.workstreamname}}</h5></div>
+                </div> {% endcomment %}
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="container-flux">
+                <div class="row">
+                    <div class="col-sm-1"><small>Owner</small></div>
+                    <div class="col-sm-2"><small>Workstream Ambition</small></div>
+                    <div class="col-sm-1"><small>Workstream Target</small></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1">{{form.author.get_full_name}}</div>
+                    <div class="col-sm-2">USD {{form.workstreamambition|default_if_none:"" |intcomma}}</div>
+                    <div class="col-sm-1">USD {{form.workstreamtarget|default_if_none:""|intcomma}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'Fit4/Workstream/asset_hierarchy.html' %}
+
+<div class="col-sm-8 shadow p-3 mb-2 bg-body rounded">
+    <div class="card">
+        <div class="card-body">
+            <ul class="nav nav-tabs mb-2" id="myTab">
+                <li class="nav-item">
+                    <a href="#Details" class="nav-link active" data-bs-toggle="tab"><b>Details</b></a>
+                </li>
+                <li class="nav-item">
+                  <a href="#Related" class="nav-link" data-bs-toggle="tab"><b>Related</b></a>
+                </li>
+                <li class="nav-item">
+                    <a href="#PreDefinedApprovers" class="nav-link" data-bs-toggle="tab"><b>Pre-Defined Approvers</b></a>
+                  </li>
+            </ul>
+           
+            <div class="tab-content ms-2">
+                <div class="tab-pane fade show active" id="Details">
+                    {% include "Fit4/Workstream/details.html" %}
+                </div>
+                <div class="tab-pane fade" id="Related">
+                    {% include "Fit4/Workstream/predefinedapprovers.html" %}
+                    {% include "Fit4/Workstream/Related.html" %}
+                </div>
+
+                <div class="tab-pane fade" id="PreDefinedApprovers">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br><br><br>
+
+
+{% endblock %}
+
+
+{% block js %}
+
+
+{% endblock %}
+

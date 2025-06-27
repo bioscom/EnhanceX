@@ -1,0 +1,80 @@
+{% load i18n %}
+{% load static %}
+{% comment %} {% load my_tags %} {% endcomment %}
+{% load humanize %}
+
+<nav class="navbar navbar-expand-lg navbar-white sticky-top" style="background-color:white">
+    <div class="container-fluid">
+      <div class="mt-1">
+        <a class="navbar-brand" href="/"><img src="/media/logo/LOGO.png" alt="" height="45" loading="lazy" /></a>
+      </div>
+        
+      {% comment %} <div class="navbar-header">
+        <a class="navbar-brand" href="/"><b>Renaissance Fit4</b></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div> {% endcomment %}
+
+      {% comment %} <div class="col-8 col-md-6 col-lg-6 text-center">  {% endcomment %}
+      <div class="col-8 col-md-6 col-lg-4">
+            <input type="text" class="form-control input" placeholder="Search" name="search" hx-get="{% url 'Fit4:search' %}" hx-trigger="keyup changed delay:500ms" hx-target="#dialog">
+            {% comment %} <input class="form-control" type="search" placeholder="Search..." name="searched" id="searched" aria-label="Search"> {% endcomment %}
+            {% comment %} <button href="{% url 'Fit4:search' %}"  class="btn btn-primary btn-outline-light" type="submit">{% trans "Search" %}</button>
+          </form> {% endcomment %}
+      </div>
+
+      {% comment %} <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-10" role="search">
+        <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
+      </form>
+
+      <form class="col-12 col-lg-auto mb-2 mb-lg-0 me-lg-auto" role="search">
+        <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+      </form> {% endcomment %}
+
+      {% comment %} <div class="collapse navbar-collapse text-end" id="navbarSupportedContent">  {% endcomment %}
+      <div class="text-end" style="font-size:18px">
+        <ul class="nav navbar-nav mb-2 mb-lg-0">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link active s" href="{% url "profile" request.user.id %}">{% trans "Welcome, " %} {{request.user}}</a>
+                </li>
+            {% else %}
+                <a class="nav-link active s">{% trans "Welcome, Guest:" %}
+                  <a href="{% url 'register' %}" class="nav-link active">{% trans "Register" %},<a href="#" class="nav-link active s" hx-get="{% url "login" %}" hx-target="#dialog">{% trans "Login" %}</a></a>
+                </a>
+            {% endif %}
+        </ul>
+      </div>
+
+      <div class="row mt-1">
+        {% include "Fit4/menus.html" %}
+      </div> 
+
+    </div>
+
+   
+</nav>
+
+
+
+{% for message in messages %}
+  <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+    <div class="row">
+      <div class="text-center col-sm-11">
+        {{ message | safe }}
+      </div>
+      <div class="col-sm-1">
+        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+
+
+<script>
+  function eventFunction() {
+    const element = document.getElementById("event_Id");
+    element.title = "Post Event Here";
+  }
+</script>

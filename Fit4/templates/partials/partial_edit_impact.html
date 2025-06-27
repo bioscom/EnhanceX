@@ -1,0 +1,288 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+<div class="row col-sm-12">
+    <div class="col-sm-3">
+        <div class="col-sm-12">
+            <label for="{{ formset.benefittype.id_for_label }}" class="form-label"><b>Benefit Type</b></label>
+        </div>
+        <div class="col-sm-12">
+            {% render_field formset.benefittype class="form-select required" placeholder="" %}
+        </div>
+        <div class="invalid-feedback">{{ formset.benefittype.errors|first }}</div>
+    </div>
+
+    <div class="col-sm-2">
+        <div class="col-sm-12">
+            <label for="{{ formset.frequency.id_for_label }}" class="form-label"><b>Frequency</b></label>
+        </div>
+        <div class="col-sm-12">
+            {% render_field formset.frequency class="form-select required" placeholder="" %}
+        </div>
+        <div class="invalid-feedback">{{ formset.frequency.errors|first }}</div>
+    </div>
+
+    <div class="col-sm-2">
+        <div class="col-sm-12">
+            <label for="{{ formset.YYear.id_for_label }}" class="form-label"><b>Year</b></label>
+        </div>
+        <div class="col-sm-12">
+            {% render_field formset.YYear class="form-select required" selected_option=initiative.YYear %}
+        </div>
+        <div class="invalid-feedback">{{ formset.YYear.errors|first }}</div>
+    </div>
+</div>
+<hr>
+<div class="overflow-x: scroll;">
+    <div class="row col-sm-12">
+        <div class="col-sm-1">
+            <b>Planned</b>
+        </div>
+        <div class="col-sm-11">
+            <div class="row col-sm-12">
+                <div class="col-sm">
+                    Jan
+                </div>
+                <div class="col-sm">
+                    Feb
+                </div>
+                <div class="col-sm">
+                    Mar
+                </div>
+                <div class="col-sm">
+                    Apr
+                </div>
+                <div class="col-sm">
+                    May
+                </div>
+                <div class="col-sm">
+                    Jun
+                </div>
+                <div class="col-sm">
+                    Jul
+                </div>
+                <div class="col-sm">
+                    Aug
+                </div>
+                <div class="col-sm">
+                    Sep
+                </div>
+                <div class="col-sm">
+                    Oct
+                </div>
+                <div class="col-sm">
+                    Nov
+                </div>
+                <div class="col-sm">
+                    Dec
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm g-0">
+                    {% render_field formset.Jan_Plan class="form-control jan_plan" %} 
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Feb_Plan class="form-control feb_plan" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Mar_Plan class="form-control mar_plan" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Apr_Plan class="form-control apr_plan" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.May_Plan class="form-control may_plan" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Jun_Plan class="form-control jun_plan" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Jul_Plan class="form-control jul_plan" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Aug_Plan class="form-control aug_plan" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Sep_Plan class="form-control sep_plan" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Oct_Plan class="form-control oct_plan" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Nov_Plan class="form-control nov_plan" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Dec_Plan class="form-control dec_plan" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row col-sm-12">
+        <div class="col-sm-1">
+            <b>Forecast</b>
+        </div>
+        <div class="col-sm-11">
+            <div class="row col-sm-12">
+                <div class="col-sm">
+                    Jan
+                </div>
+                <div class="col-sm">
+                    Feb
+                </div>
+                <div class="col-sm">
+                    Mar
+                </div>
+                <div class="col-sm">
+                    Apr
+                </div>
+                <div class="col-sm">
+                    May
+                </div>
+                <div class="col-sm">
+                    Jun
+                </div>
+                <div class="col-sm">
+                    Jul
+                </div>
+                <div class="col-sm">
+                    Aug
+                </div>
+                <div class="col-sm">
+                    Sep
+                </div>
+                <div class="col-sm">
+                    Oct
+                </div>
+                <div class="col-sm">
+                    Nov
+                </div>
+                <div class="col-sm">
+                    Dec
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm g-0">
+                    {% render_field formset.Jan_Forecast class="form-control jan_forecast" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Feb_Forecast class="form-control feb_forecast" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Mar_Forecast class="form-control mar_forecast" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Apr_Forecast class="form-control apr_forecast" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.May_Forecast class="form-control may_forecast" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Jun_Forecast class="form-control jun_forecast" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Jul_Forecast class="form-control jul_forecast" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Aug_Forecast class="form-control aug_forecast" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Sep_Forecast class="form-control sep_forecast" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Oct_Forecast class="form-control oct_forecast" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Nov_Forecast class="form-control nov_forecast" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Dec_Forecast class="form-control dec_forecast" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row col-sm-12">
+        <div class="col-sm-1">
+            <b>Actual</b>
+        </div>
+        <div class="col-sm-11">
+            <div class="row col-sm-12">
+                <div class="col-sm">
+                    Jan
+                </div>
+                <div class="col-sm">
+                    Feb
+                </div>
+                <div class="col-sm">
+                    Mar
+                </div>
+                <div class="col-sm">
+                    Apr
+                </div>
+                <div class="col-sm">
+                    May
+                </div>
+                <div class="col-sm">
+                    Jun
+                </div>
+                <div class="col-sm">
+                    Jul
+                </div>
+                <div class="col-sm">
+                    Aug
+                </div>
+                <div class="col-sm">
+                    Sep
+                </div>
+                <div class="col-sm">
+                    Oct
+                </div>
+                <div class="col-sm">
+                    Nov
+                </div>
+                <div class="col-sm">
+                    Dec
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm g-0">
+                    {% render_field formset.Jan_Actual class="form-control jan_actual" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Feb_Actual class="form-control feb_actual" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Mar_Actual class="form-control mar_actual" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Apr_Actual class="form-control apr_actual" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.May_Actual class="form-control may_actual" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Jun_Actual class="form-control jun_actual" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Jul_Actual class="form-control jul_actual" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Aug_Actual class="form-control aug_actual" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Sep_Actual class="form-control sep_actual" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Oct_Actual class="form-control oct_actual" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Nov_Actual class="form-control nov_actual" %}
+                </div>
+                <div class="col-sm g-0">
+                    {% render_field formset.Dec_Actual class="form-control dec_actual" %} 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

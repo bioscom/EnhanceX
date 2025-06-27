@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load static %}
+{% load table_tags %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %} Dashboards {% endblock %}
+
+{% block body %}
+
+    <style>
+        th { white-space: nowrap; }
+        td { white-space: nowrap; }
+    </style>
+
+    <form action="{% url 'dashboard:add_dashboard' %}" method="POST">
+        {% csrf_token %}
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addModalLabel">New Dashboard</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% include 'partial_add_dashboard.html' %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm">
+                    Dashboards
+                    <h5>Recent</h5>
+                    {{recordCount}} items
+                </div>
+                <div class="col-sm text-end">
+                    <button type="button" class="btn btn-primary pull-right" data-bs-toggle="modal" data-bs-target="#addModal">New Dashboard</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="col-sm-12 row">
+                <div class="col-sm-2 border-top">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action">DASHBOARDS</a>
+                        <a href="#" class="list-group-item list-group-item-action">Created by Me</a>
+                        <a href="#" class="list-group-item list-group-item-action">All Dashboards</a>
+                    </div>
+                </div>
+                <div class="col-sm-10 border border-1" style="height: 85vh; overflow-y: auto;">
+                    <div class="col-sm-12">
+                        <table id="rptTable2" class="table table-hover" style="width:100%; font:small">
+                            <thead>
+                                <tr>
+                                    <th>Dashboard Name</th>
+                                    <th>Description</th>
+                                    <th>Created By</th>
+                                    <th>Created On</th>
+                                    <th>Subscribed</th>
+                                    <th></th>
+                                <tr>
+                            </thead>
+                            <tbody>
+                                {% for o in oDashboard %}
+                                    <tr>
+                                        <td><a href="{% url 'dashboard:dashboard_view' o.unique_name %}">{{o.name}}</a></td>
+                                        {% comment %} <td><a href="{% url 'dashboard:dashboards' o.unique_name %}">{{o.name}}</a></td> {% endcomment %}
+                                        <td>{{o.description}}</td>
+                                        <td>{{o.created_by.first_name}}, {{o.created_by.last_name}}</td>
+                                        <td>{{o.date_created|date:'d-M-Y H:i'}}</td>
+                                        <td></td>
+                                        <td>
+                                            <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#runModal">Run</a></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Edit</a></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Subscribe</a></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Export</a></li>
+                                                {% if request.user.is_staff %}
+                                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#delete{{o.id}}Modal">Delete</a></li>
+                                                {% endif %}
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Favourite</a></li>
+                                            </ul>
+                                            {% if request.user.is_staff %}
+                                                <form action="{% url 'dashboard:delete_dashboard' o.id %}" method="POST">
+                                                    {% csrf_token %}
+                                                    <div class="modal fade" id="delete{{o.id}}Modal" tabindex="-1" aria-labelledby="deleteModalLabel" role="dialog" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="deleteModalLabel">Delete Dashboard</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    Are you sure you want to delete Dashboard ({{o.name}})?
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                    <button type="submit" class="btn btn-primary">Delete</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        //$(document).ready(function() {
+        //    $('#dashboardTable').DataTable();
+        //});
+
+        $(document).ready(function() {
+            $('#select-user').select2({ theme:'classic', width:'100%', dropdownParent: $('#Id-Parent')});
+        });
+    </script>
+
+{% endblock %}
+

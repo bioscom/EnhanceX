@@ -1,0 +1,309 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+
+<div class="container-flux" style="height: 65vh;">
+    <div class="row col-sm-12">
+        <div class="col-sm-3">
+            <div class="col-sm-12">
+                <label for="{{ initiativeImpactForm.benefittype.id_for_label }}" class="form-label"><b>Benefit Types</b></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeImpactForm.benefittype class="form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeImpactForm.benefittype.errors|first }}</div>
+        </div>
+
+        {% comment %} <div class="col-sm-2">
+            <div class="col-sm-12">
+                <label for="{{ initiativeForm.currency.id_for_label }}" class="form-label"><b>Currency</b></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeForm.currency class="form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeForm.currency.errors|first }}</div>
+        </div> {% endcomment %}
+
+        <div class="col-sm-2">
+            <div class="col-sm-12">
+                <label for="{{ initiativeImpactForm.frequency.id_for_label }}" class="form-label"><b>Frequency</b></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeImpactForm.frequency class="form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeImpactForm.frequency.errors|first }}</div>
+        </div>
+
+        <div class="col-sm-2">
+            <div class="col-sm-12">
+                <label for="{{ initiativeImpactForm.YYear.id_for_label }}" class="form-label"><b>Year</b></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeImpactForm.YYear class="form-select required" selected_option=initiative.YYear %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeImpactForm.YYear.errors|first }}</div>
+        </div>
+    </div>
+    <hr>
+    <div class="overflow-x: scroll;">
+        <div class="row col-sm-12">
+            <div class="col-sm-1">
+                <b>Planned</b>
+            </div>
+            <div class="col-sm-11">
+                <div class="row col-sm-12">
+                    <div class="col-sm">
+                        Jan
+                    </div>
+                    <div class="col-sm">
+                        Feb
+                    </div>
+                    <div class="col-sm">
+                        Mar
+                    </div>
+                    <div class="col-sm">
+                        Apr
+                    </div>
+                    <div class="col-sm">
+                        May
+                    </div>
+                    <div class="col-sm">
+                        Jun
+                    </div>
+                    <div class="col-sm">
+                        Jul
+                    </div>
+                    <div class="col-sm">
+                        Aug
+                    </div>
+                    <div class="col-sm">
+                        Sep
+                    </div>
+                    <div class="col-sm">
+                        Oct
+                    </div>
+                    <div class="col-sm">
+                        Nov
+                    </div>
+                    <div class="col-sm">
+                        Dec
+                    </div>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Jan_Plan class="form-control" placeholder="" id="Jan_Plan" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Feb_Plan class="form-control" placeholder="" id="Feb_Plan" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Mar_Plan class="form-control" placeholder="" id="Mar_Plan" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Apr_Plan class="form-control" placeholder="" id="Apr_Plan" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.May_Plan class="form-control" placeholder="" id="May_Plan" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Jun_Plan class="form-control" placeholder="" id="Jun_Plan" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Jul_Plan class="form-control" placeholder="" id="Jul_Plan" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Aug_Plan class="form-control" placeholder="" id="Aug_Plan" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Sep_Plan class="form-control" placeholder="" id="Sep_Plan" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Oct_Plan class="form-control" placeholder="" id="Oct_Plan" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Nov_Plan class="form-control" placeholder="" id="Nov_Plan" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Dec_Plan class="form-control" placeholder="" id="Dec_Plan" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row col-sm-12">
+            <div class="col-sm-1">
+                <b>Forecast</b>
+            </div>
+            <div class="col-sm-11">
+                <div class="row col-sm-12">
+                    <div class="col-sm">
+                        Jan
+                    </div>
+                    <div class="col-sm">
+                        Feb
+                    </div>
+                    <div class="col-sm">
+                        Mar
+                    </div>
+                    <div class="col-sm">
+                        Apr
+                    </div>
+                    <div class="col-sm">
+                        May
+                    </div>
+                    <div class="col-sm">
+                        Jun
+                    </div>
+                    <div class="col-sm">
+                        Jul
+                    </div>
+                    <div class="col-sm">
+                        Aug
+                    </div>
+                    <div class="col-sm">
+                        Sep
+                    </div>
+                    <div class="col-sm">
+                        Oct
+                    </div>
+                    <div class="col-sm">
+                        Nov
+                    </div>
+                    <div class="col-sm">
+                        Dec
+                    </div>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Jan_Forecast class="form-control" placeholder="" id="Jan_Forecast" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Feb_Forecast class="form-control" placeholder="" id="Feb_Forecast" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Mar_Forecast class="form-control" placeholder="" id="Mar_Forecast" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Apr_Forecast class="form-control" placeholder="" id="Apr_Forecast" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.May_Forecast class="form-control" placeholder="" id="May_Forecast" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Jun_Forecast class="form-control" placeholder="" id="Jun_Forecast" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Jul_Forecast class="form-control" placeholder="" id="Jul_Forecast" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Aug_Forecast class="form-control" placeholder="" id="Aug_Forecast" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Sep_Forecast class="form-control" placeholder="" id="Sep_Forecast" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Oct_Forecast class="form-control" placeholder="" id="Oct_Forecast" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Nov_Forecast class="form-control" placeholder="" id="Nov_Forecast" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Dec_Forecast class="form-control" placeholder="" id="Dec_Forecast" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row col-sm-12">
+            <div class="col-sm-1">
+                <b>Actual</b>
+            </div>
+            <div class="col-sm-11">
+                <div class="row col-sm-12">
+                    <div class="col-sm">
+                        Jan
+                    </div>
+                    <div class="col-sm">
+                        Feb
+                    </div>
+                    <div class="col-sm">
+                        Mar
+                    </div>
+                    <div class="col-sm">
+                        Apr
+                    </div>
+                    <div class="col-sm">
+                        May
+                    </div>
+                    <div class="col-sm">
+                        Jun
+                    </div>
+                    <div class="col-sm">
+                        Jul
+                    </div>
+                    <div class="col-sm">
+                        Aug
+                    </div>
+                    <div class="col-sm">
+                        Sep
+                    </div>
+                    <div class="col-sm">
+                        Oct
+                    </div>
+                    <div class="col-sm">
+                        Nov
+                    </div>
+                    <div class="col-sm">
+                        Dec
+                    </div>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Jan_Actual class="form-control" placeholder="" id="Jan_Actual" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Feb_Actual class="form-control" placeholder="" id="Feb_Actual" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Mar_Actual class="form-control" placeholder="" id="Mar_Actual" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Apr_Actual class="form-control" placeholder="" id="Apr_Actual" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.May_Actual class="form-control" placeholder="" id="May_Actual" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Jun_Actual class="form-control" placeholder="" id="Jun_Actual" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Jul_Actual class="form-control" placeholder="" id="Jul_Actual" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Aug_Actual class="form-control" placeholder="" id="Aug_Actual" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Sep_Actual class="form-control" placeholder="" id="Sep_Actual" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Oct_Actual class="form-control" placeholder="" id="Oct_Actual" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Nov_Actual class="form-control" placeholder="" id="Nov_Actual" %}
+                    </div>
+                    <div class="col-sm g-0">
+                        {% render_field initiativeImpactForm.Dec_Actual class="form-control" placeholder="" id="Dec_Actual" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% comment %} {% if initiativeImpactForm.errors %}
+    <ul>
+        {% for key,value in initiativeImpactForm.errors.items %} 
+            <li>{{ key|escape }} : {{ value|escape }}</li>
+        {% endfor %}
+    </ul>
+{% endif %} {% endcomment %}
+    

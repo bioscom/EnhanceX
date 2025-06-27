@@ -1,0 +1,46 @@
+{% comment %} <div class="position-absolute bg-white border rounded shadow p-3" style="top:100%; left:0; z-ndex:1050; width:100%; display: none"> {% endcomment %}
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="impactModalLabel"><b>Search Result</b></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="table-responsive shadow p-3 mt-7 bg-body rounded row">
+                <div class="col-sm-12">
+                    <div class="row fw-bold border-bottom py-2 col-sm-12">
+                        <div class="col-sm-2">Id</div>
+                        <div class="col-sm-4">Initiative Name</div>
+                        <div class="col-sm-2">Initiative Owner</div>
+                        <div class="col-sm-2">Actual Gate</div>
+                        <div class="col-sm-2">Plan Relevance</div>
+                    </div>
+                    <div class="col-sm-12" style="height: 50vh; overflow-y: auto; font-size:13px">
+                        {% for o in results %}
+                            <div class="row hover-row border-bottom py-2 col-sm-12">
+                                <div class="col-sm-2"><a href="{% url 'Fit4:initiative_details' o.slug %}">{{ o.initiative_id }}</a></div>
+                                <div class="col-sm-4"><a href="{% url 'Fit4:initiative_details' o.slug %}">{{ o.initiative_name }}</a></div>
+                                <div class="col-sm-2">{{ o.author.get_full_name }}</div>
+                                <div class="col-sm-2"><a href="{% url 'Fit4:initiative_details' o.slug %}">{{ o.actual_Lgate }}</a></div>
+                                <div class="col-sm-2">
+                                    {% for t in o.Plan_Relevance.all %}
+                                        {{ t.title }}; 
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% comment %} </div> {% endcomment %}
+
+
+
+
+<style>
+ .hover-row:hover{
+    background-color: #f8f9fa;
+    cursor:pointer;
+ }
+</style>

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Workstreams | Renaissance {% endblock %}
+
+{% block body %}
+
+<style>
+    th {
+      white-space: nowrap;
+    }
+  
+    td {
+      white-space: nowrap;
+    }
+</style>
+
+<!-- Modal -->
+<form action="{% url 'Fit4:add_workstream' %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="workstreamModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New Workstream: Upstream</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% include 'partials/partial_add_workstream.html' %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
+</form>
+
+
+<div class="card">
+    <div class="card-header row">
+        <div class="col-sm">
+            <table>
+                <tr>
+                    <td>
+                        <img src="/media/logo/workstream_img.png" alt="" loading="lazy" />
+                    </td>
+                    <td>
+                        <small>Workstreams</small>
+                        <div class="col-sm row">
+                           
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-sm-6 text-end">
+            <div class="btn-group" role="group">
+                {% if request.user.is_staff or request.user.is_superuser %}
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#workstreamModal"  class="btn btn-light border border-2 border-secondary">New</button>
+                    <button type="button" href="#"  class="btn btn-light border border-2 border-secondary">Change Owner</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="card-body" style="height: 75vh; overflow-y: auto;">
+        <table id="rptTable" class="cell-border table table-striped" style="width:100%; font:small">
+            <thead>
+                <tr>
+                    <th>...</th>
+                    <th>Worksream Name</th>
+                    <th>Workstrem Lead</th>
+                    <th>Workstream Sponsor</th>
+                    <th>Finance Sponsor</th>
+                    <th>Level 1</th>
+                    <th>Level 2</th>
+                    <th>Level 3</th>
+                    <th>Level 4</th>
+                    <th>Data Filter 1</th>
+                    <th>Data Filter 2</th>
+                    <th>Last Modified By</th>
+                    {% comment %} <th>Date Created</th>
+                    <th>Date Modified</th> {% endcomment %}
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in workstreams %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><a href="{% url 'Fit4:workstream_details' o.slug %}">{{o.workstreamname}}</a></td>
+                        <td><a href="{% url 'account:user_detailed' o.user_workstreamlead.id %}">{{o.user_workstreamlead.get_full_name}}</a></td>
+                        <td><a href="{% url 'account:user_detailed' o.user_workstreamsponsor.id %}">{{o.user_workstreamsponsor.get_full_name}}</a></td>
+                        <td><a href="{% url 'account:user_detailed' o.user_financesponsor.id %}">{{o.user_financesponsor.get_full_name}}</a></td>
+                        <td>{{o.formula_Level_1|default_if_none:""}}</td>
+                        <td>{{o.formula_Level_2|default_if_none:""}}</td>
+                        <td>{{o.formula_Level_3|default_if_none:""}}</td>
+                        <td>{{o.formula_Level_4|default_if_none:""}}</td>
+                        <td>{{o.functions|default_if_none:""}}</td>
+                        <td>{{o.SavingType|default_if_none:""}}</td>
+                        <td><a href="{% url 'account:user_detailed' o.last_modified_by.id %}">{{o.last_modified_by.get_full_name}}</a></td>
+                        {% comment %} <td>{{o.Created_Date|date:'d-M-Y'}}</td>
+                        <td>{{o.last_modified_date|date:'d-M-Y'}}</td> {% endcomment %}
+                        <td>
+                            <form action="{% url 'Fit4:delete_workstream' o.id %}" method="POST">
+                                {% csrf_token %}
+                                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deletetModalLabel">Delete Workstream</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body wordwrap:true">
+                                                Are you sure you want to delete {{o.workstreamname}} Workstream?<br>
+                                                Note: all Initiatives related to this workstream will be deleted.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editWSModal">Edit</a></li>
+                                <li>
+                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
+                                </li>
+                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ownerModal">Change Owner</a></li>
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<br><br><br>
+
+{% endblock %}
+
+
+{% block js %}
+
+{% endblock %}

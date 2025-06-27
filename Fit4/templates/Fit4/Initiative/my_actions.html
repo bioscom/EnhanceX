@@ -1,0 +1,59 @@
+
+<!-- Modal -->
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="actionsModal" tabindex="-1" aria-labelledby="actionsModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="actionsModalLabel">New Initiative Action</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include 'partials/partial_add_actions.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+<div class="card">
+    <div class="card-header">
+        <ul class="nav">
+            <div class="col-sm-6"><h5>Initiative Actions Assigned to me ({{noOfActions}})</h5></div>
+        </ul>
+    </div>
+    {% comment %} <div class="card-body" style="height: 80vh; overflow-y: auto;"> {% endcomment %}
+    <div class="card-body">
+        <table class="table table-hover">
+            <tr>
+                <th>...</th>
+                <th>Action Name</th>
+                <th>Initiative Name</th>
+                <th>Assign to Contact</th>
+                <th>Start Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                
+            </tr>
+            {% for o in formAction %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td><a href="{% url 'Fit4:action_details' o.id %}">{{o.action_name}}</a></td>
+                    <td>{{o.initiative.initiative_name}}</td>
+                    <td>{{o.assigned_to.first_name}}, {{o.assigned_to.last_name}}</td>
+                    <td>{{o.start_date|date:'d-m-Y'}}</td>
+                    <td>{{o.due_date|date:'d-m-Y'}}</td>
+                    <td>{{o.status}}</td>
+                    
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>

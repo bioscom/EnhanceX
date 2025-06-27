@@ -1,0 +1,72 @@
+
+<!-- Modal -->
+{% with WIDGET_ERROR_CLASS='is-invalid' %}
+    <form action="{% url 'Fit4:edit_DocsLinks' initiative.id %}" method="POST">
+        {% csrf_token %}
+        <div class="modal fade" id="docsModal" tabindex="-1" aria-labelledby="docsModalLabel" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="docsModalLabel">Document & Links({{initiative.id}})</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% include 'partials/partial_edit_documents.html' %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endwith %}
+
+
+<div class="accordion" id="accordionPanelsStayOpen">
+    <div class="accordion-item">
+        <h1 class="accordion-header" id="panelsStayOpen-heading">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse" aria-expanded="true" aria-controls="panelsStayOpen-collapse">
+            <b>Document Links</b>
+            </button>
+        </h1>
+        <div id="panelsStayOpen-collapse" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-heading">
+            <div class="accordion-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="col-sm-12">
+                            <small>Document Links</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11"><a href="{{initiative.DocumentLink}}" target="_blank">{{initiative.DocumentLink|default_if_none:""}}</a></div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#docsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+                        
+                        <div class="col-sm-12">
+                            <small>Sharepoint URL</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11"><a href="{{initiative.SharepointUrl}}" target="_blank">{{initiative.SharepointUrl|default_if_none:""}}</a></div>
+                            <div class="text-end col-sm-1"><a type="button" data-bs-toggle="modal" data-bs-target="#docsModal"><i class="fa fa-pencil fa-fw"></i></a></div>
+                            <hr>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="col-sm-12">
+                            <small>Initiative</small>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="col-sm-11"><br></div>
+                            {% comment %} <div class="col-sm-11"><a href="{% url 'Fit4:initiative_details' form.initiative.id %}">{{form.initiative.initiative_name}}</a></div> {% endcomment %}
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

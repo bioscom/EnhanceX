@@ -1,0 +1,179 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{{ actionsForm.media }} {#  Adds widget's JS/CSS files from CDN #}
+<div class="shadow p-3 mb-2 bg-body rounded">
+    <div class="row">
+        <ul class="nav">
+            <span class="flex-grow-1"></span>
+            <b style="color:Red">*</b> = Required Information
+        </ul>
+    </div>
+    <div class="card mb-2">
+        <div class="card-body" style="background-color:#DCDCDC">
+            Information
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ actionsForm.action_name.id_for_label }}" class="form-label"><small>Action Name*</small></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field actionsForm.action_name class="form-control required" placeholder="" %}
+                <div class="invalid-feedback">{{ actionsForm.action_name.errors|first }}</div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ initiatives_formset.id_for_label }}" class="form-label"><small>Initiative</small></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiatives_formset.initiative_name class="select form-select required" placeholder="" %}
+                <div class="invalid-feedback">{{ initiatives_formset.initiative_name.errors|first }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ actionsForm.action_type.id_for_label }}" class="form-label"><small>Action Type*</small></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field actionsForm.action_type class="select form-select required" placeholder="" %}
+                <div class="invalid-feedback">{{ actionsForm.action_type.errors|first }}</div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ actionsForm.assigned_to.id_for_label }}" class="form-label"><small>Assigned to Contact</small></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field actionsForm.assigned_to class="select-user3 select form-select required select2" %}
+                <div class="invalid-feedback">{{ actionsForm.assigned_to.errors|first }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ actionsForm.complete_by_phase.id_for_label }}" class="form-label"><small>Complete By Phase</small></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field actionsForm.complete_by_phase class="select form-select required" placeholder="" %}
+                <div class="invalid-feedback">{{ actionsForm.complete_by_phase.errors|first }}</div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ actionsForm.status.id_for_label }}" class="form-label"><small>Status</small></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field actionsForm.status class="select form-select required" placeholder="" %}
+                <div class="invalid-feedback">{{ actionsForm.status.errors|first }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ actionsForm.description.id_for_label }}" class="form-label"><small>Description</small></label>
+            </div>
+            <div class="col-sm-12">
+                {{ actionsForm.description|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:2" }}
+                <div class="invalid-feedback">{{ actionsForm.description.errors|first }}</div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ actionsForm.due_date.id_for_label }}" class="form-label"><small>Due Date</small></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field actionsForm.due_date class="form-control" placeholder="" %}
+                <div class="invalid-feedback">{{ actionsForm.due_date.errors|first }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ actionsForm.start_date.id_for_label }}" class="form-label"><small>Start Date</small></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field actionsForm.start_date class="form-control" placeholder="" %}
+                <div class="invalid-feedback">{{ actionsForm.start_date.errors|first }}</div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ actions.due_date.id_for_label }}" class="form-label"><small>Completion Date</small></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field actions.due_date class="form-control" placeholder="" %}
+                <div class="invalid-feedback">{{ actions.due_date.errors|first }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ actionsForm.complemetary.id_for_label }}" class="form-label"><small>Commentary</small></label>
+            </div>
+            <div class="col-sm-12">
+                {{ actionsForm.commentary|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:2" }}
+                <div class="invalid-feedback">{{ actionsForm.complemetary.errors|first }}</div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ actionsForm.send_email.id_for_label }}" class="form-label"><small>Send notification email</small></label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field actionsForm.send_email class="form-check" placeholder="" %}
+                <div class="invalid-feedback">{{ actionsForm.send_email.errors|first }}</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card mb-2">
+        <div class="card-body" style="background-color:#DCDCDC">
+            System Information
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <small>Created By</small>
+            </div>
+            <div class="col-sm-12">
+                {{form.created_by.first_name}} {{form.created_by.last_name}}
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <small>Last Modified By</small>
+            </div>
+            <div class="col-sm-12">
+                {{form.last_modified_by.first_name}} {{form.last_modified_by.last_name}}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} 
+    {% if actionsForm.errors %}
+        <ul>
+            {% for key,value in actionsForm.errors.items %} 
+                <li>{{ key|escape }} : {{ value|escape }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endcomment %}

@@ -1,0 +1,278 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="col-sm-12 mb-2">
+                <label for="{{ reportForm.category.id_for_label }}" class="form-label"><b>Category:</b></label>
+                {% render_field reportForm.category class="form-select select" placeholder="" %}
+                <div class="invalid-feedback">{{ reportForm.category|first }}</div>
+            </div>
+        
+            <div class="col-sm-12 mb-2">
+                <label for="{{ reportForm.name.id_for_label }}" class="form-label"><b>Report Name:</b></label>
+                {% render_field reportForm.name class="form-control" placeholder="" %}
+            </div>
+
+            <div class="col-sm-12">
+                <div class="col-sm-12">
+                    <label for="{{ reportForm.unique_name.id_for_label }}" class="form-label"><b>Unique Name:</b></label>
+                </div>
+                <div class="col-sm-12">
+                    {{reportForm.unique_name}}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-7">
+            <div class="col-sm-12">
+                <label for="{{ reportForm.description.id_for_label }}" class="form-label"><b>Description:</b></label>
+                {{ reportForm.description|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:5" }}
+                <div class="invalid-feedback">{{ reportForm.description|first }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+
+<div class="col-sm-12 shadow">
+    <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a href="#Outline" class="nav-link active" data-bs-toggle="tab"><b>Outline</b></a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a href="#Filters" class="nav-link" data-bs-toggle="tab"><b>Filters</b></a>
+        </li>
+    </ul>
+
+    <div class="tab-content ms-2" style="height: 48vh; overflow-y: auto;">
+        <div class="tab-pane fade show active" id="Outline">
+            <div class="bg-body rounded">
+                <table class="table table-striped">
+                    <tr>
+                        <td><b>Headers</b></td>
+                    </tr>
+                    {% for item in headers %}
+                        <tr>
+                            <td><input type="checkbox" name='{{ item }}' value='{{ item }}' checked="true" > {{ item }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="Filters">
+            <div class="card">
+                <div class="card-header">
+                    <div class="col-sm-12 row mb-2">
+                        <div class="col-sm-2">
+                            <b>Fields</b>
+                        </div>
+                        <div class="col-sm-5">
+                            <b></b>
+                        </div>
+                        <div class="col-sm-5">
+                            <b>Operator</b>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col-sm-12 row mb-2">
+                        <div class="col-sm-2">
+                            Workstream Name:
+                        </div>
+                        <div class="col-sm-5">
+                            <input type='text' name='Workstream' value='{{reportForm.WorkStream}}' class="form-control">
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="wsFilter" value='{{reportForm.wsFilters}}'  id="wsFilter" class="select form-select">
+                                {% for item in formReportFilter %}
+                                    <option value={{item.filter_name}}>{{item.filter_name}}</option>
+                                {% endfor %}
+                                {% comment %} <option value="equals">equals</option>
+                                <option value="equals">not equal to</option>
+                                <option value="equals">less than</option>
+                                <option value="equals">greater than</option>
+                                <option value="equals">less or equal</option>
+                                <option value="equals">greater or equal</option>
+                                <option value="contains">contains</option>
+                                <option value="doesNotContain">does not contain</option>
+                                <option value="startswith">starts with</option> {% endcomment %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    {% comment %} 'name', 'category', 'description', 'unique_name', 'WorkStream', 'wsFilters', 'overall_status', 'osFilters', 'discipline',
+                    'discFilters', 'Function', 'funcFilters', 'SavingType', 'stFilters', 'Plan_Relevance', 'psFilters', 'HashTag', 'htFilters' {% endcomment %}
+
+                    <div class=" col-sm-12 row mb-2">
+                        <div class="col-sm-2">
+                            Overall Status:<br>
+                            <i class="text-danger">* Note: Press control key to select multiple rows</i>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="OverallStatus" id="OverallStatus" value='{{reportForm.overall_status}}' multiple class="select form-select" size="6">
+                                {% comment %} {% for item in form.overall_status %}
+                                    <option value="contains">{{item}}</option>
+                                {% endfor %} {% endcomment %}
+                                <option value="NewEntry">New Entry</option>
+                                <option value="NeedsAttention">Needs Attention</option>
+                                <option value="OnTrack">On Track</option>
+                                <option value="OnHold">On Hold</option>
+                                <option value="Deferred">Deferred</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="osFilter" id="osFilter" value='{{reportForm.osFilters}}' class="select form-select">
+                                {% for item in formReportFilter %}
+                                    <option value={{item.filter_name}}>{{item.filter_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class=" col-sm-12 row mb-2">
+                        <div class="col-sm-2">
+                            Plan Relevance:<br>
+                            <i class="text-danger">* Note: Press control key to select multiple rows</i>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="pr" id="pr" value='{{reportForm.Plan_Relevance}}' multiple class="select form-select" size="6">
+                                {% for item in formPlanRelevance %}
+                                    <option value={{item.filter_name}}>{{item.filter_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="prFilter" id="prFilter" value='{{reportForm.prFilters}}' class="select form-select">
+                                <option value="equals">equals</option>
+                                <option value="notequalto">not equal to</option>
+                                <option value="includes">Includes</option>
+                                <option value="excludes">Excludes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class=" col-sm-12 row mb-2">
+                        <div class="col-sm-2">
+                            HashTag#:
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="text" id="HashTag" name="HashTag" value='{{reportForm.HashTag}}' size="40" class="form-control">
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="htFilter" id="htFilter" value='{{reportForm.htFilters}}' class="select form-select">
+                                {% for item in formReportFilter %}
+                                    <option value={{item.filter_name}}>{{item.filter_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class=" col-sm-12 row mb-2">
+                        <div class="col-sm-2">
+                            Discipline:<br>
+                            <i class="text-danger">* Note: Press control key to select multiple rows</i>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="discipline" id="discipline" multiple class="select form-select" size="6">
+                                {% for item in formDiscipline %}
+                                    <option value={{item}}>{{item}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="discFilter" id="discFilter" class="select form-select">
+                                {% for item in formReportFilter %}
+                                    <option value={{item.filter_lookup}}>{{item.filter_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class=" col-sm-12 row mb-2">
+                        <div class="col-sm-2">
+                            Function:<br>
+                            <i class="text-danger">* Note: Press control key to select multiple rows</i>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="func" id="func" multiple class="select form-select" size="6">
+                                {% for item in formFunction %}
+                                    <option value={{item}}>{{item}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="funcFilter" id="funcFilter" class="select form-select">
+                                <option value="contains">Contains</option>
+                                <option value="doesNotContain">Does not contain</option>
+                                <option value="includes">Includes</option>
+                                <option value="excludes">Excludes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class=" col-sm-12 row mb-2">
+                        <div class="col-sm-2">
+                            Saving Type:<br>
+                            <i class="text-danger">* Note: Press control key to select multiple rows</i>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="st" id="st" multiple class="select form-select" size="6">
+                                {% for item in formSavingType %}
+                                    <option value={{item}}>{{item}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="stFilter" id="stFilter" class="select form-select">
+                                <option value="contains">Contains</option>
+                                <option value="doesNotContain">Does not contain</option>
+                                <option value="includes">Includes</option>
+                                <option value="excludes">Excludes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class=" col-sm-12 row mb-2">
+                        <div class="col-sm-2">
+                            Year:<br>
+                            <i class="text-danger">* Note: Press control key to select multiple rows</i>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="year" id="year" class="select form-select">
+                                {% for item in formYear %}
+                                    <option value={{item}}>{{item}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <select name="yearFilter" id="yearFilter" class="select form-select">
+                                {% for item in formReportFilter %}
+                                    <option value={{item.filter_name}}>{{item.filter_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} {% if reportForm.errors %}
+    <ul>
+        {% for key,value in reportForm.errors.items %} 
+            <li>{{ key|escape }} : {{ value|escape }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if form.errors %}
+    <ul>
+        {% for key,value in form.errors.items %} 
+            <li>{{ key|escape }} : {{ value|escape }}</li>
+        {% endfor %}
+    </ul>
+{% endif %} {% endcomment %}

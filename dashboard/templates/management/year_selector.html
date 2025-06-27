@@ -1,0 +1,70 @@
+<form id="year-selector-form" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="selected_year" id="selected-year-input">
+
+  <div class="d-flex align-items-center">
+    <button type="button" class="btn btn-outline-secondary me-2" onclick="scrollYears(-200)">&#8592;</button>
+
+    <div id="year-row" class="d-flex overflow-auto border rounded p-2" style="white-space: nowrap; scroll-behavior: smooth; width: 100%;">
+      {% for year in years %}
+        <div class="px-3 py-2 mx-1 border rounded year-item
+              {% if selected_year == year|stringformat:'s' %} bg-primary text-white {% else %} bg-light {% endif %}"
+            data-year="{{ year }}"
+            style="min-width: 80px; cursor: pointer;">
+          {{ year }}
+        </div>
+
+        {% comment %} <div class="px-3 py-2 mx-1 border rounded bg-light year-item"
+             data-year="{{ year }}"
+             style="min-width: 80px; cursor: pointer;">
+          {{ year }}
+        </div> {% endcomment %}
+      {% endfor %}
+    </div>
+
+    <button type="button" class="btn btn-outline-secondary ms-2" onclick="scrollYears(200)">&#8594;</button>
+  </div>
+</form>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const yearRow = document.getElementById("year-row");
+    const yearForm = document.getElementById("year-selector-form");
+
+    document.querySelectorAll(".year-item").forEach(item => {
+        item.addEventListener("click", function () {
+        const year = this.dataset.year;
+        highlightYear(this);
+
+        // Send AJAX POST
+        fetch(window.location.href, {
+            method: "POST",
+            headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: new URLSearchParams({ 'selected_year': year })
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Replace a container (optional) or log result
+            console.log("Year posted:", year);
+        });
+        });
+    });
+
+    window.scrollYears = function (offset) {
+        yearRow.scrollBy({ left: offset, behavior: "smooth" });
+    };
+
+    function highlightYear(selectedEl) {
+        document.querySelectorAll('.year-item').forEach(el => {
+        el.classList.remove('bg-primary', 'text-white');
+        el.classList.add('bg-light');
+        });
+        selectedEl.classList.remove('bg-light');
+        selectedEl.classList.add('bg-primary', 'text-white');
+    }
+    });
+</script>

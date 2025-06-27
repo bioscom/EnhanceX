@@ -1,0 +1,78 @@
+<div class="card shadow mb-2 bg-body rounded">
+    <div class="card-body">
+        <div class="row col-sm-12">
+            {% comment %} {% with gate_names="G0,G1 Identify,G2 Validate,G3 Plan,G4 Implement,G5 Tracking,G5 Completed" %}
+                {% with gate_list=gate_names|split:"," %}
+                    {% for gate in gate_list %}
+                        {% if forloop.counter0 < initiative.actual_Lgate.GateIndex %}
+                            <div class="col-sm"><button class="btn btn-success w-100">{{ gate|slice:":2" }}</button></div>
+                        {% elif forloop.counter0 == initiative.actual_Lgate.GateIndex %}
+                            <div class="col-sm"><button class="btn btn-primary w-100">{{ gate }}</button></div>
+                        {% else %}
+                            <div class="col-sm"><button class="btn btn-light w-100">{{ gate }}</button></div>
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
+            {% endwith %} {% endcomment %}
+
+
+            {% if initiative.actual_Lgate.GateIndex == 0 %}
+                <div class="col-sm"><button class="btn btn-success w-100">G0</button></div>
+                <div class="col-sm"><button class="btn btn-primary w-100">G1 Identify</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G2 Validate</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G3 Plan</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G4 Implement</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G5 Tracking</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G5 Completed</button></div>
+            {% elif initiative.actual_Lgate.GateIndex == 1 %}
+                <div class="col-sm"><button class="btn btn-success w-100">G0</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G1</button></div>
+                <div class="col-sm"><button class="btn btn-primary w-100">G2 Validate</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G3 Plan</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G4 Implement</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G5 Tracking</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G5 Completed</button></div>
+            {% elif initiative.actual_Lgate.GateIndex == 2 %}
+                <div class="col-sm"><button class="btn btn-success w-100">G0</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G1</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G2</button></div>
+                <div class="col-sm"><button class="btn btn-primary w-100">G3 Plan</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G4 Implement</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G5 Tracking</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G5 Completed</button></div>
+            {% elif initiative.actual_Lgate.GateIndex == 3 %}
+                <div class="col-sm"><button class="btn btn-success w-100">G0</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G1</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G2</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G3</button></div>
+                <div class="col-sm"><button class="btn btn-primary w-100">G4 Implement</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G5 Tracking</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G5 Completed</button></div>
+            {% elif initiative.actual_Lgate.GateIndex == 4 %}
+                <div class="col-sm"><button class="btn btn-success w-100">G0</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G1</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G2</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G3</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G4</button></div>
+                <div class="col-sm"><button class="btn btn-primary w-100">G5</button></div>
+                <div class="col-sm"><button class="btn btn-light w-100">G5 Completed</button></div>
+            {% elif initiative.actual_Lgate.GateIndex == 5 %}
+                <div class="col-sm"><button class="btn btn-success w-100">G0</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G1</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G2</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G3</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G4</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G5</button></div>
+                <div class="col-sm"><button class="btn btn-primary w-100">G5 Completed</button></div>
+            {% elif initiative.actual_Lgate.GateIndex == 6 %}
+                <div class="col-sm"><button class="btn btn-success w-100">G0</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G1</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G2</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G3</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G4</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G5</button></div>
+                <div class="col-sm"><button class="btn btn-success w-100">G5 Completed</button></div>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,505 @@
+{% load humanize %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load BankNumber_tags %}
+
+{% comment %} {% load multifor %} {% endcomment %}
+
+
+<!-- Modal -->
+
+<form id="add_benefitForm" action="{% url 'Fit4:add_benefits' initiative.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="impactModal" tabindex="-1" aria-labelledby="impactModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="impactModalLabel">Add New Benefits</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include 'partials/partial_add_benefits.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% comment %} <form action="{% url 'Fit4:edit_benefits' initiative.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="editImpactModal" tabindex="-1" aria-labelledby="editImpactModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="impactModalLabel">Update Benefits</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include 'partials/partial_edit_benefits.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form> {% endcomment %}
+
+
+
+<div id="initiative_Impacts" class="card" class="tab-content ms-2" style="height: 48vh; overflow-y: auto;">
+    <div class="card-body shadow" style="background-color:#DCDCDC">
+        <div class="row">
+            <div class="col-sm">
+                <b>Currency</b> 
+            </div>
+            <div class="col-sm">
+                <span id="locked-initiative" class="text-danger"></span>
+            </div>
+            <div class="col-sm">
+                <ul class="nav nav-tabs">
+                    <span class="flex-grow-1"></span>
+                    <b class="text-danger">*</b><b>Click Save button after making any updates on the benefits</b>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm">
+                <div class="col-sm-2">
+                    {% render_field initiativeForm.currency class="select form-select" %} {# TODO let selected currency show, not showing right now #}
+                </div>
+                <div class="invalid-feedback">{{ initiativeForm.currency.errors|first }}</div>
+            </div>
+            <div class="col-sm">
+                <ul class="nav nav-tabs">
+                    <span class="flex-grow-1"></span>
+                    <button type="button" class="btn btn-secondary border" data-bs-toggle="modal" data-bs-target="#impactModal">+Add New Benefits</button>
+                    {% comment %} < action="{% url 'Fit4:edit_benefits' initiative.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary border">Save</button>
+                    </> {% endcomment %}
+                    
+                </ul>
+            </div>
+        </div>
+        
+        {% comment %} {{ Zipformsets.management_form }} {% endcomment %}
+        {% comment %} {% for f, formset in formsets %} {% endcomment %}
+        {% for f, form in Zipformsets %}
+            <form id="benefitForm_{{f.id}}" action="{% url 'Fit4:edit_benefits' f.id %}" method="POST">
+                {% csrf_token %}
+                <div class="accordion accordion-flush mt-2" id="accordionPanels">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne{{f.id}}" aria-expanded="true" aria-controls="collapseOne">
+                                {% comment %} {% with WIDGET_ERROR_CLASS='is-invalid' %} {% endcomment %}
+                                    <div class="row col-sm-12">
+                                        <div class="col-sm-2">
+                                            <div class="col-sm-12">
+                                                <label class="form-label">Benefit Type</label>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                {% render_field form.benefittype class="select form-select required" onclick="event.stopPropagation();" %}
+                                            </div>
+                                            <div class="invalid-feedback">{{ form.benefittype.errors|first }}</div>
+                                        </div>
+
+                                        {% comment %} <div class="col-sm">
+                                            <div class="col-sm-12">
+                                                <label for="{{ initiativeForm.currency.id_for_label }}" class="form-label">Currency</label>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                {% render_field initiativeForm.currency class="select form-select" %}
+                                            </div>
+                                            <div class="invalid-feedback">{{ initiativeForm.currency.errors|first }}</div>
+                                        </div> {% endcomment %}
+
+                                        <div class="col-sm">
+                                            <div class="col-sm-12">
+                                                <label class="form-label">Frequency</label>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                {% render_field form.frequency class="select form-select required" onclick="event.stopPropagation();" %}
+                                            </div>
+                                            <div class="invalid-feedback">{{ form.frequency.errors|first }}</div>
+                                        </div>
+
+                                        <div class="col-sm-3">
+                                        </div>
+                                        
+                                        <div class="col-sm-3">
+                                            <div class="row">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <b>Plan</b>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <strong>{{f.sum_plan|currency}}</strong>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <b>Forecast</b>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <strong>{{f.sum_forecast|currency}}</strong>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <b>Actual</b>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <strong>{{f.sum_actual|currency}}</strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm">
+                                            <b class="fs-4">{{f.YYear}}</b><br>
+                                            {% comment %} {{f.id}},  {{initiative.id}} {% endcomment %}
+                                        </div>
+
+                                        <div class="col-sm">
+                                            <a href="{% url 'Fit4:delete_benefit' f.id %}"><i class="fa fa-trash fa-2x"></i></a>
+                                        </div>
+                                    </div>
+                                {% comment %} {% endwith %} {% endcomment %}
+                            </button>
+                        </h2>
+                        <div id="collapseOne{{f.id}}" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionPanels">
+                            <div class="accordion-body">
+                                <div id="actual_Lgate" value="{{ initiative.actual_Lgate.GateIndex }}"></div>
+                                    {% comment %} {{ form.management_form }} {% endcomment %}
+                                    <div class="row col-sm-12 mb-2">
+                                        <div class="col-sm">
+                                            <b>Planned</b>
+                                        </div>
+                                        <div class="col-sm-11">
+                                            <div class="row col-sm-12">
+                                                <div class="col-sm">
+                                                    Jan
+                                                </div>
+                                                <div class="col-sm">
+                                                    Feb
+                                                </div>
+                                                <div class="col-sm">
+                                                    Mar
+                                                </div>
+                                                <div class="col-sm">
+                                                    Apr
+                                                </div>
+                                                <div class="col-sm">
+                                                    May
+                                                </div>
+                                                <div class="col-sm">
+                                                    Jun
+                                                </div>
+                                                <div class="col-sm">
+                                                    Jul
+                                                </div>
+                                                <div class="col-sm">
+                                                    Aug
+                                                </div>
+                                                <div class="col-sm">
+                                                    Sep
+                                                </div>
+                                                <div class="col-sm">
+                                                    Oct
+                                                </div>
+                                                <div class="col-sm">
+                                                    Nov
+                                                </div>
+                                                <div class="col-sm">
+                                                    Dec
+                                                </div>
+                                            </div>
+                                            <div class="row col-sm-12">
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Jan_Plan class="form-control jan_plan" %} 
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Feb_Plan class="form-control feb_plan" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Mar_Plan class="form-control mar_plan" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Apr_Plan class="form-control apr_plan" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.May_Plan class="form-control may_plan" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Jun_Plan class="form-control jun_plan" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Jul_Plan class="form-control jul_plan" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Aug_Plan class="form-control aug_plan" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Sep_Plan class="form-control sep_plan" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Oct_Plan class="form-control oct_plan" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Nov_Plan class="form-control nov_plan" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Dec_Plan class="form-control dec_plan" %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row col-sm-12 mb-2">
+                                        <div class="col-sm">
+                                            <b>Forecast</b>
+                                        </div>
+                                        <div class="col-sm-11">
+                                            <div class="row col-sm-12">
+                                                <div class="col-sm">
+                                                    Jan
+                                                </div>
+                                                <div class="col-sm">
+                                                    Feb
+                                                </div>
+                                                <div class="col-sm">
+                                                    Mar
+                                                </div>
+                                                <div class="col-sm">
+                                                    Apr
+                                                </div>
+                                                <div class="col-sm">
+                                                    May
+                                                </div>
+                                                <div class="col-sm">
+                                                    Jun
+                                                </div>
+                                                <div class="col-sm">
+                                                    Jul
+                                                </div>
+                                                <div class="col-sm">
+                                                    Aug
+                                                </div>
+                                                <div class="col-sm">
+                                                    Sep
+                                                </div>
+                                                <div class="col-sm">
+                                                    Oct
+                                                </div>
+                                                <div class="col-sm">
+                                                    Nov
+                                                </div>
+                                                <div class="col-sm">
+                                                    Dec
+                                                </div>
+                                            </div>
+                                            <div class="row col-sm-12">
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Jan_Forecast class="form-control jan_forecast" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Feb_Forecast class="form-control feb_forecast" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Mar_Forecast class="form-control mar_forecast" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Apr_Forecast class="form-control apr_forecast" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.May_Forecast class="form-control may_forecast" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Jun_Forecast class="form-control jun_forecast" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Jul_Forecast class="form-control jul_forecast" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Aug_Forecast class="form-control aug_forecast" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Sep_Forecast class="form-control sep_forecast" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Oct_Forecast class="form-control oct_forecast" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Nov_Forecast class="form-control nov_forecast" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Dec_Forecast class="form-control dec_forecast" %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row col-sm-12">
+                                        <div class="col-sm">
+                                            <b>Actual</b>
+                                        </div>
+                                        <div class="col-sm-11">
+                                            <div class="row col-sm-12">
+                                                <div class="col-sm">
+                                                    Jan
+                                                </div>
+                                                <div class="col-sm">
+                                                    Feb
+                                                </div>
+                                                <div class="col-sm">
+                                                    Mar
+                                                </div>
+                                                <div class="col-sm">
+                                                    Apr
+                                                </div>
+                                                <div class="col-sm">
+                                                    May
+                                                </div>
+                                                <div class="col-sm">
+                                                    Jun
+                                                </div>
+                                                <div class="col-sm">
+                                                    Jul
+                                                </div>
+                                                <div class="col-sm">
+                                                    Aug
+                                                </div>
+                                                <div class="col-sm">
+                                                    Sep
+                                                </div>
+                                                <div class="col-sm">
+                                                    Oct
+                                                </div>
+                                                <div class="col-sm">
+                                                    Nov
+                                                </div>
+                                                <div class="col-sm">
+                                                    Dec
+                                                </div>
+                                            </div>
+                                            <div class="row col-sm-12">
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Jan_Actual class="form-control jan_actual" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Feb_Actual class="form-control feb_actual" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Mar_Actual class="form-control mar_actual" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Apr_Actual class="form-control apr_actual" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.May_Actual class="form-control may_actual" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Jun_Actual class="form-control jun_actual" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Jul_Actual class="form-control jul_actual" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Aug_Actual class="form-control aug_actual" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Sep_Actual class="form-control sep_actual" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Oct_Actual class="form-control oct_actual" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Nov_Actual class="form-control nov_actual" %}
+                                                </div>
+                                                <div class="col-sm g-0">
+                                                    {% render_field form.Dec_Actual class="form-control dec_actual" %} 
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row col-sm-12">
+                                        <div class="col-sm-10">
+                                            
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button type="submit" class="btn btn-primary pull-right">Save changes</button>
+                                        </div>
+                                    </div>
+                                
+                                {% comment %} <div class="row col-sm-12">
+                                    <div class="col-sm">
+                                        .
+                                    </div>
+                                    <div class="col-sm-11">
+                                    </div>
+                                </div>
+
+                                <div class="row col-sm-12">
+                                    <div class="col-sm">
+                                        
+                                    </div>
+                                    <div class="col-sm-11">
+                                        <div class="row col-sm-12">
+                                            <div class="col-sm-10">
+                                                
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <form action="{% url 'Fit4:edit_benefits' f.id %}" method="POST">
+                                                    {% csrf_token %}
+                                                    <div class="modal fade" id="update{{f.id}}Modal" tabindex="-1" aria-labelledby="editImpactModalLabel" role="dialog" aria-hidden="true">
+                                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="impactModalLabel">Update Benefits</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    {% include 'partials/partial_edit_impact.html' %}
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                                <ul class="nav">
+                                                    <span class="flex-grow-1"></span>
+                                                    <button type="button" class="btn btn-primary border pull-right" data-bs-toggle="modal" data-bs-target="#update{{f.id}}Modal">Update Benefit</button>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> {% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            {% if form.errors %}
+                <ul>
+                    {% for key,value in form.errors.items %} 
+                        <li>{{ key|escape }} : {{ value|escape }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+

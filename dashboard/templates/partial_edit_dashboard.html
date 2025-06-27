@@ -1,0 +1,26 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+
+<div class="col-sm-12">
+    <div class="col-sm-12 mb-2">
+        <label class="form-label"><b>Dashboard Name:</b></label>
+        {% render_field oDashboardForm.name class="form-control" placeholder="" %}
+        {% comment %} <div class="invalid-feedback">{{ form.name|first }}</div> {% endcomment %}
+    </div>
+
+    <div class="col-sm-12">
+        <label class="form-label"><b>Description:</b></label>
+        {{ oDashboardForm.description|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:3" }} 
+        {% comment %} <div class="invalid-feedback">{{ form.description|first }}</div> {% endcomment %}
+    </div>
+</div>
+
+
+{% comment %} {% if DashboardForm.errors %}
+    <ul>
+        {% for key,value in DashboardForm.errors.items %} 
+            <li>{{ key|escape }} : {{ value|escape }}</li>
+        {% endfor %}
+    </ul>
+{% endif %} {% endcomment %}

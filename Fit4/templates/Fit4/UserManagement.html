@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{initiative.initiative_name}} | Renaissance {% endblock %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block body %}
+
+{% comment %} <div class="position-relative col-sm-12">
+    <div class="position-absolute top-50 start-0">
+        <img src="/media/logo/user_big_img.png" alt="" loading="lazy" />
+    </div> {% endcomment %}
+
+    <div class="card-body"> </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row col-sm-12">
+                <div class="col-sm-2"><img src="/media/logo/user_big_img.png" alt="" loading="lazy" /></div>
+                <div class="col-sm-5 align-middle">
+                    <h3>{{initiative.author.first_name}} {{initiative.author.last_name}}</h3>
+                </div>
+                <div class="col-sm-5 align-middle text-end">
+                    <button type="button" class="btn btn-secondary border" data-bs-toggle="modal" data-bs-target="#initiativeModal">Edit</button>
+                    <a type="button" class="btn btn-secondary border" href="{% url 'account:user_detailed' initiative.author.pk %}">User Detail</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% comment %} </div> {% endcomment %}
+
+
+
+
+
+
+{% endblock %}
+
+
+{% block js %}
+{% endblock %}
+
+
+
+
+{% if initiative.errors %}
+    <ul>
+        {% for key,value in initiative.errors.items %} 
+            <li>{{ key|escape }} : {{ value|escape }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
