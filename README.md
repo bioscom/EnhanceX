@@ -1,4 +1,4 @@
-﻿# Renaissance
+﻿# EnhanceX
 
 This platform is designed to manage initiatives and projects across the entire organization, providing end-to-end visibility and governance. Initiatives are captured in a centralized funnel and guided through structured approval stages—known as Gate Reviews—from G0 (Identified) to G5 (Completed).
 
