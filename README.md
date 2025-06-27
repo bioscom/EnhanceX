@@ -1,5 +1,4 @@
 ﻿# Renaissance
-Improved Statement with Fit4 Comparison:
 
 This platform is designed to manage initiatives and projects across the entire organization, providing end-to-end visibility and governance. Initiatives are captured in a centralized funnel and guided through structured approval stages—known as Gate Reviews—from G0 (Identified) to G5 (Completed).
 
@@ -7,7 +6,7 @@ Each initiative begins with a project charter and is submitted by the designated
 
 Serving as a single source of truth, this system ensures alignment, accountability, and traceability throughout the project lifecycle. This approach similarly emphasizes standardized processes, digital governance, and enterprise-wide project portfolio management. However, it provides added value by offering a fully tailored solution that reflects the unique approval workflows, gate criteria, and reporting needs of the organization—without reliance on external templates or generic modules.
 
-##Key Benefits:
+# Key Benefits:
 
 Custom Gate Definitions: Fully aligned with internal governance processes (G0–G5).
 
