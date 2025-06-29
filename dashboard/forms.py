@@ -32,25 +32,25 @@ class ManagementReportForm(forms.ModelForm):
         
 
 class opexRecognitionForm(forms.ModelForm):
-    recognition = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
+    recognition = forms.CharField(widget=CKEditorUploadingWidget())
     class Meta:
         model = opex_weekly_recognition
         fields = ['recognition', ]
         
 class deliveryRecognitionForm(forms.ModelForm):
-    recognition = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
+    recognition = forms.CharField(widget=CKEditorUploadingWidget())
     class Meta:
         model = delivery_weekly_recognition
         fields = ['recognition', ]
         
 class capexRecognitionForm(forms.ModelForm):
-    recognition = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
+    recognition = forms.CharField(widget=CKEditorUploadingWidget())
     class Meta:
         model = capex_weekly_Recognition
         fields = ['recognition', ]
         
 class commercialRecognitionForm(forms.ModelForm):
-    recognition = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
+    recognition = forms.CharField(widget=CKEditorUploadingWidget())
     class Meta:
         model = commercial_weekly_Recognition
         fields = ['recognition', ]

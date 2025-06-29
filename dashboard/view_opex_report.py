@@ -402,9 +402,10 @@ def opex_monthly_banking_plan(selected_year):
 
 def add_opex_recognition(request, id=None):
     try:
-        if id:
-            edit_opex_recognition(request, id)
-            return redirect(reverse("dashboard:opex_report"))
+        # Check if Recognition already exists for the current week
+        opexRecognition = opex_weekly_recognition.objects.filter(report_week=get_report_week(), Created_Date__year=datetime.now().today().year).first()
+        if opexRecognition:
+            return edit_opex_recognition(request, opexRecognition.id)
         
         if request.method == "POST":
             form = opexRecognitionForm(request.POST)
@@ -431,7 +432,7 @@ def edit_opex_recognition(request, id):
                 o = form.save(commit=False)
                 o.last_modified_by = request.user
                 o.save()
-                messages.success(request, '<b>Recognition added successfully.</b>')
+                messages.success(request, '<b>Recognition updated successfully.</b>')
                 return redirect(reverse("dashboard:opex_report"))
         else:
             form = opexRecognitionForm(instance=recogntion)

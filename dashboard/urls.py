@@ -21,8 +21,11 @@ urlpatterns = [
     
     path(_("sync-data/"), views.trigger_opex_data_copy, name="trigger_opex_data_copy"),
     path(_("add_opex_recognition"), views.add_opex_recognition, name="add_opex_recognition"),
+    path(_("edit_opex_recognition"), views.edit_opex_recognition, name="edit_opex_recognition"),
     
     path(_("sync-delivery-data/"), views.trigger_delivery_data_copy, name="trigger_delivery_data_copy"),
-    path(_("add_delivery_recognition"), views.add_opex_recognition, name="add_delivery_recognition"),
+    path(_("add_delivery_recognition"), views.add_delivery_recognition, name="add_delivery_recognition"),
+    path(_("edit_delivery_recognition"), views.edit_delivery_recognition, name="edit_delivery_recognition"),
+    #
     
 ]

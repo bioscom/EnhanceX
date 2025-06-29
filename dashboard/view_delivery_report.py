@@ -483,9 +483,10 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
 
 def add_delivery_recognition(request, id=None):
     try:
-        if id:
-            edit_delivery_recognition(request, id)
-            return redirect(reverse("dashboard:delivery_report"))
+        # Check if Recognition already exists for the current week
+        deliveryRecognition = delivery_weekly_recognition.objects.filter(report_week=get_report_week(), Created_Date__year=datetime.now().today().year).first()
+        if deliveryRecognition:
+            return edit_delivery_recognition(request, deliveryRecognition.id)
         
         if request.method == "POST":
             form = deliveryRecognitionForm(request.POST)
@@ -501,7 +502,7 @@ def add_delivery_recognition(request, id=None):
             form = deliveryRecognitionForm()
     except Exception as e:
         print(traceback.format_exc())
-    return render(request, "partials/partial_opex_recognition.html", {'opex': form})
+    return render(request, "partials/partial_add_delivery_recognition.html", {'opex': form})
 
 def edit_delivery_recognition(request, id):
     try:
@@ -512,13 +513,13 @@ def edit_delivery_recognition(request, id):
                 o = form.save(commit=False)
                 o.last_modified_by = request.user
                 o.save()
-                messages.success(request, '<b>Recognition added successfully.</b>')
+                messages.success(request, '<b>Recognition updated successfully.</b>')
                 return redirect(reverse("dashboard:delivery_report"))
         else:
             form = deliveryRecognitionForm(instance=recogntion)
     except Exception as e:
         print(traceback.format_exc())
-    return render(request, "partials/partial_opex_recognition.html", {'opex': form})
+    return render(request, "partials/partial_edit_delivery_recognition.html", {'opex': form})
 
 
 

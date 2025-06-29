@@ -67,6 +67,7 @@
 
     <form action="{% url 'dashboard:add_opex_recognition' %}" method="POST">
         {% csrf_token %}
+        {{ form.media }}
         <div class="modal fade" id="opexRecognitionModal" tabindex="-1" aria-labelledby="impactModalLabel" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
