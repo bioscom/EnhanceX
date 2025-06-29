@@ -332,7 +332,7 @@ MESSAGE_TAGS = {
 }
 
 # Session Time Out
-SESSION_COOKIE_AGE = 3600 # 60 minutes in seconds
+SESSION_COOKIE_AGE = 7200 # 120 minutes in seconds
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'

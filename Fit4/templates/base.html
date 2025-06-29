@@ -186,8 +186,6 @@
       }
     </style>  
 
-    
-
     <!--  JAVA Scripts  -->
 
     <!-- Please,place these 2 cripts together this way, so that htmx will work fine in the application -->
@@ -227,7 +225,6 @@
 
     <!-- Source: https://datatables.net/manual/installation  Kindly keep this for future reference-->
     
-    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> {% endcomment %}
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/select/3.0.0/js/dataTables.select.js"></script>
     <script src="https://cdn.datatables.net/select/3.0.0/js/select.dataTables.js"></script>
@@ -250,7 +247,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     
 
-    
+  <!--region: Initiative Management Scripts--> 
     <script>
       lottie.loadAnimation({
         container: document.getElementById('lottie-banner'),
@@ -283,6 +280,16 @@
     </script>
 
     <!-- HTMX and TOAST scrips -->
+    <!-- Toast -->
+    {% comment %} <script>
+      document.getElementById("toastbtn").onclick = function() {
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        var toastList = toastElList.map(function(toastEl) {
+          return new bootstrap.Toast(toastEl)
+        })
+        toastList.forEach(toast => toast.show())
+      }
+    </script> {% endcomment %}
     <script>
       ;(function(){
         const modal = new bootstrap.Modal(document.getElementById('modal'))
@@ -333,17 +340,6 @@
           document.getElementById("myDiv").style.display = "block";
         }
     </script>
-
-    <!-- Toast -->
-    {% comment %} <script>
-      document.getElementById("toastbtn").onclick = function() {
-        var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-        var toastList = toastElList.map(function(toastEl) {
-          return new bootstrap.Toast(toastEl)
-        })
-        toastList.forEach(toast => toast.show())
-      }
-    </script> {% endcomment %}
 
     <!-- Works with all tables in the app to make them exportable to excel and searchable e.g. Reports/template/report.html -->
     <script>
@@ -860,8 +856,8 @@
       (function () {
         let inactivityTimer;
         let warningTimer;
-        const warningTime = 25 * 60 * 1000; // 25 minutes
-        const logoutTime = 30 * 60 * 1000; // 30 minutes
+        const warningTime = 115 * 60 * 1000; // 115 minutes
+        const logoutTime = 120 * 60 * 1000; // 120 minutes
     
         function resetTimers() {
             clearTimeout(warningTimer);
@@ -944,6 +940,8 @@
           });
       });
     </script>
+  <!--endregion-->
+
 
   <!-- region: MTO Scripts -->
     <!-- MTO Impact Calculator Script -->
@@ -1100,624 +1098,1063 @@
         });
       });
     </script>
-  <!--endregion-->
+  <!--endregion MTO Scripts-->
 
 
-  <!-- region: Management Dashboard Charts -->
-    <!-- Opex Funnel Chart -->
-    <script>
-      const actual = {{ actual|floatformat:1 }};
-      const plan = {{ plan|floatformat:1 }};
+<!-- region: Management Dashboard Charts -->
 
-      const ctxp = document.getElementById('funnelChart').getContext('2d');
-      Chart.register(ChartDataLabels);  // ✅ Register the plugin
+  <!-- Script to ensure a report is selected before trigger_data_copy in dashboard.views.py function is called -->
+  <script>
+      document.getElementById('checkboxForm').addEventListener('submit', function(event) {
+        // Get all checkboxes
+        const checkboxes = document.querySelectorAll('input[name="selected_id"]:checked');
+        
+        if (checkboxes.length === 0) {
+          event.preventDefault();  // Stop form submission
 
-      // ✅ Custom plugin to draw total at the end of the bar
-      {% comment %} const drawTotalPlugin = {
-        id: 'drawTotalPlugin',
-        afterDatasetsDraw(chart, args, options) {
-          const { ctx, chartArea: { top, bottom }, scales } = chart;
-          const meta0 = chart.getDatasetMeta(0);
-          const lastBar = meta0.data[0];
-          if (!lastBar) return;
-
-          const barX = lastBar.x;
-          const barY = lastBar.y;
-          const barHeight = lastBar.height;
-
-          // Get total width of both bars
-          const totalWidth = chart.data.datasets.reduce((sum, ds, i) => {
-            return sum + (chart.getDatasetMeta(i).data[0]?.width || 0);
-          }, 0);
-
-          const xValue = actual + plan;
-          const xPos = scales.x.getPixelForValue(xValue);
-          const yPos = barY;
-
-          ctx.save();
-          ctx.font = 'bold 14px sans-serif';
-          ctx.fillStyle = 'black';
-          ctx.textAlign = 'left';
-          ctx.fillText(`Total: $${total.toFixed(1)}M`, xPos + 10, yPos + 6);
-          ctx.restore();
+          // Show SweetAlert2 instead of alert()
+          Swal.fire({
+            icon: 'warning',
+            title: 'No Selection',
+            text: 'Please select the report you want to Sync before submitting.',
+            confirmButtonText: 'OK',
+            draggable: true
+          });
         }
-      }; {% endcomment %}
-
-      new Chart(ctxp, {
-          type: 'bar',
-          data: {
-              labels: ['Funnel'],
-              datasets: [
-                  {
-                      label: 'Actual',
-                      data: [actual],
-                      backgroundColor: 'green',
-                      stack: 'Stack 0'
-                  },
-                  {
-                      label: 'Plan',
-                      data: [plan],
-                      backgroundColor: 'gold',
-                      stack: 'Stack 0'
-                  }
-              ]
-          },
-          options: {
-              indexAxis: 'y',
-              responsive: true,
-              plugins: {
-                  legend: {
-                    labels: {
-                        usePointStyle: true, // ⬅️ This makes legend use dots
-                        pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
-                        padding: 20
-                      },
-                      position: 'bottom',
-                      labels: {
-                          usePointStyle: true
-                      }
-                  },
-                  tooltip: {
-                      callbacks: {
-                          label: function(context) {
-                              return `$${context.dataset.label}: ${context.raw}M`;
-                          }
-                      }
-                  },
-                  datalabels: {
-                      anchor: 'center',
-                      align: 'center',
-                      color: 'black',
-                      font: { weight: 'bold' },
-                      formatter: value => `$${value}M`
-                  }
-              },
-              scales: {
-                  x: {
-                      stacked: true,
-                      display: false
-                  },
-                  y: {
-                      stacked: true
-                  }
-              }
-          },
-          plugins: [ChartDataLabels]
-          //plugins: [ChartDataLabels, drawTotalPlugin]  // ✅ Register custom plugin
       });
-    </script>
+  </script>
 
-    <!-- Banked YTD by Function -->
-    <script>
-      //document.addEventListener('DOMContentLoaded', function () {
-        //const labelsElement = document.getElementById('chart-labels');
-        //const dataElement = document.getElementById('chart-data');
+    <!--region: Opex Chart-->
 
-        //const labels = JSON.parse(labelsElement.textContent);
-        //const data = JSON.parse(dataElement.textContent);
+      <!-- Opex Funnel Chart -->
+      <script>
+        const actual = {{ actual|floatformat:1 }};
+        const plan = {{ plan|floatformat:1 }};
 
-          const ctxo = document.getElementById('bankedYTDChart').getContext('2d');
-          const charto = new Chart(ctxo, {
-              type: 'pie',
-              data: {
-                  labels: {{ labels|safe }},
-                  datasets: [{
-                      label: 'Banked YTD by Function (Million)',
-                      data: {{ data|safe }},
-                      backgroundColor: ['#f94144', '#f3722c', '#f8961e', '#90be6d', '#43aa8b', '#577590'],
-                      borderWidth: 1
-                  }]
-              },
-              options: {
-              responsive: true,
-              plugins: {
-                      legend: {
-                        labels: {
+        const ctxp = document.getElementById('funnelChart').getContext('2d');
+        Chart.register(ChartDataLabels);  // ✅ Register the plugin
+
+        // ✅ Custom plugin to draw total at the end of the bar
+        {% comment %} const drawTotalPlugin = {
+          id: 'drawTotalPlugin',
+          afterDatasetsDraw(chart, args, options) {
+            const { ctx, chartArea: { top, bottom }, scales } = chart;
+            const meta0 = chart.getDatasetMeta(0);
+            const lastBar = meta0.data[0];
+            if (!lastBar) return;
+
+            const barX = lastBar.x;
+            const barY = lastBar.y;
+            const barHeight = lastBar.height;
+
+            // Get total width of both bars
+            const totalWidth = chart.data.datasets.reduce((sum, ds, i) => {
+              return sum + (chart.getDatasetMeta(i).data[0]?.width || 0);
+            }, 0);
+
+            const xValue = actual + plan;
+            const xPos = scales.x.getPixelForValue(xValue);
+            const yPos = barY;
+
+            ctx.save();
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillStyle = 'black';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Total: $${total.toFixed(1)}M`, xPos + 10, yPos + 6);
+            ctx.restore();
+          }
+        }; {% endcomment %}
+
+        new Chart(ctxp, {
+            type: 'bar',
+            data: {
+                labels: ['Funnel'],
+                datasets: [
+                    {
+                        label: 'Actual',
+                        data: [actual],
+                        backgroundColor: 'green',
+                        stack: 'Stack 0'
+                    },
+                    {
+                        label: 'Plan',
+                        data: [plan],
+                        backgroundColor: 'gold',
+                        stack: 'Stack 0'
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    legend: {
+                      labels: {
                           usePointStyle: true, // ⬅️ This makes legend use dots
                           pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
                           padding: 20
                         },
-                        position: 'right'
-                      },
-                      tooltip: {
-                        callbacks: {
-                          label: function(context) {
-                          return `${context.label}: ${context.raw}M`;
-                          }
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true
                         }
-                      }
-                  }
-              }
-          });
-      //});
-      //console.log("Labels:", {{ labels|safe }});
-      //console.log("Data:", {{ data|safe }});
-    </script>
-
-    <!-- Funnel Value by Functions/Assets Chart-->
-    <script>
-      const ctxx = document.getElementById('funnelValueChart').getContext('2d');
-
-      Chart.register(ChartDataLabels);  // ✅ Register the plugin
-
-      const chartx = new Chart(ctxx, {
-        type: 'bar',
-        data: {
-          labels: {{ functions_labels|safe }},
-          datasets: {{ functions_datasets|safe }}  // Must contain values in millions already
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              labels: {
-                usePointStyle: true, // ⬅️ This makes legend use dots
-                pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
-                padding: 20
-              },
-              position: 'bottom'
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `${context.dataset.label}: $${context.raw.toFixed(1)}M`;
-                }
-              }
-            },
-            datalabels: {
-              anchor: 'end',
-              align: 'end',
-              color: '#000',
-              //font: {
-              //  weight: 'bold'
-              //},
-              formatter: function(value) {
-                  return '$' + (value) + 'M';
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Value to L3+ ($M)'
-              },
-              ticks: {
-                callback: function(value) {
-                  return `$${value}M`;
-                }
-              }
-            }
-          }
-        },
-        plugins: [ChartDataLabels]  // ✅ Activate the plugin
-      });
-    </script>
-
-    {% comment %} <script>
-      const ctxx = document.getElementById('funnelValueChart').getContext('2d');
-
-      Chart.register(ChartDataLabels);  // ✅ Register the plugin
-
-      const chartx = new Chart(ctxx, {
-        type: 'bar',
-        data: {
-          labels: {{ functions_labels|safe}}, // Pass Python list directly
-          datasets:  {{ functions_datasets|safe}}  // Pass full dataset list directly
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'bottom'
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `${context.dataset.label}: $${context.raw.toFixed(1)}M`;
-                }
-              }
-            },
-            datalabels: {
-              anchor: 'end',
-              align: 'end',
-              color: '#000',
-              font: {
-                weight: 'bold'
-              },
-              formatter: function(value) {
-                  return '$' + (value / 1_000_000).toFixed(0) + 'M';
-              }
-              //formatter: function(value) {
-              //  return `$${value.toFixed(1)}M`;
-              //}
-            },
-          }
-        },
-        plugins: [ChartDataLabels]  // ✅ Activate the plugin
-      });
-    </script> {% endcomment %}
-
-    <!--Initiative Movement to L3+-->
-    <script>
-      const ctxq = document.getElementById('l3InitiativeMovementChart').getContext('2d');
-
-      Chart.register(ChartDataLabels);
-
-      new Chart(ctxq, {
-          type: 'bar',
-          data: {
-              labels: {{movement_labels|safe}},
-              datasets: [
-                  {
-                      label: 'Value to L3+',
-                      data: {{ value_to_l3|safe }},
-                      backgroundColor: 'green',
-                      yAxisID: 'y',
-                      datalabels: {
-                          anchor: 'end',
-                          align: 'end',
-                          color: '#000',
-                          formatter: function(value) {
-                              return '$' + (value / 1_000_000).toFixed(1) + 'M';
-                          }
-                      }
-                  },
-                  {
-                      label: 'Count to L3+',
-                      data: {{ count_to_l3|safe }},
-                      type: 'line',
-                      borderColor: 'orange',
-                      backgroundColor: 'orange',
-                      yAxisID: 'y1',
-                      tension: 0.4,
-                      fill: false,
-                      pointBackgroundColor: 'red'
-                  }
-              ]
-          },
-          options: {
-              responsive: true,
-              plugins: {
-                  legend: {
-                    labels: {
-                        usePointStyle: true, // ⬅️ This makes legend use dots
-                        pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
-                        padding: 20
-                      },
-                      position: 'bottom'
-                  },
-                  tooltip: {
-                      callbacks: {
-                          label: function(context) {
-                              if (context.dataset.label === 'Value to L3+') {
-                                  return context.dataset.label + ': $' + (context.raw / 1_000_000).toFixed(2) + 'M';
-                              }
-                              return context.dataset.label + ': ' + context.raw;
-                          }
-                      }
-                  },
-                  datalabels: {
-                      display: true
-                  }
-              },
-              scales: {
-                  y: {
-                      beginAtZero: true,
-                      title: {
-                          display: true,
-                          text: 'Value to L3+ ($M)'
-                      },
-                      ticks: {
-                          callback: function(value) {
-                              return '$' + (value / 1_000_000).toFixed(0) + 'M';
-                          }
-                      }
-                  },
-                  y1: {
-                      beginAtZero: true,
-                      position: 'right',
-                      title: {
-                          display: true,
-                          text: 'Count to L3+'
-                      },
-                      grid: {
-                          drawOnChartArea: false
-                      }
-                  }
-              }
-          },
-          plugins: [ChartDataLabels]
-      });
-
-    </script>
-
-    <!-- Total & New Initiative Count -->
-    <script>
-      const ctxt = document.getElementById('initiativeCountChart').getContext('2d');
-      Chart.register(ChartDataLabels);
-      new Chart(ctxt, {
-          type: 'bar',
-          data: {
-              labels: {{ initiative_count_labels|safe }},
-              datasets: [
-                  {
-                      label: 'Total Initiatives',
-                      data: {{ initiative_count_counts|safe }},
-                      backgroundColor: '#4aa6ff', // light blue
-                      borderWidth: 1
-                  },
-                  {
-                      label: 'New Initiatives',
-                      data: {{ initiative_count_diffs|safe }},
-                      backgroundColor: '#00008b', // dark blue
-                      borderWidth: 1
-                  }
-              ]
-          },
-          options: {
-              responsive: true,
-              plugins: {
-                  //title: {
-                  //    display: true,
-                  //    text: 'Total & New Initiative Count per Function/Asset'
-                  //},
-                  legend: {
-                    labels: {
-                        usePointStyle: true, // ⬅️ This makes legend use dots
-                        pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
-                        padding: 20
-                      },
-                      position: 'bottom'
-                  },
-                  tooltip: {
-                      mode: 'index',
-                      intersect: false
-                  },
-                  datalabels: {
-                    anchor: 'end',
-                    align: 'end',
-                    color: '#000',
-                    font: {
-                      weight: 'bold'
                     },
-                  }
-              },
-              scales: {
-                  y: {
-                      beginAtZero: true,
-                      title: {
-                          display: true,
-                          text: 'Total Initiatives and New Initiatives'
-                      },
-                      ticks: {
-                          precision: 0
-                      }
-                  },
-                  x: {
-                      ticks: {
-                          autoSkip: false,
-                          maxRotation: 45,
-                          minRotation: 0
-                      }
-                  }
-              }
-          },
-          plugins: [ChartDataLabels]
-      });
-    </script>
-
-    <!-- Chart at the bottom of the Dashboard -->
-    <script>
-      const ctxy = document.getElementById('lgateChart').getContext('2d');
-      Chart.register(ChartDataLabels);
-
-      // Example data (Planned Value per L-Gate)
-      const lgateLabels = {{lgateLabels|safe}}; //['G0 Idea', 'G1 Identify', 'G2 Validate', 'G3 Plan', 'G4 Implement', 'G5 Track'];
-      const lgateValues = {{lgateValues|safe}};
-      const lgateColors = ['#57016E', '#EAC84C', '#DA5655', '#011C94', '#9EFF6E', '#038C3E'];
-
-      const lgateChartx = new Chart(ctxy, {
-        type: 'bar',
-        data: {
-          labels: ['Actual L-Gate'],
-          datasets: lgateValues.map((val, i) => ({
-            label: `${lgateLabels[i]}`,
-            data: [val],
-            backgroundColor: lgateColors[i],
-          }))
-        },
-        options: {
-          indexAxis: 'y', // Horizontal bar
-          responsive: true,
-          plugins: {
-            legend: {
-              labels: {
-                usePointStyle: true, // ⬅️ This makes legend use dots
-                pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
-                padding: 20
-              },
-              position: 'bottom'
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `$${context.dataset.label}: ${context.raw}M`;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        anchor: 'center',
+                        align: 'center',
+                        color: 'black',
+                        font: { weight: 'bold' },
+                        formatter: value => `$${value}M`
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        display: false
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
             },
-            tooltip: {
-              callbacks: {
-                label: context => `$${context.raw}M (${context.dataset.label})`
-              }
-            },
-            datalabels: {
-              display: true,
-              color: '#fff',
-              anchor: 'center',
-              align: 'center',
-              formatter: value => `$${value}M`,
-              font: {
-                weight: 'bold'
-              }
-            }
-          },
-          scales: {
-            x: {
-              stacked: true,
-              title: {
-                display: true,
-                text: 'Planned Value ($M)'
-              }
-            },
-            y: {
-              stacked: true
-            }
-          }
-        },
-        plugins: [ChartDataLabels] // enable datalabels plugin
-      });
-    </script>
+            plugins: [ChartDataLabels]
+            //plugins: [ChartDataLabels, drawTotalPlugin]  // ✅ Register custom plugin
+        });
+      </script>
 
-    <!-- Opex Monthly Banking Plan-->
-    <script>
-      const ctxmbp = document.getElementById('monthlyChart').getContext('2d');
-      //Chart.register(ChartDataLabels);
-      const chartmbp = new Chart(ctxmbp, {
-          type: 'bar',
-          data: {
-              labels: {{ opex_labels|safe }},
-              datasets: [
-                  {
-                      label: 'Planned Value',
-                      backgroundColor: '#FFD700',
-                      data: {{ opex_plan_data|safe }},
-                  },
-                  {
-                      label: 'Forecast Value',
-                      backgroundColor: '#800080',
-                      data: {{ opex_forecast_data|safe }},
-                  },
-                  {
-                      label: 'Actual Value',
-                      backgroundColor: '#228B22',
-                      data: {{ opex_actual_data|safe }},
-                  }
-              ]
-          },
-          options: {
-              responsive: true,
-              plugins: {
+      <!-- Banked YTD by Function -->
+      <script>
+            const ctxo = document.getElementById('bankedYTDChart').getContext('2d');
+
+            //Chart.register(ChartDataLabels);  // ✅ Register the plugin
+            const charto = new Chart(ctxo, {
+                type: 'pie',
+                data: {
+                    labels: {{ labels|safe }},
+                    datasets: [{
+                        label: 'Banked YTD by Function (Million)',
+                        data: {{ data|safe }},
+                        backgroundColor: ['#57016E', '#EAC84C', '#DA5655', '#011C94', '#9EFF6E', '#038C3E'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                responsive: true,
+                plugins: {
                   legend: {
+                    position: 'bottom', // ✅ This goes here, not under labels
                     labels: {
-                        usePointStyle: true, // ⬅️ This makes legend use dots
-                        pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
-                        padding: 20
-                      },
-                      position: 'bottom'
+                      usePointStyle: true,
+                      pointStyle: 'circle',
+                      font: {
+                        size: 10
+                      }
+                    }
                   },
                   tooltip: {
-                      callbacks: {
-                          label: function(context) {
-                              let value = context.parsed.y || 0;
-                              return '$' + (value / 1_000_000).toFixed(1) + 'M';
-                          }
+                    callbacks: {
+                      label: function(context) {
+                        return `${context.label}: ${context.raw}M`;
                       }
+                    }
                   },
                   datalabels: {
-                    display: true,
                     color: '#000',
+                    font: {
+                      size: 10
+                    },
+                    //formatter: function(value, context) {
+                    //  if (typeof value === 'number' && value > 0) {
+                    //    return value.toFixed(1);
+                    //  }
+                    //  return '';
+                    //},
                     anchor: 'end',
                     align: 'end',
-                    formatter: value => `$${(value / 1_000_000).toFixed(1)}M`,
-                    font: {
-                      weight: 'bold'
-                    }
+                    offset: 10
                   }
+                }
               },
-              scales: {
-                  y: {
-                      beginAtZero: true,
-                      ticks: {
-                          callback: function(value) {
-                              return '$' + (value / 1_000_000).toFixed(1) + 'M';
-                          }
-                      }
-                  }
-              }
-          }
-          //plugins: [ChartDataLabels]
-      });
-    </script>
-
-  <!-- endregion -->
-
-
-    <!-- Load CKEditor5 into Modal templates -->
-    <!-- Javascript for MTO Dashboards -->
-    {% comment %} <script>
-      document.getElementById('dashboardForm').addEventListener('submit', function(event) {
-          event.preventDefault(); // prevent normal form submission
-
-          const form = event.target;
-          const formData = new FormData(form);
-          
-          fetch(`{% url 'dashboard:dashboards_mto' %}`, {
-              method: 'POST',
-              headers: {
-                  'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
-                  'X-Requested-With': 'XMLHttpRequest'
-              },
-              body: formData
-          })
-          .then(response => response.text())
-          .then(html => {
-              // Replace content or inject into DOM
-              document.getElementById('dashboardResults').innerHTML = html;
-          })
-          .catch(error => {
-              console.error('Error:', error);
-              alert('Something went wrong.');
-          });
-      });
-    </script> {% endcomment %}
-
-    <!-- Script to ensure a report is selected before trigger_data_copy in dashboard.views.py function is called -->
-    <script>
-        document.getElementById('checkboxForm').addEventListener('submit', function(event) {
-          // Get all checkboxes
-          const checkboxes = document.querySelectorAll('input[name="selected_id"]:checked');
-          
-          if (checkboxes.length === 0) {
-            event.preventDefault();  // Stop form submission
-
-            // Show SweetAlert2 instead of alert()
-            Swal.fire({
-              icon: 'warning',
-              title: 'No Selection',
-              text: 'Please select the report you want to Sync before submitting.',
-              confirmButtonText: 'OK',
-              draggable: true
+              //plugins: [ChartDataLabels] // ✅ Activate the plugin
             });
-            //alert("Please select at least one item before submitting.");
+        //});
+        //console.log("Labels:", {{ labels|safe }});
+        //console.log("Data:", {{ data|safe }});
+      </script>
+
+      <!-- Funnel Value by Functions/Assets Chart-->
+      <script>
+        const ctxx = document.getElementById('funnelValueChart').getContext('2d');
+
+        Chart.register(ChartDataLabels);  // ✅ Register the plugin
+
+        const chartx = new Chart(ctxx, {
+          type: 'bar',
+          data: {
+            labels: {{ functions_labels|safe }},
+            datasets: {{ functions_datasets|safe }}  // Must contain values in millions already
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                labels: {
+                  usePointStyle: true, // ⬅️ This makes legend use dots
+                  pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                  padding: 20
+                },
+                position: 'bottom'
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `${context.dataset.label}: $${context.raw.toFixed(1)}M`;
+                  }
+                }
+              },
+              datalabels: {
+                anchor: 'end',
+                align: 'end',
+                color: '#000',
+                //font: {
+                //  weight: 'bold'
+                //},
+                formatter: function(value) {
+                    return '$' + (value) + 'M';
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Value to L3+ ($M)'
+                },
+                ticks: {
+                  callback: function(value) {
+                    return `$${value}M`;
+                  }
+                }
+              }
+            }
+          },
+          plugins: [ChartDataLabels]  // ✅ Activate the plugin
+        });
+      </script>
+
+      <!--Initiative Movement to L3+-->
+      <script>
+        const ctxq = document.getElementById('l3InitiativeMovementChart').getContext('2d');
+
+        Chart.register(ChartDataLabels);
+
+        new Chart(ctxq, {
+            type: 'bar',
+            data: {
+                labels: {{movement_labels|safe}},
+                datasets: [
+                    {
+                        label: 'Value to L3+',
+                        data: {{ value_to_l3|safe }},
+                        backgroundColor: 'green',
+                        yAxisID: 'y',
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            color: '#000',
+                            formatter: function(value) {
+                                return '$' + (value / 1_000_000).toFixed(1) + 'M';
+                            }
+                        }
+                    },
+                    {
+                        label: 'Count to L3+',
+                        data: {{ count_to_l3|safe }},
+                        type: 'line',
+                        borderColor: 'orange',
+                        backgroundColor: 'orange',
+                        yAxisID: 'y1',
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: 'red'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                      labels: {
+                          usePointStyle: true, // ⬅️ This makes legend use dots
+                          pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                          padding: 20
+                        },
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                if (context.dataset.label === 'Value to L3+') {
+                                    return context.dataset.label + ': $' + (context.raw / 1_000_000).toFixed(2) + 'M';
+                                }
+                                return context.dataset.label + ': ' + context.raw;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Value to L3+ ($M)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value / 1_000_000).toFixed(0) + 'M';
+                            }
+                        }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Count to L3+'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+      </script>
+
+      <!-- Total & New Initiative Count per Function/Asset -->
+      <script>
+        const ctxt = document.getElementById('initiativeCountChart').getContext('2d');
+        Chart.register(ChartDataLabels);
+        new Chart(ctxt, {
+            type: 'bar',
+            data: {
+                labels: {{ initiative_count_labels|safe }},
+                datasets: [
+                    {
+                        label: 'Total Initiatives',
+                        data: {{ initiative_count_counts|safe }},
+                        backgroundColor: '#4aa6ff', // light blue
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'New Initiatives',
+                        data: {{ initiative_count_diffs|safe }},
+                        backgroundColor: '#00008b', // dark blue
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    //title: {
+                    //    display: true,
+                    //    text: 'Total & New Initiative Count per Function/Asset'
+                    //},
+                    legend: {
+                      labels: {
+                          usePointStyle: true, // ⬅️ This makes legend use dots
+                          pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                          padding: 20
+                        },
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    datalabels: {
+                      anchor: 'end',
+                      align: 'end',
+                      color: '#000',
+                      font: {
+                        weight: 'bold'
+                      },
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total Initiatives and New Initiatives'
+                        },
+                        ticks: {
+                            precision: 0
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 45,
+                            minRotation: 0
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+      </script>
+
+      <!-- Chart at the bottom of the Dashboard -->
+      <script>
+        const ctxy = document.getElementById('lgateChart').getContext('2d');
+        Chart.register(ChartDataLabels);
+
+        // Example data (Planned Value per L-Gate)
+        const lgateLabels = {{lgateLabels|safe}}; //['G0 Idea', 'G1 Identify', 'G2 Validate', 'G3 Plan', 'G4 Implement', 'G5 Track'];
+        const lgateValues = {{lgateValues|safe}};
+        const lgateColors = ['#57016E', '#EAC84C', '#DA5655', '#011C94', '#9EFF6E', '#038C3E'];
+
+        const lgateChartx = new Chart(ctxy, {
+          type: 'bar',
+          data: {
+            labels: ['Actual L-Gate'],
+            datasets: lgateValues.map((val, i) => ({
+              label: `${lgateLabels[i]}`,
+              data: [val],
+              backgroundColor: lgateColors[i],
+            }))
+          },
+          options: {
+            indexAxis: 'y', // Horizontal bar
+            responsive: true,
+            plugins: {
+              legend: {
+                labels: {
+                  usePointStyle: true, // ⬅️ This makes legend use dots
+                  pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                  padding: 20
+                },
+                position: 'bottom'
+              },
+              tooltip: {
+                callbacks: {
+                  label: context => `$${context.raw}M (${context.dataset.label})`
+                }
+              },
+              datalabels: {
+                display: true,
+                color: '#fff',
+                anchor: 'center',
+                align: 'center',
+                formatter: value => `$${value}M`,
+                font: {
+                  weight: 'bold'
+                }
+              }
+            },
+            scales: {
+              x: {
+                stacked: true,
+                title: {
+                  display: true,
+                  text: 'Planned Value ($M)'
+                }
+              },
+              y: {
+                stacked: true
+              }
+            }
+          },
+          plugins: [ChartDataLabels] // enable datalabels plugin
+        });
+      </script>
+
+      <!-- Opex Monthly Banking Plan-->
+      <script>
+        const ctxmbp = document.getElementById('monthlyChart').getContext('2d');
+        //Chart.register(ChartDataLabels);
+        const chartmbp = new Chart(ctxmbp, {
+            type: 'bar',
+            data: {
+                labels: {{ opex_labels|safe }},
+                datasets: [
+                    {
+                        label: 'Planned Value',
+                        backgroundColor: '#FFD700',
+                        data: {{ opex_plan_data|safe }},
+                    },
+                    {
+                        label: 'Forecast Value',
+                        backgroundColor: '#800080',
+                        data: {{ opex_forecast_data|safe }},
+                    },
+                    {
+                        label: 'Actual Value',
+                        backgroundColor: '#228B22',
+                        data: {{ opex_actual_data|safe }},
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                      labels: {
+                          usePointStyle: true, // ⬅️ This makes legend use dots
+                          pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                          padding: 20
+                        },
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let value = context.parsed.y || 0;
+                                return '$' + (value / 1_000_000).toFixed(1) + 'M';
+                            }
+                        }
+                    },
+                    datalabels: {
+                      display: true,
+                      color: '#000',
+                      anchor: 'end',
+                      align: 'end',
+                      formatter: value => `$${(value / 1_000_000).toFixed(1)}M`,
+                      font: {
+                        weight: 'bold'
+                      }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value / 1_000_000).toFixed(1) + 'M';
+                            }
+                        }
+                    }
+                }
+            }
+            //plugins: [ChartDataLabels]
+        });
+      </script>
+
+    <!-- endregion Opex Chart -->
+
+
+    <!--region: Delivery Chart-->
+
+      <!-- Funnel Value by Workstream -->
+      <script>
+        const ctxxdel = document.getElementById('funnelTargetChart').getContext('2d');
+
+        Chart.register(ChartDataLabels);  // ✅ Register the plugin
+
+        const chartxdel = new Chart(ctxxdel, {
+          type: 'bar',
+          data: {
+            labels: {{ workstream_labels|safe }},
+            datasets: {{ workstream_datasets|safe }}  // Must contain values in millions already
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,  // IMPORTANT for stretching height
+            plugins: {
+              legend: {
+                labels: {
+                  usePointStyle: true, // ⬅️ This makes legend use dots
+                  pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                  padding: 20
+                },
+                position: 'bottom'
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `${context.dataset.label}: $${context.raw.toFixed(1)}M`;
+                  }
+                }
+              },
+              datalabels: {
+                anchor: 'end',
+                align: 'end',
+                color: '#000',
+                //font: {
+                //  weight: 'bold'
+                //},
+                formatter: function(value) {
+                    return '$' + (value) + 'M';
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Value to L3+ ($M)'
+                },
+                ticks: {
+                  callback: function(value) {
+                    return `$${value}M`;
+                  }
+                }
+              }
+            }
+          },
+          plugins: [ChartDataLabels]  // ✅ Activate the plugin
+        });
+      </script>
+
+      <!-- Plan YTD Vs Actual-->
+      <script>
+        const ctxdelpa = document.getElementById('planActualChart').getContext('2d');
+
+        new Chart(ctxdelpa, {
+          type: 'bar',
+          data: {
+            labels: [''],
+            datasets: [
+              {
+                label: 'Actual Value',
+                data: {{BankedYTD|safe}},
+                backgroundColor: 'green',
+                barThickness: 10
+              },
+              {
+                label: 'Planned Value',
+                data: {{FunnelSize|safe}},
+                backgroundColor: 'goldenrod',
+                barThickness: 10
+              }
+            ]
+          },
+          options: {
+            plugins: {
+              //title: {
+              //  display: true,
+              //  text: 'Plan YTD Vs Actual',
+              //  font: { size: 16 }
+              //},
+              legend: {
+                display: true,
+                position: 'right',
+                labels: {
+                  usePointStyle: true,
+                  pointStyle: 'circle'
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `$${context.raw.toFixed(1)}M`;
+                  }
+                }
+              }
+            },
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return `$${value}M`;
+                  }
+                }
+              },
+              x: {
+                stacked: true
+              }
+            }
           }
         });
-    </script>
-    
+      </script>
+
+      <!-- Banked YTD (Delivery) -->
+      <script>
+            const ctxodel = document.getElementById('DeliveryBankedYTDChart').getContext('2d');
+
+            //Chart.register(ChartDataLabels);  // ✅ Register the plugin
+            const chartdel = new Chart(ctxodel, {
+                type: 'pie',
+                data: {
+                    labels: {{ labels|safe }},
+                    datasets: [{
+                        label: 'Banked YTD by Function (Million)',
+                        data: {{ data|safe }},
+                        backgroundColor: ['#011C94', '#DA5655', '#57016E', '#EAC84C', '#9EFF6E', '#038C3E'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: 'right', // ✅ This goes here, not under labels
+                    labels: {
+                      usePointStyle: true,
+                      pointStyle: 'circle',
+                      font: {
+                        size: 10
+                      }
+                    }
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function(context) {
+                        return `${context.label}: ${context.raw}M`;
+                      }
+                    }
+                  },
+                  datalabels: {
+                    color: '#000',
+                    font: {
+                      size: 10
+                    },
+                    //formatter: function(value, context) {
+                    //  if (typeof value === 'number' && value > 0) {
+                    //    return value.toFixed(1);
+                    //  }
+                    //  return '';
+                    //},
+                    anchor: 'end',
+                    align: 'end',
+                    offset: 10
+                  }
+                }
+              },
+              //plugins: [ChartDataLabels] // ✅ Activate the plugin
+            });
+        //});
+        //console.log("Labels:", {{ labels|safe }});
+        //console.log("Data:", {{ data|safe }});
+      </script>
+
+      <!--Initiative Movement to L3+ by Value & Count  -->
+      <script>
+        const ctxDel = document.getElementById('Deliveryl3InitiativeMovementChart').getContext('2d');
+
+        Chart.register(ChartDataLabels);
+
+        new Chart(ctxDel, {
+            type: 'bar',
+            data: {
+                labels: {{movement_labels|safe}},
+                datasets: [
+                    {
+                        label: 'Value to L3+',
+                        data: {{ value_to_l3|safe }},
+                        backgroundColor: 'green',
+                        yAxisID: 'y',
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            color: '#000',
+                            formatter: function(value) {
+                                return '$' + (value / 1_000_000).toFixed(1) + 'M';
+                            }
+                        }
+                    },
+                    {
+                        label: 'Count to L3+',
+                        data: {{ count_to_l3|safe }},
+                        type: 'line',
+                        borderColor: 'orange',
+                        backgroundColor: 'orange',
+                        yAxisID: 'y1',
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: 'red'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                      labels: {
+                          usePointStyle: true, // ⬅️ This makes legend use dots
+                          pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                          padding: 20
+                        },
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                if (context.dataset.label === 'Value to L3+') {
+                                    return context.dataset.label + ': $' + (context.raw / 1_000_000).toFixed(2) + 'M';
+                                }
+                                return context.dataset.label + ': ' + context.raw;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Value to L3+ ($M)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value / 1_000_000).toFixed(0) + 'M';
+                            }
+                        }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Count to L3+'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+      </script>
+
+      <!-- Total Count, L3+ & New Initiative per Workstream  (Total & New Initiative Count per Function/Asset) -->
+      <script>
+        const ctxdel = document.getElementById('DeliveryInitiativeCountChart').getContext('2d');
+        Chart.register(ChartDataLabels);
+        new Chart(ctxdel, {
+            type: 'bar',
+            data: {
+                labels: {{ del_initiative_count_labels|safe }},
+                datasets: [
+                    {
+                        label: 'Total Initiatives',
+                        data: {{ del_initiative_count_counts|safe }},
+                        backgroundColor: '#4aa6ff', // light blue
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'New Initiatives',
+                        data: {{ del_initiative_count_diffs|safe }},
+                        backgroundColor: '#00008b', // dark blue
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    //title: {
+                    //    display: true,
+                    //    text: 'Total & New Initiative Count per Function/Asset'
+                    //},
+                    legend: {
+                      labels: {
+                          usePointStyle: true, // ⬅️ This makes legend use dots
+                          pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                          padding: 20
+                        },
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    datalabels: {
+                      anchor: 'end',
+                      align: 'end',
+                      color: '#000',
+                      font: {
+                        weight: 'bold'
+                      },
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total Initiatives and New Initiatives'
+                        },
+                        ticks: {
+                            precision: 0
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 45,
+                            minRotation: 0
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+      </script>
+
+      <!-- Chart at the bottom of the Dashboard -->
+      <script>
+        const ctxdelLgate = document.getElementById('DeliveryLgateChart').getContext('2d');
+        Chart.register(ChartDataLabels);
+
+        // Example data (Planned Value per L-Gate)
+        const del_lgateLabels = {{del_lgateLabels|safe}}; //['G0 Idea', 'G1 Identify', 'G2 Validate', 'G3 Plan', 'G4 Implement', 'G5 Track'];
+        const del_lgateValues = {{del_lgateValues|safe}};
+        const del_lgateColors = ['#57016E', '#EAC84C', '#DA5655', '#011C94', '#9EFF6E', '#038C3E'];
+
+        const lgateChartx = new Chart(ctxdelLgate, {
+          type: 'bar',
+          data: {
+            labels: ['Actual L-Gate'],
+            datasets: del_lgateValues.map((val, i) => ({
+              label: `${del_lgateLabels[i]}`,
+              data: [val],
+              backgroundColor: del_lgateColors[i],
+            }))
+          },
+          options: {
+            indexAxis: 'y', // Horizontal bar
+            responsive: true,
+            plugins: {
+              legend: {
+                labels: {
+                  usePointStyle: true, // ⬅️ This makes legend use dots
+                  pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                  padding: 20
+                },
+                position: 'bottom'
+              },
+              tooltip: {
+                callbacks: {
+                  label: context => `$${context.raw}M (${context.dataset.label})`
+                }
+              },
+              datalabels: {
+                display: true,
+                color: '#fff',
+                anchor: 'center',
+                align: 'center',
+                formatter: value => `$${value}M`,
+                font: {
+                  weight: 'bold'
+                }
+              }
+            },
+            scales: {
+              x: {
+                stacked: true,
+                title: {
+                  display: true,
+                  text: 'Planned Value ($M)'
+                }
+              },
+              y: {
+                stacked: true
+              }
+            }
+          },
+          plugins: [ChartDataLabels] // enable datalabels plugin
+        });
+      </script>
+
+      <!-- Delivery Monthly Banking Plan-->
+      <script>
+        const ctxmbp = document.getElementById('deliverymonthlyChart').getContext('2d');
+        //Chart.register(ChartDataLabels);
+        const chartmbp = new Chart(ctxmbp, {
+            type: 'bar',
+            data: {
+                labels: {{ delivery_labels|safe }},
+                datasets: [
+                    {
+                        label: 'Planned Value',
+                        backgroundColor: '#FFD700',
+                        data: {{ delivery_plan_data|safe }},
+                    },
+                    {
+                        label: 'Forecast Value',
+                        backgroundColor: '#800080',
+                        data: {{ delivery_forecast_data|safe }},
+                    },
+                    {
+                        label: 'Actual Value',
+                        backgroundColor: '#228B22',
+                        data: {{ delivery_actual_data|safe }},
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                      labels: {
+                          usePointStyle: true, // ⬅️ This makes legend use dots
+                          pointStyle: 'circle', // ⬅️ Style: 'circle', 'rect', 'triangle', etc.
+                          padding: 20
+                        },
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let value = context.parsed.y || 0;
+                                return '$' + (value / 1_000_000).toFixed(1) + 'M';
+                            }
+                        }
+                    },
+                    datalabels: {
+                      display: true,
+                      color: '#000',
+                      anchor: 'end',
+                      align: 'end',
+                      formatter: value => `$${(value / 1_000_000).toFixed(1)}M`,
+                      font: {
+                        weight: 'bold'
+                      }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value / 1_000_000).toFixed(1) + 'M';
+                            }
+                        }
+                    }
+                }
+            }
+            //plugins: [ChartDataLabels]
+        });
+      </script>
+
+    <!-- endregion Delivery Chart -->
+
+<!-- endregion-->
+
 
     {% block js %}
       
