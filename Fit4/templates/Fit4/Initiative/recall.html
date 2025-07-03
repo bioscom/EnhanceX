@@ -1,0 +1,16 @@
+<div class="card shadow mb-2 bg-body rounded">
+    <div class="card-body">
+        <div class="row col-sm-12">
+            <div class="col-sm-6">
+                <h5>Recall Initiative</h5>
+            </div>
+            <div class="col-sm-6 text-end">
+                <form method="POST" action="{% url 'Fit4:recall_initiative' initiative.slug %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to recall this initiative?');"><i class="fas fa-undo"></i>   Recall Initiative</button>
+                </form>
+                {% comment %} <a href="{% url 'Fit4:recall_initiative' initiative.slug %}" class="btn btn-success"><i class="fas fa-undo"></i>   Recall Initiative</a> {% endcomment %}
+            </div>
+        </div>
+    </div>
+</div>

@@ -164,9 +164,17 @@
     <div class="card col-sm-12 mb-2">
         <div class="card-body">
             <div class="col-sm-12">
-                <div class="text-end mb-2">
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#listDeliveryReportModal">Sync Delivery data for this week</button>
+                <div class="row">
+                    <div class="col-sm-9 text-center">
+                        <h2>2025 Renaissance Delivery Dashboard (FCF)</h2>
+                    </div>
+                    <div class="col-sm-3 text-end mb-2">
+                        {% if request.user.is_staff %}
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#listDeliveryReportModal">Sync this week Delivery data</button>
+                        {% endif %}
+                    </div>
                 </div>
+                
                 <div class="tab-content ms-2" id="myDeliveryTabContent">
                     <div class="tab-pane fade show active" id="delivery" role="tabpanel" aria-labelledby="delivery-tab">
                         {% include 'management/delivery/deliveryDashboard.html' %}
@@ -176,6 +184,10 @@
                     </div>
                     <div class="tab-pane fade" id="deliverybankingplan" role="tabpanel" aria-labelledby="delivery-banking-tab">
                         {% include 'management/delivery/deliveryMonthlyBankingPlan.html' %}
+                    </div>
+
+                    <div class="tab-pane fade" id="deliveryPerformance" role="tabpanel" aria-labelledby="delivery-banking-tab">
+                        {% include 'management/delivery/deliveryInitiativePerformance.html' %}
                     </div>
                 </div>
 
@@ -193,6 +205,11 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="delivery-banking-tab" data-bs-toggle="tab" data-bs-target="#deliverybankingplan" type="button" role="tab" aria-controls="deliverybankingplan" aria-selected="false">
                             <b>Monthly Banking Plan</b>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="delivery-performance-tab" data-bs-toggle="tab" data-bs-target="#deliveryPerformance" type="button" role="tab" aria-controls="deliveryPerformance" aria-selected="false">
+                            <b>Initiatives Performance</b>
                         </button>
                     </li>
                 </ul>

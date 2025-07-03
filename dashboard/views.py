@@ -20,6 +20,16 @@ from .views_dashboard_plotly_graphs import *
 from .view_delivery_report import *
 from .view_opex_report import *
 
+from django.db.models.functions import TruncMonth
+from collections import defaultdict
+import calendar
+import hashlib
+
+def get_color_from_label(label):
+    # Generate a color hex from a hash of the label
+    hex_color = hashlib.md5(label.encode()).hexdigest()[:6]
+    return f'#{hex_color}'
+
 # def get_weeks(year):
 #     # First Monday of the year (or the first week starting on Monday)
 #     d = datetime.date(year, 1, 1)
@@ -215,6 +225,7 @@ def dashboard_view2(request, dashboard_id):
 # MTO KPI5 - Total Threats/Opportunity Score
 
 def dashboard_MTO(request):
+    #yyear=int(request.POST.get('year_select') or datetime.now().year)
     yyear=request.POST.get('year_select')
     unit=request.POST.get('unit_select')
     recordType=request.POST.get('recordType_select')
@@ -266,17 +277,47 @@ def dashboard_MTO(request):
         initovrsD=overall_status.objects.get(Q(name="Defer"))
         initovrsCa=overall_status.objects.get(Q(name="Cancelled"))
     
-        overDueActions = actionsOverDue(yyear, unit, recordType, workstream, ovrsC, ovrsH, ovrsCa)                                                              #1 of MTO Actions Overdue with summary
-        actionsDueIn30Days = actionsOverDueIn30Days(yyear, unit, recordType, workstream, ovrsC, ovrsH, ovrsCa)                                                  #2 Open MTO Actions Due within 30 days
+        #1 of MTO Actions Overdue with summary
+        overDueActions = actionsOverDue(yyear, unit, recordType, workstream, ovrsC, ovrsH, ovrsCa)
         
-        threatsIn30Days = threatsDueIn30Days(initiatives, yyear, unit, recordType, workstream, initovrsC, initovrsH, initovrsD, initovrsCa)                     #3 Threats and Opportunities Due in 30 days
-        overDueThreatsOpportunity = OverDueThreatsOpportunity(initiatives, yyear, unit, recordType, workstream, initovrsC, initovrsH, initovrsD, initovrsCa)    #4 Overdue Threats and Opportunities
-        obj_top20Threats =top20ThreatsOpport(initiatives, yyear, unit, recordType, workstream, initovrsC, initovrsH, initovrsD, initovrsCa)                     #5 Top 20 Threats & Opportunities (L3 - L5)
-        threatOpportunityatL2=threatsOpportL2(initiatives, yyear, unit, recordType, workstream, initovrsC, initovrsH, initovrsD, initovrsCa)                    #6 Threats & Opportunities at L0 to L2
-                                                                                                                                                                #7 KPI1: New Threats & Opportunity
-                                                                                                                                                                #8 KPI3: Resolved Threats & Opportunity
-                                                                                                                                                                #9 KPI4: Overdue Threats & Opportunity
-                                                                                                                                                                #10 MTO KPI5 - Total Threats/Opportunity Score
+        #2 Open MTO Actions Due within 30 days                                                        
+        actionsDueIn30Days = actionsOverDueIn30Days(yyear, unit, recordType, workstream, ovrsC, ovrsH, ovrsCa) 
+                                                         
+        #3 Threats and Opportunities Due in 30 days
+        threatsIn30Days = threatsDueIn30Days(initiatives, yyear, unit, recordType, workstream, initovrsC, initovrsH, initovrsD, initovrsCa)
+        
+        #4 Overdue Threats and Opportunities                     
+        overDueThreatsOpportunity = OverDueThreatsOpportunity(initiatives, yyear, unit, recordType, workstream, initovrsC, initovrsH, initovrsD, initovrsCa)
+        
+        #5 Top 20 Threats & Opportunities (L3 - L5)
+        obj_top20Threats =top20ThreatsOpport(initiatives, yyear, unit, recordType, workstream, initovrsC, initovrsH, initovrsD, initovrsCa)
+        
+        #6 Threats & Opportunities at L0 to L2                     
+        threatOpportunityatL2=threatsOpportL2(initiatives, yyear, unit, recordType, workstream, initovrsC, initovrsH, initovrsD, initovrsCa)                    
+        
+        #7 KPI1: New Threats & Opportunity
+        newThreats=newThreatsOpportunity(initiatives, yyear, unit, recordType, workstream)
+        labels_new_threats = newThreats['labels_new_threats']
+        datasets_new_threats = newThreats['datasets_new_threats']
+        
+        #8 KPI3: Resolved Threats & Opportunity
+        resolvedThreats=resolvedThreatsOpportunity(initiatives, yyear, unit, recordType, workstream)
+        labels_resolved_threats = resolvedThreats['labels_resolved_threats']
+        datasets_resolved_threats = resolvedThreats['datasets_resolved_threats']
+        
+        #9 KPI4: Overdue Threats & Opportunity
+        overDueThreats=overDueThreatsOpportunities(initiatives, yyear, unit, recordType, workstream)
+        labels_overDue_threats = overDueThreats['labels_overDue_threats']
+        datasets_overDue_threats = overDueThreats['datasets_overDue_threats']
+        
+        #10 MTO KPI5 - Total Threats/Opportunity Score
+        totalThreats=totalThreatsOpportunities(initiatives, yyear, unit, recordType, workstream)
+        labels_total_threats=totalThreats['month_labels']
+        active_data_total_threats=totalThreats['active_data']
+        inactive_data_total_threats=totalThreats['inactive_data']
+        sum_data_total_threats=totalThreats['sum_data']
+
+        #11 All Active Threats and Opportunities
         page_obj = activeThreatsOpport(initiatives, yyear, unit, recordType, workstream, initovrsC, initovrsH, initovrsD, initovrsCa)                           #11 All ACTIVE Threats and Opportunities Report 
     
     except Exception as e:
@@ -292,8 +333,34 @@ def dashboard_MTO(request):
                                                        'overDueThreatsOpportunity':overDueThreatsOpportunity,
                                                        'obj_top20Threats':obj_top20Threats,
                                                        'threatOpportunityatL2':threatOpportunityatL2, 
-                                                       'yyear':yyear, 'unit':unitName, 
-                                                       'recordType':recordTypeName, 'workstream':workstreamName })
+                                                       'yyear':yyear, 
+                                                       'unit':unitName, 
+                                                       'recordType':recordTypeName, 
+                                                       'workstream':workstreamName, 
+                                                       'labels_new_threats':labels_new_threats, 
+                                                       'datasets_new_threats':datasets_new_threats,
+                                                       'labels_overDue_threats':labels_overDue_threats,
+                                                       'datasets_overDue_threats':datasets_overDue_threats,
+                                                       'labels_resolved_threats':labels_resolved_threats,
+                                                       'datasets_resolved_threats':datasets_resolved_threats,
+                                                       
+                                                       'labels_total_threats':labels_total_threats,
+                                                       'active_data_total_threats':active_data_total_threats,
+                                                       'inactive_data_total_threats':inactive_data_total_threats,
+                                                       'sum_data_total_threats':sum_data_total_threats
+                                                    })
+
+#MTO
+
+
+# def resolvedThreatsOpportunity():
+#     pass
+
+# def overdueThreatsOpportunity():
+#     pass
+
+def totalThreatsOpportunityScore():
+    pass
 
 #endregion =============================================================================================================================
 

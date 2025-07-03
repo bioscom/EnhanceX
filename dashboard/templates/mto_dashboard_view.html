@@ -283,6 +283,7 @@
                                         <th>Initiative: Record Type</th>
                                         <th>Initiative: Initiative Name</th>
                                         <th>Unit</th>
+                                        <th>Planned Date</th>
                                         <th>MTO Score</th>
                                         <th>Initiative Owner</th>
                                     </tr>
@@ -296,6 +297,7 @@
                                                 <td>{{o.recordType}}</td>
                                                 <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
                                                 <td>{{o.unit.name}}</td>
+                                                <td>{{o.Planned_Date|date:'d-m-Y'}}</td>
                                                 <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
                                                 <td>{{o.author.get_full_name}}</td>
                                             </tr>
@@ -416,207 +418,59 @@
         </div>
     </div>
 
-    <div class="col-sm-12 mb-1 container-flux">
-        <div class="row g-1">
-            <div class="col-sm-3">
-                <div  class="card zoom-card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6>KPI1: New Threats & Opportunity</h6>
-                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
-                            <table class="table table-bordered table-hover table-font">
-                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
-                                    <tr>
-                                        <th>...</th>
-                                        <th>Initiative: Record Type</th>
-                                        <th>Formular Level 2</th>
-                                        <th>Initiative: Initiative Name</th>
-                                        <th>Unit</th>
-                                        <th>MTO Score</th>
-                                        <th>Initiative Owner</th>
-                                        <th>L-Gate</th>
-                                        <th>Overall Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% if page_obj %}
-                                    {% for o in page_obj %}
-                                        <tr>
-                                            <td>{{forloop.counter}}</td>
-                                            <td>{{o.recordType}}</td>
-                                            <td>{{o.formula_Level_2.name}}</td>
-                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
-                                            <td>{{o.unit.name}}</td>
-                                            <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
-                                            <td>{{o.author.get_full_name}}</td>
-                                            <td>{{o.actual_Lgate}}</td>
-                                            <td>{{o.overall_status}}</td>
-                                        </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="9" class="text-center">
-                                            <p><b class="text-danger">No data found</b></p>
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+    <div class="row g-1 mb-1">
+        <div class="col-sm-3">
+            <div class="card zoom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>KPI1: New Threats & Opportunity</h6>
+                    <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <canvas id="newThreatsOpportunityChart" style="height: 300px"></canvas>
                 </div>
             </div>
-            <div class="col-sm-3">
-                <div  class="card zoom-card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6>KPI3: Resolved Threats & Opportunity</h6>
-                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
-                            <table class="table table-bordered table-hover table-font">
-                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
-                                    <tr>
-                                        <th>...</th>
-                                        <th>Initiative: Record Type</th>
-                                        <th>Formular Level 2</th>
-                                        <th>Initiative: Initiative Name</th>
-                                        <th>Unit</th>
-                                        <th>MTO Score</th>
-                                        <th>Initiative Owner</th>
-                                        <th>L-Gate</th>
-                                        <th>Overall Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% if page_obj%}
-                                    {% for o in page_obj %}
-                                        <tr>
-                                            <td>{{forloop.counter}}</td>
-                                            <td>{{o.recordType}}</td>
-                                            <td>{{o.formula_Level_2.name}}</td>
-                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
-                                            <td>{{o.unit.name}}</td>
-                                            <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
-                                            <td>{{o.author.get_full_name}}</td>
-                                            <td>{{o.actual_Lgate}}</td>
-                                            <td>{{o.overall_status}}</td>
-                                        </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="9" class="text-center">
-                                            <p><b class="text-danger">No data found</b></p>
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                                
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card zoom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>KPI3: Resolved Threats & Opportunity</h6>
+                    <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <canvas id="resolvedThreatsOpportunityChart" style="height: 300px"></canvas>
                 </div>
             </div>
-            <div class="col-sm-3">
-                <div  class="card zoom-card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6>KPI4: Overdue Threats & Opportunity</h6>
-                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
-                            <table class="table table-bordered table-hover table-font">
-                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
-                                    <tr>
-                                        <th>...</th>
-                                        <th>Initiative: Record Type</th>
-                                        <th>Formular Level 2</th>
-                                        <th>Initiative: Initiative Name</th>
-                                        <th>Unit</th>
-                                        <th>MTO Score</th>
-                                        <th>Initiative Owner</th>
-                                        <th>L-Gate</th>
-                                        <th>Overall Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% if page_obj%}
-                                    {% for o in page_obj %}
-                                        <tr>
-                                            <td>{{forloop.counter}}</td>
-                                            <td>{{o.recordType}}</td>
-                                            <td>{{o.formula_Level_2.name}}</td>
-                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
-                                            <td>{{o.unit.name}}</td>
-                                            <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
-                                            <td>{{o.author.get_full_name}}</td>
-                                            <td>{{o.actual_Lgate}}</td>
-                                            <td>{{o.overall_status}}</td>
-                                        </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="9" class="text-center">
-                                            <p><b class="text-danger">No data found</b></p>
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card zoom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>KPI4: Overdue Threats & Opportunity</h6>
+                    <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <canvas id="overdueThreatsOpportunityChart" style="height: 300px"></canvas>
                 </div>
             </div>
-            <div class="col-sm-3 pull-right">
-                <div  class="card zoom-card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6>MTO KPI5 - Total Threats/Opportunity Score</h6>
-                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
-                            <table class="table table-bordered table-hover table-font">
-                                <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
-                                    <tr>
-                                        <th>...</th>
-                                        <th>Initiative: Record Type</th>
-                                        <th>Formular Level 2</th>
-                                        <th>Initiative: Initiative Name</th>
-                                        <th>Unit</th>
-                                        <th>MTO Score</th>
-                                        <th>Initiative Owner</th>
-                                        <th>L-Gate</th>
-                                        <th>Overall Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% if page_obj %}
-                                    {% for o in page_obj %}
-                                        <tr>
-                                            <td>{{forloop.counter}}</td>
-                                            <td>{{o.recordType}}</td>
-                                            <td>{{o.formula_Level_2.name}}</td>
-                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
-                                            <td>{{o.unit.name}}</td>
-                                            <td style="text-align: right;">{{o.mto_score|default_if_none:""|intcomma}}</td>
-                                            <td>{{o.author.get_full_name}}</td>
-                                            <td>{{o.actual_Lgate}}</td>
-                                            <td>{{o.overall_status}}</td>
-                                        </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="9" class="text-center">
-                                            <p><b class="text-danger">No data found</b></p>
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card zoom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>MTO KPI5 - Total Threats/Opportunity Score</h6>
+                    <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <canvas id="totalThreatsOpportunityScoreChart" style="height: 300px"></canvas>
                 </div>
             </div>
         </div>
@@ -625,11 +479,11 @@
     <div class="card zoom-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6>All Active Threats and Opportunities</h6>
-            <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+            {% comment %} <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span> {% endcomment %}
         </div>
         <div class="card-body">
             <div class="col-sm-12 row">
-                <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                <div class="table-responsive shadow" style="max-height: 500px; overflow-y; auto;">
                     <table id="rptTable" class="table table-bordered table-hover table-font">
                         <thead class="table-light" style="position: sticky; top:0; z-index:1";>                    
                             <tr>
@@ -643,6 +497,7 @@
                                 <th>Initiative Owner</th>
                                 <th>L-Gate</th>
                                 <th>Overall Status</th>
+                                <th>Date Created</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -659,11 +514,12 @@
                                     <td>{{o.author.get_full_name}}</td>
                                     <td>{{o.actual_Lgate}}</td>
                                     <td>{{o.overall_status}}</td>
+                                    <td>{{o.Created_Date|default_if_none:""|date:'d-M-Y'}}</td>
                                 </tr>
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="9" class="text-center">
+                                <td colspan="10" class="text-center">
                                     <p><b class="text-danger">No data found</b></p>
                                 </td>
                             </tr>
@@ -674,7 +530,6 @@
             </div>
         </div>
     </div>
-
     <br><br><br>
 
 {% endblock %}
@@ -701,4 +556,3 @@
         });
     </script>
 {% endblock %}
-

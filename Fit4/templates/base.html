@@ -1098,6 +1098,268 @@
         });
       });
     </script>
+
+
+    <!--newThreatsOpportunityChart-->
+    <script>
+      const labels = {{ labels_new_threats|safe }};
+      const datasets = [
+        {% for dataset in datasets_new_threats %}
+          {
+            label: "{{ dataset.label }}",
+            data: {{ dataset.data|safe }},
+            backgroundColor: "{{ dataset.backgroundColor }}"
+          },
+        {% endfor %}
+      ];
+
+      const ctxmto = document.getElementById('newThreatsOpportunityChart').getContext('2d');
+      new Chart(ctxmto, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            //title: {
+            //  display: true,
+            //  text: 'KPI1: New Threats & Oppty',
+            //  font: { size: 16 }
+            //},
+            legend: {
+              labels: {
+                usePointStyle: true,
+                pointStyle: 'circle', // Style: 'circle', 'rect', 'triangle', etc.
+                padding: 20
+              },
+              position: 'right'
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
+          interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+          },
+          scales: {
+            x: {
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Initiative: Created Date'
+              },
+              ticks: {
+                maxRotation: 90,
+                minRotation: 45
+              }
+            },
+            y: {
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Sum of Initiative'
+              },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
+
+    <!--resolvedThreatsOpportunityChart-->
+    <script>
+      const resolved_labels = {{ labels_resolved_threats|safe }};
+      const resolved_datasets = [
+        {% for dataset in datasets_resolved_threats %}
+          {
+            label: "{{ dataset.label }}",
+            data: {{ dataset.data|safe }},
+            backgroundColor: "{{ dataset.backgroundColor }}"
+          },
+        {% endfor %}
+      ];
+
+      const ctprmto = document.getElementById('resolvedThreatsOpportunityChart').getContext('2d');
+      new Chart(ctprmto, {
+        type: 'bar',
+        data: {
+          labels: resolved_labels,
+          datasets: resolved_datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            //title: {
+            //  display: true,
+            //  text: 'KPI1: New Threats & Oppty',
+            //  font: { size: 16 }
+            //},
+            legend: {
+              labels: {
+                usePointStyle: true,
+                pointStyle: 'circle', // Style: 'circle', 'rect', 'triangle', etc.
+                padding: 20
+              },
+              position: 'right'
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
+          interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+          },
+          scales: {
+            x: {
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Initiative: Created Date'
+              },
+              ticks: {
+                maxRotation: 90,
+                minRotation: 45
+              }
+            },
+            y: {
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Sum of Initiative'
+              },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
+
+    <!--overdueThreatsOpportunityChart-->
+    <script>
+      const overDue_labels = {{ labels_overDue_threats|safe }};
+      const overDue_datasets = [
+        {% for dataset in datasets_overDue_threats %}
+          {
+            label: "{{ dataset.label }}",
+            data: {{ dataset.data|safe }},
+            backgroundColor: "{{ dataset.backgroundColor }}"
+          },
+        {% endfor %}
+      ];
+
+      const ctamto = document.getElementById('overdueThreatsOpportunityChart').getContext('2d');
+      new Chart(ctamto, {
+        type: 'bar',
+        data: {
+          labels: overDue_labels,
+          datasets: overDue_datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                usePointStyle: true,
+                pointStyle: 'circle', // Style: 'circle', 'rect', 'triangle', etc.
+                padding: 20
+              },
+              position: 'right'
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
+          interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+          },
+          scales: {
+            x: {
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Initiative: Created Date'
+              },
+              ticks: {
+                maxRotation: 90,
+                minRotation: 45
+              }
+            },
+            y: {
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Sum of Initiative'
+              },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
+
+    <!--totalThreatsOpportunityScoreChart-->
+    <script>
+      const cttotal= document.getElementById('totalThreatsOpportunityScoreChart').getContext('2d');
+
+      new Chart(cttotal, {
+        type: 'bar',
+        data: {
+          labels: {{ labels_total_threats|safe }},
+          datasets: [
+            {
+              label: 'Active',
+              data: {{ active_data_total_threats|safe }},
+              backgroundColor: 'rgba(102, 204, 255, 0.8)', // light blue
+              stack: 'Type'
+            },
+            {
+              label: 'Inactive',
+              data: {{ inactive_data_total_threats|safe }},
+              backgroundColor: 'rgba(153, 204, 255, 0.8)', // lighter blue
+              stack: 'Type'
+            },
+            {
+              label: 'Sum of 12 Months',
+              type: 'line',
+              data: {{ sum_data_total_threats|safe }},
+              borderColor: 'teal',
+              borderWidth: 2,
+              pointRadius: 4,
+              tension: 0.3,
+              yAxisID: 'y'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Sum of MTO Score'
+              },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
+
   <!--endregion MTO Scripts-->
 
 

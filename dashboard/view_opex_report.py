@@ -1,7 +1,7 @@
 from .models import *
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.db import models
-from django.db.models import Q, F, Prefetch
+from django.db.models import Q, F, Prefetch, FloatField, ExpressionWrapper
 from dashboard.forms import *
 import traceback
 from Fit4.models import *
@@ -123,6 +123,17 @@ def OpexPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, opex
         opex_plan_data=opex_banking_plan['plan_data']
         opex_forecast_data=opex_banking_plan['forecast_data']
         opex_actual_data=opex_banking_plan['actual_data']
+        
+        #13 Initiatives Performance
+        fullybankedInitiatives=queryTW.filter(
+            Yearly_Actual_value__gte=F('Yearly_Planned_Value'),
+            Yearly_Actual_value__gt=0,
+            Yearly_Planned_Value__gt=0,
+        ).annotate(achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Planned_Value'), output_field=FloatField())).order_by('-achievement_pct')
+        
+        notFullybankedInitiatives=queryTW.filter(Yearly_Actual_value__lt=F('Yearly_Planned_Value')).annotate(
+            achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Planned_Value'), output_field=FloatField())
+        ).order_by('-achievement_pct')
         
         #region ========================== Data for the charts start from here ==============================================================
         
@@ -264,6 +275,10 @@ def OpexPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, opex
                                                                 'opex_plan_data':json.dumps(opex_plan_data, default=str),
                                                                 'opex_forecast_data':json.dumps(opex_forecast_data, default=str),
                                                                 'opex_actual_data':json.dumps(opex_actual_data, default=str),
+                                                                
+                                                                #13 Initiatives Performance
+                                                                'fullybankedInitiatives':fullybankedInitiatives,
+                                                                'notFullybankedInitiatives':notFullybankedInitiatives,
                                                             })
 
 def get_banked_by_function(queryTW):
@@ -375,7 +390,10 @@ def opex_monthly_banking_plan(selected_year):
     labels, plan_data, forecast_data, actual_data = [], [], [], []
 
     # Filter records by year
-    queryset = InitiativeImpact.objects.filter(YYear=selected_year)
+    queryset = InitiativeImpact.objects.filter(
+        YYear=selected_year,
+        initiative__Workstream__workstreamname__icontains='Opex'
+    )
     
     # Aggregate manually
     for month, fields in month_fields.items():

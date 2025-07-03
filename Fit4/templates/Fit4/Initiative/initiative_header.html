@@ -64,9 +64,9 @@
                     <div class="col-sm">{{initiative.recordType.name}} </div>
                     
                     {% if initiative.approval_status_visual.id == 2 %} {% comment %} # TODO: Ensure the hardcode is taken care of  {% endcomment %}
-                        <div class="col-sm">{{initiative.approval_status_visual.title}}({{ initiative.approval_status_visual.id }})<img src="/media/logo/padlock_img.png" alt="" loading="lazy" /></div>
+                        <div class="col-sm">{{initiative.approval_status_visual.title}}<img src="/media/logo/padlock_img.png" alt="" loading="lazy" /></div>
                     {% else %}
-                        <div class="col-sm">{{initiative.approval_status_visual.title}}({{ initiative.approval_status_visual.id }})</div>
+                        <div class="col-sm">{{initiative.approval_status_visual.title}}</div>
                     {% endif %}
                     <div id="approvalStatus" value="{{ initiative.approval_status_visual.id }}"></div>
                 </div>

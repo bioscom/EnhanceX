@@ -57,7 +57,7 @@
     </div>
 </form>
 
-<form action="{% url 'Fit4:clone_MTO_initiative' initiative.slug %}" method="POST">
+<form action="{% url 'Fit4:clone_MTO_initiative' %}" method="POST">
     {% csrf_token %}
     <div class="modal fade" id="cloneMTOModal" aria-labelledby="cloneMTOModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -219,6 +219,10 @@
     {% include "Fit4/Initiative/initiative_header.html" %}
 
     {% include "Fit4/Initiative/workflowIndicator.html" %}
+
+    {% if initiative.approval_status_visual.id == 2 %} {% comment %} # TODO: Ensure the hardcode is taken care of  {% endcomment %}
+        {% include "Fit4/Initiative/recall.html" %}
+    {% endif %}
 
     {% include "Fit4/Initiative/asset_hierarchy.html" %}
 

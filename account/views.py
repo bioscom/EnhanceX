@@ -43,6 +43,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
+from django.contrib.auth.views import PasswordResetView
 
 
 # @login_required
@@ -299,6 +300,8 @@ class UserPasswordChangeView(PasswordChangeView):
     template_name = 'registration/password_change_form.html'
     success_url = reverse_lazy('password_change_done')
     form_class = CustomPasswordChangeForm # You can also use Django’s default
+
+
 
 # @login_required
 # def edit(request):

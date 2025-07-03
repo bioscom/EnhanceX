@@ -38,12 +38,13 @@ urlpatterns = [
     path(_('add_initiative/'), views.add_initiative, name="add_initiative"),
 
     path(_('clone_initiative'), views.clone_initiative, name="clone_initiative"),
-    path(_('clone_MTO_initiative/<str:slug>'), views.clone_MTO_initiative, name="clone_MTO_initiative"),
+    path(_('clone_MTO_initiative'), views.clone_MTO_initiative, name="clone_MTO_initiative"),
     
     path(_('add_threat/'), views.add_threat, name="add_threat"),
     
     path(_('edit_initiative/<str:slug>/'), views.edit_initiative, name="edit_initiative"),
     path(_('update_assethierarchy/<str:slug>/'), views.update_AssetHierarchy, name="update_assethierarchy"),
+    path(_('recall_initiative/<str:slug>/'), views.recall_initiative, name="recall_initiative"),
 
     #actions
     path(_('actions'), views.actions_list, name="actions_list"),

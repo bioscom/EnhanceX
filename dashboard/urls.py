@@ -11,6 +11,9 @@ urlpatterns = [
     #path(_('dashboard/<str:dashboard_id>/view'), views.chart, name='dashboard_view'),
     path(_('dashboard/<str:dashboard_id>/view'), views.dashboard_view, name='dashboard_view'),
     path(_("dashboards/<str:dashboard_id>/view"), views.dashboard_view2, name="dashboards"),
+    path(_("dashboards/<int:id>"), views.delete_dashboard, name="delete_dashboard"),
+    
+    #delete_dashboard
     
     path(_("dashboards_mto"), views.dashboard_MTO, name="dashboards_mto"),
     

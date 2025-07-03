@@ -288,7 +288,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend" # In Production environment
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # In Development environment
+#EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend" # In Production environment
 EMAIL_HOST = '127.0.0.1'
 EMAIL_PORT = 25 #587
 EMAIL_USE_TLS = False #True

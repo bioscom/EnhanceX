@@ -1,7 +1,7 @@
 from .models import *
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.db import models
-from django.db.models import Q, F, Prefetch
+from django.db.models import Q, F, Prefetch, FloatField, ExpressionWrapper
 from dashboard.forms import *
 import traceback
 from Fit4.models import *
@@ -115,7 +115,10 @@ def delivery_monthly_banking_plan(selected_year):
     labels, plan_data, forecast_data, actual_data = [], [], [], []
 
     # Filter records by year
-    queryset = InitiativeImpact.objects.filter(YYear=selected_year)
+    queryset = InitiativeImpact.objects.filter(
+        YYear=selected_year,
+        initiative__Workstream__workstreamname__icontains='Renaissance Delivery'
+    )
     
     # Aggregate manually
     for month, fields in month_fields.items():
@@ -320,6 +323,23 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
     #7. Top Initiatives by Value
     topInitiatives=queryTW.order_by('-Yearly_Planned_Value')
     
+    eastAssetInitiatives = queryTW.filter(Workstream__workstreamname__icontains='East').order_by('-Yearly_Planned_Value')
+    eastAssetTotals = eastAssetInitiatives.aggregate(
+        total_planned=Sum('Yearly_Planned_Value'),
+        total_actual=Sum('Yearly_Actual_value')
+    )
+    
+    westAssetInitiatives = queryTW.filter(Workstream__workstreamname__icontains='West').order_by('-Yearly_Planned_Value')
+    westAssetTotals = westAssetInitiatives.aggregate(
+        total_planned=Sum('Yearly_Planned_Value'),
+        total_actual=Sum('Yearly_Actual_value')
+    )
+    novAssetInitiatives = queryTW.filter(Workstream__workstreamname__icontains='NOV').order_by('-Yearly_Planned_Value')
+    novAssetTotals = novAssetInitiatives.aggregate(
+        total_planned=Sum('Yearly_Planned_Value'),
+        total_actual=Sum('Yearly_Actual_value')
+    )
+    
     #8. Pipeline Robustness
     pipeLineRobustness = round(((float(PlannedTW)/100)*100)) #TODO:Note: where 100 is the value in the Delivery target. Replace with {{OpexTarget}}
     
@@ -339,6 +359,19 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
     delivery_plan_data=delivery_banking_plan['plan_data']
     delivery_forecast_data=delivery_banking_plan['forecast_data']
     delivery_actual_data=delivery_banking_plan['actual_data']
+    
+    #13 Initiatives Performance
+    fullybankedInitiatives=queryTW.filter(
+        Yearly_Actual_value__gte=F('Yearly_Planned_Value'),
+        Yearly_Actual_value__gt=0,
+        Yearly_Planned_Value__gt=0,
+    ).annotate(achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Planned_Value'), output_field=FloatField())).order_by('-achievement_pct')
+    
+    notFullybankedInitiatives=queryTW.filter(Yearly_Actual_value__lt=F('Yearly_Planned_Value')).annotate(
+        achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Planned_Value'), output_field=FloatField())
+    ).order_by('-achievement_pct')
+    
+    
     
     #region ========================== Data for the charts start from here ==============================================================
     
@@ -477,6 +510,24 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
         'delivery_plan_data':json.dumps(delivery_plan_data, default=str),
         'delivery_forecast_data':json.dumps(delivery_forecast_data, default=str),
         'delivery_actual_data':json.dumps(delivery_actual_data, default=str),
+        
+        #12 Initiatives by Delivery
+        'eastAssetInitiatives':eastAssetInitiatives,
+        'westAssetInitiatives':westAssetInitiatives,
+        'novAssetInitiatives':novAssetInitiatives,
+        
+        'east_total_planned': eastAssetTotals['total_planned'] or 0,
+        'east_total_actual': eastAssetTotals['total_actual'] or 0,
+        
+        'west_total_planned': westAssetTotals['total_planned'] or 0,
+        'west_total_actual': westAssetTotals['total_actual'] or 0,
+        
+        'nov_total_planned': novAssetTotals['total_planned'] or 0,
+        'nov_total_actual': novAssetTotals['total_actual'] or 0,
+        
+        #13 Initiatives Performance
+        'fullybankedInitiatives':fullybankedInitiatives,
+        'notFullybankedInitiatives':notFullybankedInitiatives,
     })
 
 

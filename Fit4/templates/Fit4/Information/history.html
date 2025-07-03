@@ -33,6 +33,8 @@
                             Reassigned
                         {% elif o.status == 4 %}
                             <b class="text-success">Approved</b>
+                        {% elif o.status == 5 %}
+                            <b class="text-success">Recalled</b>
                         {% elif o.status == None %}
                             <b class="text-warning">Pending</b>
                         {% endif %}

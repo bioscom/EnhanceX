@@ -1,0 +1,145 @@
+{% load humanize %}
+
+<div class="container-flux">
+    <div class="card shadow mb-2 bg-body rounded">
+        <div class="card-header">
+            <div class="col-sm-12 row">
+                <div class="col-sm">
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="/media/logo/initiative_img.png" alt="" loading="lazy"/>
+                            </td>
+                            <td>
+                                <small>Weekly</small>
+                                <div class="col-sm row">
+                                    <div class="col-sm"><h5>Initiative Performance Report</h5></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-sm text-end">
+                    <div class="btn-group pull-right" role="group" aria-label="Basic example">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="card zoom-card col-md-6">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>Initiatives Fully Banked</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                            <i class="fas fa-expand-arrows-alt"></i>
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="height: 30vh; overflow-y: auto;">
+                            <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
+                                    <tr>
+                                        <th></th>
+                                        <th>Initiative Name</th>
+                                        <th>Actual Gate</th>
+                                        <th>Planned Value($)</th>
+                                        <th>Banked Value($)</th>
+                                        <th>Performance(%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for o in fullybankedInitiatives %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                            <td>{{o.actual_Lgate}}</td>
+                                            <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
+                                            <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
+                                            <td style="
+                                                {% if o.achievement_pct >= 50 %}
+                                                    background-color: green;
+                                                    color: white;
+                                                {% elif o.achievement_pct < 50 %}
+                                                    background-color: red;
+                                                    color: white;
+                                                {% endif %}
+                                                font-weight: bold; text-align: center;
+                                            ">
+                                                {{o.achievement_pct|floatformat:1}}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                {% comment %} <tfoot class="table-light">
+                                    <tr>
+                                        <th colspan="3" class="text-end">Total</th>
+                                        <th class="text-end">${{ west_total_planned|floatformat:2|intcomma }}</th>
+                                        <th class="text-end">${{ west_total_actual|floatformat:2|intcomma }}</th>
+                                    </tr>
+                                </tfoot> {% endcomment %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card zoom-card col-md-6">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6>Initiatives Not Fully Banked</h6>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                            <i class="fas fa-expand-arrows-alt"></i>
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive shadow" style="height: 30vh; overflow-y: auto;">
+                            <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
+                                <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
+                                    <tr>
+                                        <th></th>
+                                        <th>Initiative Name</th>
+                                        <th>Actual Gate</th>
+                                        <th>Planned Value($)</th>
+                                        <th>Banked Value($)</th>
+                                        <th>Performance(%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for o in notFullybankedInitiatives %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                            <td>{{o.actual_Lgate}}</td>
+                                            <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
+                                            <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
+                                            <td style="
+                                                {% if o.achievement_pct >= 50 %}
+                                                    background-color: green;
+                                                    color: white;
+                                                {% elif o.achievement_pct < 50 %}
+                                                    background-color: red;
+                                                    color: white;
+                                                {% endif %}
+                                                font-weight: bold; text-align: center;
+                                            ">
+                                                {{o.achievement_pct|floatformat:1}}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                {% comment %} <tfoot class="table-light">
+                                    <tr>
+                                        <th colspan="3" class="text-end">Total</th>
+                                        <th class="text-end">${{ west_total_planned|floatformat:2|intcomma }}</th>
+                                        <th class="text-end">${{ west_total_actual|floatformat:2|intcomma }}</th>
+                                    </tr>
+                                </tfoot> {% endcomment %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

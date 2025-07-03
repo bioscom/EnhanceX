@@ -54,22 +54,26 @@
                         {% csrf_token %}
                         {% comment %}{% crispy form %}{% endcomment %}
 
-                        {% render_field form.username class="form-control" placeholder="firstname.lastname" %}
+                        {% render_field form.username class="form-control mb-4" placeholder="firstname.lastname" %}
                         <div class="col-md-8 offset-md-2 text-danger">{{ form.username.errors|first }}</div>
-                        <br>
-                        {% render_field form.password class="form-control" placeholder="Password" %}
-                        <br>
+                        {% render_field form.password class="form-control mb-4" placeholder="Password" %}
                         <div class="col-md-8 offset-md-2 text-danger">{{ form.password.errors|first }}</div> 
 
                         {% comment %} <input type="hidden" name="text" value="{{ next }}"> {% endcomment %}
                         <button type="submit" class="btn btn-primary w-100" style="height:50px">Log in</button>
                     </div>
-                    <a href="mailto:isaac.bejide@raecafrica.com" class="p-4">Contact Admin to create your profile.</a> 
-                    {% comment %} <p class="text-center mt-3"><a href="{% url 'password_reset' %}">Forgot Password?</a></p> {% endcomment %}
+                    <a href="mailto:isaac.bejide@raecafrica.com">Contact Admin to create your profile.</a><br>
+                    
                 </div>
             </form>
 
+            {% comment %} <p class="text-center">
+                <a href="{% url 'account:password_reset' %}">Forgot Password?</a>
+            </p> {% endcomment %}
             
+            {% comment %} <div class="card w-50 mb-4 mx-auto">
+                
+            </div> {% endcomment %}
 
             <div class="mb-4 text-center">
                 Or
