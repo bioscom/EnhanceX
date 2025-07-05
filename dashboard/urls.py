@@ -30,5 +30,5 @@ urlpatterns = [
     path(_("add_delivery_recognition"), views.add_delivery_recognition, name="add_delivery_recognition"),
     path(_("edit_delivery_recognition"), views.edit_delivery_recognition, name="edit_delivery_recognition"),
     #
-    
+    path('upload-excel/', views.upload_weekly_commitment_excel, name='upload_excel'),
 ]

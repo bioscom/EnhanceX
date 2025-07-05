@@ -274,8 +274,9 @@ def initiative_details(request, slug):
         
         initiativeImpact = []
         impact_formset = []
-        if InitiativeImpact.objects.filter(initiative=oInitiative.id).exists():
-            initiativeImpact = InitiativeImpact.objects.filter(initiative=oInitiative.id).order_by('-YYear')
+        initiativeImpact=InitiativeImpact.objects.filter(initiative=oInitiative)
+        if initiativeImpact.exists():
+            initiativeImpact = initiativeImpact.order_by('-YYear')
             for o in initiativeImpact:
                 impact_formset.append(InitiativeImpactForm(instance=o))
         else:
@@ -284,26 +285,25 @@ def initiative_details(request, slug):
             
         Zipformsets = zip(initiativeImpact, impact_formset)
 
-        
-        oActions = Actions.objects.filter(initiative=oInitiative.id)
+        oActions = Actions.objects.filter(initiative=oInitiative)
         actionsForm = ActionsForm(request.POST)
         #editActionsForm = ActionsForm(instance=oActions)
         noOfActions = oActions.count()
-        
-        oMembers = TeamMembers.objects.filter(initiative=oInitiative.id)
+
+        oMembers = TeamMembers.objects.filter(initiative=oInitiative)
         membersForm = MemberForm(request.POST)
         noOfMembers = oMembers.count()
-        
-        oNotes = InitiativeNotes.objects.filter(initiative=oInitiative.id)
+
+        oNotes = InitiativeNotes.objects.filter(initiative=oInitiative)
         noteForm = NoteForm(request.POST)
         #editNoteForm = NoteForm(instance=oNotes)
         noOfNotes = oNotes.count()
-        
-        oApprovalHistory = InitiativeApprovals.objects.filter(initiative=oInitiative.id)
+
+        oApprovalHistory = InitiativeApprovals.objects.filter(initiative=oInitiative)
         noOfApprovals = oApprovalHistory.count()
 
-        if InitiativeFiles.objects.filter(initiative=oInitiative.id).first() != None:
-            oInitiativeFiles = InitiativeFiles.objects.filter(initiative=oInitiative.id)
+        oInitiativeFiles = InitiativeFiles.objects.filter(initiative=oInitiative)
+        if oInitiativeFiles.first() != None:
             initiativeFilesForm = FileForm(request.POST)
             noOfFiles = oInitiativeFiles.count()
         else:
@@ -328,25 +328,44 @@ def initiative_details(request, slug):
         #saved_data = {s.cell_index: s.value for s in selections.values.all()}
     
         return render(request, 'Fit4/Initiative/Init_Details.html', {
-            'initiative':oInitiative, 'oPlanRelevance':oPlanRelevance, 
-            'oEnabledBy':oEnabledBy, 'initiativeForm':initiativeForm, 
-            'initiativeForm3':initiativeForm3, 'initiativeNextLGateForm':initiativeNextLGateForm, 
-            'initiatives_formset':initiatives_formset, 'workstream':oWorkstream, 
-            'form':benefitType, 'initiativeImpact':initiativeImpact, 
-            'initiativeImpactForm':initiativeImpactForm, 'Zipformsets': Zipformsets, 
-            'actions':oActions, 'actionsForm':actionsForm, 
-            'noOfActions':noOfActions, 'members':oMembers, 
-            'membersForm':membersForm, 'noOfMembers':noOfMembers, 
-            'notes':oNotes, 'noteForm':noteForm,
-            'noOfNotes':noOfNotes, 'oInitiativeFiles': oInitiativeFiles, 
-            'initiativeFilesForm': initiativeFilesForm, 'noOfFiles': noOfFiles, 
-            'allUsers':allUsers, 'oApprovalHistory':oApprovalHistory, 
-            'noOfApprovals':noOfApprovals, 'initiativeThreatForm':initiativeThreatForm, 
-            'assetHierarchyForm':assetHierarchyForm, 'oUnit':oUnit,
-            'oProactiveType':oProactiveType, 'oThreatlikelihood':oThreatlikelihood, 
-            'mtoScoringInfoForm':mtoScoringInfoForm, 'mtoScoringForm':mtoScoringForm, 
-            'riskAssessmentForm':riskAssessmentForm, 'ZipUnits':ZipUnits, 
-            'initiative_id': oInitiative.id, 'saved_data': json.dumps(saved_data), 
+            'initiative':oInitiative, 
+            'oPlanRelevance':oPlanRelevance, 
+            'oEnabledBy':oEnabledBy, 
+            'initiativeForm':initiativeForm, 
+            'initiativeForm3':initiativeForm3, 
+            'initiativeNextLGateForm':initiativeNextLGateForm, 
+            'initiatives_formset':initiatives_formset, 
+            'workstream':oWorkstream, 
+            'form':benefitType, 
+            'initiativeImpact':initiativeImpact, 
+            'initiativeImpactForm':initiativeImpactForm, 
+            'Zipformsets': Zipformsets, 
+            'actions':oActions, 
+            'actionsForm':actionsForm, 
+            'noOfActions':noOfActions, 
+            'members':oMembers, 
+            'membersForm':membersForm, 
+            'noOfMembers':noOfMembers, 
+            'notes':oNotes, 
+            'noteForm':noteForm,
+            'noOfNotes':noOfNotes, 
+            'oInitiativeFiles': oInitiativeFiles, 
+            'initiativeFilesForm': initiativeFilesForm,
+            'noOfFiles': noOfFiles, 
+            'allUsers':allUsers, 
+            'oApprovalHistory':oApprovalHistory, 
+            'noOfApprovals':noOfApprovals, 
+            'initiativeThreatForm':initiativeThreatForm, 
+            'assetHierarchyForm':assetHierarchyForm, 
+            'oUnit':oUnit,
+            'oProactiveType':oProactiveType, 
+            'oThreatlikelihood':oThreatlikelihood, 
+            'mtoScoringInfoForm':mtoScoringInfoForm, 
+            'mtoScoringForm':mtoScoringForm, 
+            'riskAssessmentForm':riskAssessmentForm, 
+            'ZipUnits':ZipUnits, 
+            'initiative_id': oInitiative.id, 
+            'saved_data': json.dumps(saved_data), 
         })
     except Exception as e:
         import traceback
@@ -417,6 +436,7 @@ def add_benefits(request, id):
                 oBenefit = form.save(commit=False)
                 oBenefit.initiative = oInitiative
                 oBenefit.created_by = request.user
+                oBenefit.last_modified_by = request.user
                 oBenefit.save()
                 # Update Currency in Initiative
                 oInitiative.currency = Currency.objects.get(id = data.get('currency'))

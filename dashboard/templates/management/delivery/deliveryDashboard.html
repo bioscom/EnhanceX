@@ -1,5 +1,27 @@
 {% load humanize %}
 
+<form action="{% url 'dashboard:upload_excel' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal fade" id="weeklyCommitmentModal" tabindex="-1" aria-labelledby="weeklyCommitmentModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="weeklyCommitmentModalLabel">Upload Weekly Commitments</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ formUploadWeeklyCommitments.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
 <div class="container-fluid p-2" style="background:#038C3E">
   <!-- Row 1: Header and KPIs -->
     <div class="row">
@@ -46,9 +68,9 @@
                     <h6 class="small">Report Week</h6>
                 </div>
                 <div class="card-body">
-                    <select name="reportWeek" id="reportWeek" class="form-select mb-2">
-                        {% for o in oWeeks %}
-                            <option value="{{o}}" {% if request.GET.reportWeek == o|stringformat:"s" %}selected{% endif %}>{{ o }}</option>
+                    <select name="reportWeek" id="reportWeekSelect" class="form-select mb-2">
+                        {% for week in oWeeks %}
+                            <option value="{{week}}" {% if week == request.GET.reportWeek|stringformat:"s" %}selected{% endif %}>{{ week }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -59,7 +81,7 @@
                     <h6 class="small">Current Week</h6>
                 </div>
                 <div class="card-body">
-                    <h1 class="text-center">{{oWeekTW}}</h1>
+                    <div id="currentWeek"><h1 class="text-center">{{oWeekTW}}</h1></div>
                 </div>
             </div>
 
@@ -215,7 +237,7 @@
                     <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive shadow" style="height: 30vh; overflow-y: auto;">
+                    <div class="table-responsive shadow" style="height: 53vh; overflow-y: auto;">
                         <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
                             <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
                                 <tr>
@@ -250,10 +272,13 @@
             <div class="card zoom-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h6>Commitments</h6>
+                    {% if request.user.is_staff %}
+                        <a type="button" data-bs-toggle="modal" data-bs-target="#weeklyCommitmentModal" title="Click to upload weekly commitments for the week"><b>Upload Commitments</b></a>
+                    {% endif %}
                     <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive shadow" style="height: 30vh; overflow-y; auto;">
+                    <div class="table-responsive shadow" style="height: 53vh; overflow-y: auto;">
                         <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
                             <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
                                 <tr>
@@ -265,15 +290,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% comment %} {% for o in topInitiatives %}
+                                {% for o in weeklyCommitments %}
                                     <tr>
                                         <td>{{forloop.counter}}</td>
-                                        <td>{{o.initiative_id}}</td>
-                                        <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
-                                        <td>{{o.actual_Lgate}}</td>
-                                        <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
+                                        <td>{{o.functions}}</td>
+                                        <td>{{o.initiative}}</td>
+                                        <td>{{o.commitments}}</td>
+                                        <td style="
+                                            {% if o.status == 1 %}
+                                                background-color: green;
+                                                color: white;
+                                            {% elif o.status == 0 %}
+                                                background-color: red;
+                                                color: white;
+                                            {% endif %}
+                                            font-weight: bold; text-align: center;
+                                        "></td>
                                     </tr>
-                                {% endfor %} {% endcomment %}
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -292,3 +326,21 @@
     </div>
 </div>
 
+
+{% comment %} <script>
+  $('#reportWeekSelect').change(function () {
+    const week = $(this).val();
+
+    $.ajax({
+      url: "{% url 'dashboard:get_delivery_week_data' %}",
+      data: { week: week },
+      success: function (data) {
+        $('#currentWeek').text(data.current_week);
+        //$('#funnelSize').text(`$${data.funnel_size}M`);
+      },
+      error: function () {
+        alert("Failed to load week data.");
+      }
+    });
+  });
+</script> {% endcomment %}

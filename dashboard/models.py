@@ -189,3 +189,17 @@ class commercial_target(BaseModel):
 
 
 #endregion ============================== Management Report ======================================================================================
+
+
+class weekly_commitment_report(BaseModel):
+    functions = models.CharField(_('functions'), max_length=80)
+    initiative = models.CharField(_('initiative'), max_length=150)
+    commitments =  models.TextField(null=True, blank=True)
+    status = models.BooleanField(_("status"), default=False)
+    date_downloaded = models.DateTimeField(auto_now_add=True, blank=True, null=True, db_index=True)
+    report_week =  models.IntegerField()
+    report_year =  models.IntegerField()
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='commitment_created_by')
+    
+    def __str__(self):
+        return self.initiative

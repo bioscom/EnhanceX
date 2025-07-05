@@ -17,10 +17,12 @@ from django.contrib import messages
 from django.db.models import Sum, Count
 from django.utils import timezone
 from django.db.models.functions import ExtractWeek, ExtractYear
+from decimal import Decimal, ROUND_HALF_UP
+from django.utils.timezone import now
 
 
 def get_report_week():
-    today = datetime.now().today()
+    today = now().today()
     week_number = today.isocalendar().week
     return week_number
 
@@ -175,9 +177,10 @@ def trigger_delivery_data_copy(request):
         current_week = now.isocalendar()[1]  # ISO week number (1–53)
         current_year = now.year
         
-        if now.weekday() != 4 or now.hour < 9:
-            messages.error(request, "⚠️ Sync only allowed after 9am on Fridays.")
-            return redirect('/en/delivery_report')
+        #TODO: Uncomment the following lines if you want to restrict sync to Fridays after 9am
+        # if now.weekday() != 4 or now.hour < 9:
+        #     messages.error(request, "⚠️ Sync only allowed after 9am on Fridays.")
+        #     return redirect('/en/delivery_report')
         
         try:
             oFilter = SavedFilter.objects.get(id=selected_id)
@@ -223,7 +226,7 @@ def trigger_delivery_data_copy(request):
                     HashTag =  o.initiative.HashTag,
                     Created_Date = o.initiative.Created_Date,
                     benefittype = o.benefittype,
-                    Date_Downloaded = now.date(),
+                    Date_Downloaded = timezone.now(),
                     created_by = o.initiative.created_by,
                     report_week = current_week,
                 )
@@ -306,12 +309,19 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
         funnelBelowG3=round(funnelBelowG3/1000000, 1)
     else: 
         funnelBelowG3=0
-        
+    
+    
     #5. Funnel Growth
-    FunnelGrowthTW=float(PlannedTW) - float(PlannedLW)
+    FunnelGrowthTW = (PlannedTW - PlannedLW).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
     
     #6. Total Banked Value
-    TotalBankedTW=round(float(BankedTW) - float(BankedLW), 1)
+    TotalBankedTW = (BankedTW - BankedLW).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
+        
+    ##5. Funnel Growth
+    #FunnelGrowthTW=round(float(PlannedTW) - float(PlannedLW), 1)
+    
+    ##6. Total Banked Value
+    #TotalBankedTW=round(float(BankedTW) - float(BankedLW), 1)
     
     #6. Total Record Count
     #totalRecordCount=queryTW.filter(condition=True).count()
@@ -451,6 +461,12 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
         #functions_actual_data.append(round((row['total_actual'] or 0) / 1_000_000, 1))
 
     #endregion =============================================================================================================================
+    
+    # Upload Commitment Report
+    formUploadWeeklyCommitments = ExcelUploadForm(request.POST) #upload_weekly_commitment_excel(request)
+    weeklyCommitments = weekly_commitment_report.objects.filter(report_week=oWeekTWLW, date_downloaded__year=oYear)
+    #deliveryRecogForm = deliveryRecognitionForm(instance=deliveryRecognition)
+
         
 #except Exception as e:
 #    print(traceback.format_exc())
@@ -528,7 +544,46 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
         #13 Initiatives Performance
         'fullybankedInitiatives':fullybankedInitiatives,
         'notFullybankedInitiatives':notFullybankedInitiatives,
+        
+        #14 Upload Commitment Report
+        'formUploadWeeklyCommitments': formUploadWeeklyCommitments,
+        'weeklyCommitments':weeklyCommitments,
     })
+
+def upload_weekly_commitment_excel(request):
+    if request.method == 'POST':
+        form = ExcelUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            excel_file = request.FILES['file']
+            try:
+                df = pd.read_excel(excel_file)
+
+                # Optional: Check required columns
+                required_columns = ['functions', 'initiative', 'commitments', 'status']
+                df.columns = [col.strip().lower() for col in df.columns]  # normalize
+                if not all(col in df.columns for col in required_columns):
+                    messages.error(request, "Excel sheet is missing required columns.")
+                    return redirect(reverse("dashboard:delivery_report"))
+
+                for _, row in df.iterrows():
+                    weekly_commitment_report.objects.create(
+                        functions=row['functions'],
+                        initiative=row['initiative'],
+                        commitments=row.get('commitments', ''),
+                        status=bool(row['status']),
+                        report_week=get_report_week(),
+                        report_year=now().year,
+                        created_by=request.user
+                    )
+
+                messages.success(request, "Excel data uploaded successfully.")
+                return redirect(reverse("dashboard:delivery_report"))
+            except Exception as e:
+                messages.error(request, f"Upload failed: {str(e)}")
+                print(traceback.format_exc(), str(e))
+    else:
+        form = ExcelUploadForm()
+    return redirect(reverse("dashboard:delivery_report"))
 
 
 

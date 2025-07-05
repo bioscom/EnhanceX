@@ -140,12 +140,12 @@ def recycleBin(request):
 
 def actions_list(request):
     workstreams = Workstream.objects.all()
-    pendingActions = Actions.objects.filter(Created_Date__year=datetime.today().year).exclude(status__name='Completed').order_by('-start_date')
-    completedActions = Actions.objects.filter(Q(Created_Date__year=datetime.today().year) & Q(status__name='Completed')).order_by('-start_date')
+    pendingActions = Actions.objects.filter(Created_Date__year=now().year).exclude(status__name='Completed').order_by('-start_date')
+    completedActions = Actions.objects.filter(Q(Created_Date__year=now().year) & Q(status__name='Completed')).order_by('-start_date')
     return render(request, 'Fit4/Initiative/actions_report.html', {'pending': pendingActions, 'completed': completedActions, 'workstreams':workstreams})
 
 def pending_approval(request):
-    pendingApproval=InitiativeApprovals.objects.filter(Q(status=None) & Q(Created_Date__year=datetime.today().year)).order_by('-Created_Date')
+    pendingApproval=InitiativeApprovals.objects.filter(Q(status=None) & Q(Created_Date__year=now().year)).order_by('-Created_Date')
     # o.status == None
     return render(request, 'Fit4/Initiative/pending_approval.html', {'pending': pendingApproval})
 
@@ -165,7 +165,6 @@ def initiatives_list(request):
     return render(request, "Fit4/Initiative/initiative_list.html", context)
 
 #endregion============================================== End Home Page ===========================================================================
-
 
 #region================================================ Actions ===================================================================================
 
@@ -330,106 +329,3 @@ def edit_note(request, id):
     return render(request, "partials/partial_edit_notes.html", {'form': form})
 
 #endregion =========================================================================================================================================
-
-#region ============================ Advance to Next L Gate refined ===========================
-
-# def validate_date_order1(request, o):
-#     stages = [
-#         ('L0_Completion_Date_Planned', 'L1_Completion_Date_Planned'),
-#         ('L1_Completion_Date_Planned', 'L2_Completion_Date_Planned'),
-#         ('L2_Completion_Date_Planned', 'L3_Completion_Date_Planned'),
-#         ('L3_Completion_Date_Planned', 'L4_Completion_Date_Planned'),
-#         ('L4_Completion_Date_Planned', 'L5_Completion_Date_Planned'),
-#     ]
-#     for earlier, later in stages:
-#         if getattr(o, earlier) > getattr(o, later):
-#             messages.warning(request, f'<b>Date error between {earlier} and {later}. Please review.</b>')
-#             return False
-#     return True
-
-
-
-# def advance_to_next_LGateNew(request, id):
-#     oInitiative = get_object_or_404(Initiative, id=id)
-#     oWorkstream = get_object_or_404(Workstream, id=oInitiative.Workstream.id)
-
-#     if request.method != "POST" or request.user != oInitiative.author:
-#         messages.error(request, 'You are not authorized to perform this action.')
-#         return redirect(reverse("Fit4:initiative_details", args=[oInitiative.slug]))
-
-#     form = InitiativeNextLGateForm(data=request.POST, instance=oInitiative)
-#     if not form.is_valid():
-#         messages.error(request, 'Form validation failed.')
-#         return redirect(reverse("Fit4:initiative_details", args=[oInitiative.slug]))
-
-#     o = form.save(commit=False)
-
-    
-#     has_approver_roles = any([
-#         oInitiative.workstreamsponsor is not None,
-#         oInitiative.workstreamlead is not None,
-#         oInitiative.financesponsor is not None
-#     ])
-
-#     if has_approver_roles and not oInitiative.activate_initiative_approvers:
-#         messages.warning(request, '<b>vActivate Initiative Approvers</b> must be clicked.')
-#         return redirect(reverse("Fit4:initiative_details", args=[oInitiative.slug]))
-    
-#     print("Sponsor:", oInitiative.workstreamsponsor)
-#     print("Lead:", oInitiative.workstreamlead)
-#     print("Finance:", oInitiative.financesponsor)
-
-#     if not validate_date_order(request, o):
-#         return redirect(reverse("Fit4:initiative_details", args=[oInitiative.slug]))
-
-#     try:
-#         assign_approvers(o, oWorkstream)
-#         gate_index = o.actual_Lgate.GateIndex
-
-#         # Close previous stage
-#         setattr(o, f'L{gate_index}_Completion_Date_Actual', now())
-#         o.Planned_Date = getattr(o, f'L{gate_index}_Completion_Date_Planned')
-#         o.approval_status_visual = approvalStatusVisual.objects.get(id=ApprovalVisualStatus.Pending.value)
-#         o.last_modified_by = request.user
-#         o.last_modified_date = now()
-
-#         # Update next gate
-#         if gate_index < LGateIndex.L5.value:
-#             o.actual_Lgate = Actual_L_Gate.objects.get(GateIndex=gate_index + 1)
-
-#         o.save()
-
-#         # Log approvals
-#         create_approval(oInitiative, gate_index + 1, "Approval Request Submitted", oInitiative.author)
-
-#         approver = (
-#             oInitiative.financesponsor if gate_index >= LGateIndex.L4.value
-#             else oInitiative.workstreamlead if oInitiative.activate_initiative_approvers
-#             else oWorkstream.user_workstreamlead
-#         )
-#         role = "Finance Sponsor" if gate_index >= LGateIndex.L4.value else "Workstream Lead"
-#         create_approval(oInitiative, gate_index + 1, role, approver)
-
-#         # Send mail based on stage
-#         if gate_index == LGateIndex.L1.value:
-#             InitiativeOwnerSendmailToWorkStreamLead(request, oInitiative)
-#         elif gate_index == LGateIndex.L4.value:
-#             WorkStreamLeadSendmailToFinanceSponsorCopyInitiativeOwner(request, oInitiative)
-#         elif gate_index == LGateIndex.L5.value:
-#             InitiativeOwnerSendmailToFinanceSponsor(request, oInitiative)
-
-#         messages.success(request, f'<b>Initiative successfully sent for L{gate_index + 1} approval.</b>')
-#         return redirect(reverse("Fit4:initiative_details", args=[oInitiative.slug]))
-
-#     except Exception as e:
-#         print(traceback.format_exc())
-#         messages.error(request, 'An error occurred. Please contact admin.')
-#         return redirect(reverse("Fit4:initiative_details", args=[oInitiative.slug]))
-
-# def assign_approvers(initiative, workstream):
-#     if not initiative.activate_initiative_approvers:
-#         initiative.workstreamlead = workstream.user_workstreamlead
-#         initiative.financesponsor = workstream.user_financesponsor
-#         initiative.workstreamsponsor = getattr(workstream, 'user_workstreamsponsor', None)
-
-#endregion ===================================================================================

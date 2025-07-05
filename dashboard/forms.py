@@ -54,3 +54,7 @@ class commercialRecognitionForm(forms.ModelForm):
     class Meta:
         model = commercial_weekly_Recognition
         fields = ['recognition', ]
+        
+        
+class ExcelUploadForm(forms.Form):
+    file = forms.FileField()

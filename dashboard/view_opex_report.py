@@ -17,6 +17,7 @@ from django.contrib import messages
 from django.db.models import Sum, Count
 from django.utils import timezone
 from django.db.models.functions import ExtractWeek, ExtractYear
+from decimal import Decimal, ROUND_HALF_UP
 
 def get_report_week():
     today = datetime.now().today()
@@ -84,15 +85,16 @@ def OpexPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, opex
         #4. Funnel Below L3
         funnelBelowG3=queryTW.filter(actual_Lgate__GateIndex__lt=3).aggregate(total=Sum('Yearly_Planned_Value'))['total'] or 0 # Only below L3
         if funnelBelowG3 > 0:
-            funnelBelowG3=round(PlannedTW/funnelBelowG3, 1)
+            funnelBelowG3=round(funnelBelowG3/1000000, 1)
         else: 
             funnelBelowG3=0
-            
-        #5. Funnel Growth
-        FunnelGrowthTW=PlannedTW - PlannedLW
         
+        #5. Funnel Growth
+        FunnelGrowthTW = (PlannedTW - PlannedLW).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
+    
         #6. Total Banked Value
-        TotalBankedTW=BankedTW - BankedLW
+        TotalBankedTW = (BankedTW - BankedLW).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
+        
         
         #6. Total Record Count
         #totalRecordCount=queryTW.filter(condition=True).count()
@@ -468,9 +470,10 @@ def trigger_opex_data_copy(request):
         current_week = now.isocalendar()[1]  # ISO week number (1–53)
         current_year = now.year
         
-        if now.weekday() != 4 or now.hour < 9:
-            messages.error(request, "⚠️ Sync only allowed after 9am on Fridays.")
-            return redirect('/en/opex_report')
+        #TODO: Uncomment the following lines if you want to restrict sync to Fridays after 9am
+        # if now.weekday() != 4 or now.hour < 9:
+        #     messages.error(request, "⚠️ Sync only allowed after 9am on Fridays.")
+        #     return redirect('/en/opex_report')
         
         try:
             # week_number = get_report_week()
@@ -521,7 +524,7 @@ def trigger_opex_data_copy(request):
                     HashTag =  o.initiative.HashTag,
                     Created_Date = o.initiative.Created_Date,
                     benefittype = o.benefittype,
-                    Date_Downloaded = now.date(),
+                    Date_Downloaded = timezone.now(),
                     created_by = o.initiative.created_by,
                     report_week = current_week,
                 )

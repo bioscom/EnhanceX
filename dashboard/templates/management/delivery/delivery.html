@@ -13,11 +13,11 @@
 
     <style>
         th {
-            white-space: nowrap;
+            {% comment %} white-space: nowrap; {% endcomment %}
         }
     
         td {
-            white-space: nowrap;
+            {% comment %} white-space: nowrap; {% endcomment %}
         }
     </style>
 
@@ -46,6 +46,8 @@
             position: fixed;
             top: 50%;
             left: 50%;
+            width: 60vw;  /* 60% of viewport width */
+            height: 60vh; /* optional: prevent vertical overflow */
             transform: translate(-50%, -50%) scale(1.1);
             z-index: 1050; /* above Bootstrap modals */
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
@@ -149,9 +151,8 @@
                         {% include 'partials/partial_show_reports.html' %}  <!-- Can be shared-->
                     </div>
                     <div class="modal-footer">
-                        <button id="syncButton" type="submit" class="btn btn-primary">Sync Data for this week</button>
-                        {% comment %} <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#syncModal">Sync Data for this week</button>
-                        <button type="submit" class="btn btn-primary">Sync Data for this week</button> {% endcomment %}
+                        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#syncModal">Sync Data for this week</button>
+                        {% comment %}<button id="syncButton" type="submit" class="btn btn-primary">Sync Data for this week</button>  {% endcomment %}
                         <div id="availabilityNote" class="text-muted small">
                             🔒 This button will be available from <strong>Friday 9:00 AM</strong>
                         </div>
