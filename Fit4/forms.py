@@ -126,14 +126,9 @@ class InitiativeForm(forms.ModelForm):
             'description': 'description',
         }
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            exclude_names = [
-                'G2 Validate', 'G3 Plan', 'G4 Implement',
-                'G5 Tracking', 'G5 Completed'
-            ]
-            self.fields['actual_Lgate'].queryset = Actual_L_Gate.objects.exclude(name__in=exclude_names).order_by('LGate')
-            self.fields['actual_Lgate'].empty_label = "Select L-Gate"
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['actual_Lgate'].queryset = Actual_L_Gate.objects.all()[:2]
 
 class FCFMultiplierForm(forms.ModelForm):
     class Meta:
@@ -154,7 +149,10 @@ class InitiativeThreatForm(forms.ModelForm):
         # labels = {
         #     'description': 'description',
         # }
-    
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['actual_Lgate'].queryset = Actual_L_Gate.objects.all()[:2]
+        
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['unit'].queryset = Unit.objects.filter(active=True).order_by('name') # Force required in form
@@ -177,43 +175,12 @@ class AssetHierarchyForm(forms.ModelForm):
         model = Initiative
         fields = ['formula_Level_1', 'formula_Level_2', 'formula_Level_3', 'formula_Level_4', 'functions', 'SavingType', ]
         
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        
-        # Initially show empty state choices
-        self.fields['formula_Level_2'].queryset = Formula_Level_2.objects.none()
-        self.fields['formula_Level_3'].queryset = Formula_Level_3.objects.none()
-        self.fields['formula_Level_4'].queryset = Formula_Level_4.objects.none()
-
-        # Pre-populate states if instance is provided or data exists (useful for edit forms)
-        if 'formula_Level_1' in self.data:
-            try:
-                level1_id = int(self.data.get('formula_Level_1'))
-                self.fields['formula_Level_2'].queryset = Formula_Level_2.objects.filter(formula_Level_1_id=level1_id).order_by('name')
-            except (ValueError, TypeError):
-                pass  # invalid input; ignore and leave empty
-        elif self.instance.pk:
-            self.fields['formula_Level_2'].queryset = Formula_Level_2.objects.filter(formula_Level_1=self.instance.formula_Level_1)
-            
-        if 'formula_Level_2' in self.data:
-            try:
-                level2_id = int(self.data.get('formula_Level_2'))
-                self.fields['formula_Level_3'].queryset = Formula_Level_3.objects.filter(formula_Level_2_id=level2_id).order_by('name')
-            except (ValueError, TypeError):
-                pass  # invalid input; ignore and leave empty
-        elif self.instance.pk:
-            self.fields['formula_Level_3'].queryset = Formula_Level_3.objects.filter(formula_Level_2=self.instance.formula_Level_2)
-        
-        
-        if 'formula_Level_3' in self.data:
-            try:
-                level3_id = int(self.data.get('formula_Level_3'))
-                self.fields['formula_Level_4'].queryset = Formula_Level_3.objects.filter(formula_Level_3_id=level3_id).order_by('name')
-            except (ValueError, TypeError):
-                pass  # invalid input; ignore and leave empty
-        elif self.instance.pk:
-            self.fields['formula_Level_4'].queryset = Formula_Level_4.objects.filter(formula_Level_3=self.instance.formula_Level_3)
-        
+        widgets = {
+            'formula_Level_1': forms.Select(attrs={'class': 'form-select'}),
+            'formula_Level_2': forms.Select(attrs={'class': 'form-select'}),
+            'formula_Level_3': forms.Select(attrs={'class': 'form-select'}),
+            'formula_Level_4': forms.Select(attrs={'class': 'form-select'}),
+        }        
 
 class WorkstreamAssetHierarchyForm(forms.ModelForm):
     class Meta:
@@ -224,14 +191,6 @@ class InitiativeForm2(forms.ModelForm):
     description = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
     problem_statement = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
     overallstatuscommentary = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
-    
-    # Plan_Relevance = forms.ModelMultipleChoiceField(
-    #     queryset=PlanRelevance.objects.all(),
-    #     widget=forms.SelectMultiple(attrs={
-    #         'class': 'duallistbox',
-    #         'multiple': 'multiple'
-    #     })
-    # )
     
     class Meta:
         model = Initiative
@@ -270,14 +229,6 @@ class InitiativeForm2Users(forms.ModelForm):
     problem_statement = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
     overallstatuscommentary = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
     
-    # Plan_Relevance = forms.ModelMultipleChoiceField(
-    #     queryset=PlanRelevance.objects.all(),
-    #     widget=forms.SelectMultiple(attrs={
-    #         'class': 'duallistbox',
-    #         'multiple': 'multiple'
-    #     })
-    # )
-    
     class Meta:
         model = Initiative
 
@@ -301,10 +252,6 @@ class InitiativeForm2Users(forms.ModelForm):
             # 'problem_statement': CKEditor5Widget(attrs={"class": "django_ckeditor_5"}, config_name="default"),
             # 'overallstatuscommentary': CKEditor5Widget(attrs={"class": "django_ckeditor_5"}, config_name="default"),
         }
-        # labels = {
-        #     'description': 'description',
-            
-        # }
       
 class InitiativeForm3(forms.ModelForm):
     class Meta:

@@ -6,6 +6,7 @@ import traceback
 from user_visit.models import *
 from enum import Enum
 from django.urls import reverse
+from django.utils.timezone import now
 from .notifications import *
 from .views_workflow import *
 

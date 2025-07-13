@@ -240,45 +240,17 @@ def delete_filter(request, id):
 def report_view(request, report_id):
     oFilter = SavedFilter.objects.get(unique_name=report_id)
     reportForm = SavedFilterForm(instance=oFilter)
+    RecordCount=0
+    duped=[]
     
     try:
         #queryset=Initiative.objects.select_related().filter(**filter_params)
         if oFilter.filter_params2 != None:
-            multi_valued_keys = ['Plan_Relevance', 'Workstream', 'overall_status', 'YYear', 'benefittype', 'enabledby']
+            multi_valued_keys = ['Plan_Relevance', 'Workstream', 'overall_status', 'YYear', 'benefittype', 'enabledby', 'functions']
             for key in multi_valued_keys:
                 if key in oFilter.filter_params2 and isinstance(oFilter.filter_params2[key], list):
                     oFilter.filter_params2[f"{key}__in"] = oFilter.filter_params2.pop(key)
                     
-            # if "Plan_Relevance" in filter_params2 and isinstance(filter_params2['Plan_Relevance'], list):
-            #     filter_params2['Plan_Relevance__in'] = filter_params2.pop('Plan_Relevance') # Replace key with __in
-
-            # if 'Workstream' in filter_params2 and isinstance(filter_params2['Workstream'], list):
-            #     filter_params2['Workstream__in'] = filter_params2.pop('Workstream') # Replace key with __in
-
-            # if 'overall_status' in filter_params2 and isinstance(filter_params2['overall_status'], list):
-            #     filter_params2['overall_status__in'] = filter_params2.pop('overall_status') # Replace key with __in
-
-            # if 'YYear' in filter_params2 and isinstance(filter_params2['YYear'], list):
-            #     filter_params2['YYear__in'] = filter_params2.pop('YYear') # Replace key with __in
-            
-            # if 'HashTag' in filter_params2 and isinstance(filter_params2['HashTag'], list):
-            #     filter_params2['HashTag__in'] = filter_params2.pop('HashTag') # Replace key with __in
-
-            # if 'benefittype' in filter_params2 and isinstance(filter_params2['benefittype'], list):
-            #     filter_params2['benefittype__in'] = filter_params2.pop('benefittype') # Replace key with __in
-
-            # if 'enabledby' in filter_params2 and isinstance(filter_params2['enabledby'], list):
-            #     filter_params2['enabledby__in'] = filter_params2.pop('enabledby') # Replace key with __in
-
-            # if 'functions' in filter_params2 and isinstance(filter_params2['functions'], list):
-            #     filter_params2['functions__in'] = filter_params2.pop('functions') # Replace key with __in
-            #functions
-            
-            # queryset = InitiativeImpact.objects.filter().select_related('initiative').annotate(
-            #      Workstream=F('initiative__Workstream'), HashTag=F('initiative__HashTag'),  
-            #      overall_status=F('initiative__overall_status'), Plan_Relevance=F('initiative__Plan_Relevance'), 
-            #      enabledby=F('initiative__enabledby'), functions=F('initiative__functions')).prefetch_related(Prefetch('initiative__Plan_Relevance'), Prefetch('initiative__enabledby')).filter(**filter_params2)
-
             queryset = InitiativeImpact.objects.select_related('initiative').annotate(
                 Workstream=F('initiative__Workstream'),
                 #HashTag=F('initiative__HashTag'),

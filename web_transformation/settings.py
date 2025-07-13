@@ -189,6 +189,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'Fit4.context_processors.global_function',
                 'Fit4.context_processors.global_Initiative',
+                'Fit4.context_processors.global_initiative_data',
                 #'django.core.context_processors.media',
                 #'django.core.context_processors.request',
             ],

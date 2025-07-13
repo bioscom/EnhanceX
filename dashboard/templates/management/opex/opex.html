@@ -25,15 +25,15 @@
 
 
     <style>
-    .resize {
-        width: 100% !important;
-        height: 200px !important;
-    }
+        .resize {
+            width: 100% !important;
+            height: 200px !important;
+        }
 
-    .resize2 {
-        width: 100% !important;
-        height: 100px !important;
-    }
+        .resize2 {
+            width: 100% !important;
+            height: 100px !important;
+        }
     </style>
 
     <style>
@@ -165,61 +165,54 @@
         </div>
     </form>
 
-    <div class="card col-sm-12 mb-2">
+    <div class="card mb-2">
         <div class="card-body">
             <div class="col-sm-12">
-                <div class="row">
-                    <div class="col-sm-9 text-center">
-                        <h2>2025 Renaissance Opex Dashboard (100%)</h2>
+                <div class="row ms-2">
+                    <div class="col-sm-2">
+                        <div class="col-sm fw-bold">Report Week</div>
+                        <div class="col-sm">
+                            <select name="reportWeek" id="reportWeek" class="form-select mb-2">
+                                {% for o in oWeeks %}
+                                    <option value="{{ o }}" {% if oWeekTW|stringformat:"s" == o|stringformat:"s" %}selected{% endif %}>{{ o }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
-                    <div class="col-sm-3 text-end mb-2">
+                    <div class="col-sm-2">
+                        <div class="col-sm fw-bold">Functions</div>
+                        <div class="col-sm">
+                            <select id="functionFilter" class="form-select mb-2">
+                                <option value="">All</option>
+                                {% for o in xfunctions %}
+                                    <option value="{{o.id}}" {% if request.GET.functionFilter == o.id|stringformat:"s" %}selected{% endif %}>{{ o.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 text-center d-flex align-items-center">
+                        <h2>{{oYear}} Renaissance Opex Dashboard (100%)</h2>
+                    </div>
+                    
+                    <div class="col-sm-2 d-flex align-items-center text-end">
                         {% if request.user.is_staff %}
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#listReportModal">Sync this week Opex data</button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#listReportModal">Sync this week's Opex data</button>
                         {% endif %}
                     </div>
                 </div>
-                
-                <div class="tab-content ms-2" id="myTabContent">
-                    <div class="tab-pane fade show active" id="Opex" role="tabpanel" aria-labelledby="opex-tab">
-                        {% include 'management/opex/opexDashboard.html' %}
-                    </div>
-                    <div class="tab-pane fade" id="movement" role="tabpanel" aria-labelledby="movement-tab">
-                        {% include 'management/opex/opexMovement.html' %}
-                    </div>
-                    <div class="tab-pane fade" id="bankingplan" role="tabpanel" aria-labelledby="banking-tab">
-                        {% include 'management/opex/opexMonthlyBankingPlan.html' %}
-                    </div>
-
-                    <div class="tab-pane fade" id="opexPerformance" role="tabpanel" aria-labelledby="opex-performance-tab">
-                        {% include 'management/opex/opexInitiativePerformance.html' %}
-                    </div>
-                </div>
-
-                <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="opex-tab" data-bs-toggle="tab" data-bs-target="#Opex" type="button" role="tab" aria-controls="Opex" aria-selected="true">
-                            <b>Opex Dashboards</b>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="movement-tab" data-bs-toggle="tab" data-bs-target="#movement" type="button" role="tab" aria-controls="movement" aria-selected="false">
-                            <b>Opex Movement</b>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="banking-tab" data-bs-toggle="tab" data-bs-target="#bankingplan" type="button" role="tab" aria-controls="bankingplan" aria-selected="false">
-                            <b>Monthly Banking Plan</b>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="opex-performance-tab" data-bs-toggle="tab" data-bs-target="#opexPerformance" type="button" role="tab" aria-controls="opexPerformance" aria-selected="false">
-                            <b>Initiatives Performance</b>
-                        </button>
-                    </li>
-                </ul>
+            </div>
+        </div>
+    </div>
+        
+    <div class="card col-sm-12">
+        <div class="card-body">
+            <div id="ajaxReportContainer">
+                {% include "management/opex/ajax_partial.html" %}
             </div>
         </div>
     </div><br><br><br>
+    
 {% endblock %}
 
 

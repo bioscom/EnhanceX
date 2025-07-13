@@ -1,0 +1,135 @@
+{% load humanize %}
+
+<div class="container-flux">
+    <div class="card shadow mb-2 bg-body rounded">
+        <div class="card-header">
+            <div class="col-sm-12 row">
+                <div class="col-sm">
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="/media/logo/initiative_img.png" alt="" loading="lazy"/>
+                            </td>
+                            <td>
+                                <small>Weekly</small>
+                                <div class="col-sm row">
+                                    <div class="col-sm"><h5>Opex Performance Report</h5></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-sm text-end">
+                    <div class="btn-group pull-right" role="group" aria-label="Basic example">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card zoom-card col-md-12 mb-2">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>Fully Banked</h6>
+                    <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive shadow" style="height: 30vh; overflow-y: auto;">
+                        <table class="table table-bordered table-hover table-font">
+                            <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
+                                <tr>
+                                    <td></td>
+                                    <td>Performance(%)</td>
+                                    <td>Initiative Name</td>
+                                    <td>Actual Gate</td>
+                                    <td>Planned Value($)</td>
+                                    <td>Banked Value($)</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for o in opex_fullybankedInitiatives %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td style="
+                                            {% if o.achievement_pct >= 50 %}
+                                                background-color: green;
+                                                color: white;
+                                            {% elif o.achievement_pct < 50 %}
+                                                background-color: red;
+                                                color: white;
+                                            {% endif %}
+                                            font-weight: bold; text-align: center;
+                                        ">
+                                            {{o.achievement_pct|floatformat:1}}
+                                        </td>
+                                        
+                                        <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                        <td>{{o.actual_Lgate}}</td>
+                                        <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
+                                        <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            {% comment %} <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="3" class="text-end">Total</th>
+                                    <th class="text-end">${{ west_total_planned|floatformat:2|intcomma }}</th>
+                                    <th class="text-end">${{ west_total_actual|floatformat:2|intcomma }}</th>
+                                </tr>
+                            </tfoot> {% endcomment %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card zoom-card col-md-12">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>Not Fully Banked</h6>
+                    <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive shadow" style="height: 30vh; overflow-y: auto;">
+                        <table class="table table-bordered table-hover table-font">
+                            <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
+                                <tr>
+                                    <td></td>
+                                    <td>Performance(%)</td>
+                                    <td>Initiative Name</td>
+                                    <td>Actual Gate</td>
+                                    <td>Planned Value($)</td>
+                                    <td>Banked Value($)</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for o in opex_notFullybankedInitiatives %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td style="
+                                            {% if o.achievement_pct >= 50 %}
+                                                background-color: green;
+                                                color: white;
+                                            {% elif o.achievement_pct < 50 %}
+                                                background-color: red;
+                                                color: white;
+                                            {% endif %}
+                                            font-weight: bold; text-align: center;
+                                        ">
+                                            {{o.achievement_pct|floatformat:1}}
+                                        </td>
+                                        <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                        <td>{{o.actual_Lgate}}</td>
+                                        <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
+                                        <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

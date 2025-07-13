@@ -9,7 +9,7 @@
       {% for year in years %}
         <div class="px-3 py-2 mx-1 border rounded year-item
               {% if selected_year == year|stringformat:'s' %} bg-primary text-white {% else %} bg-light {% endif %}"
-            data-year="{{ year }}"
+              data-year="{{ year }}"
             style="min-width: 80px; cursor: pointer;">
           {{ year }}
         </div>
@@ -34,23 +34,23 @@
 
     document.querySelectorAll(".year-item").forEach(item => {
         item.addEventListener("click", function () {
-        const year = this.dataset.year;
-        highlightYear(this);
+          const year = this.dataset.year;
+          highlightYear(this);
 
-        // Send AJAX POST
-        fetch(window.location.href, {
-            method: "POST",
-            headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            },
-            body: new URLSearchParams({ 'selected_year': year })
-        })
-        .then(response => response.text())
-        .then(html => {
-            // Replace a container (optional) or log result
-            console.log("Year posted:", year);
-        });
+          // Send AJAX POST
+          fetch(window.location.href, {
+              method: "POST",
+              headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+              },
+              body: new URLSearchParams({ 'selected_year': year })
+          })
+          .then(response => response.text())
+          .then(html => {
+              // Replace a container (optional) or log result
+              console.log("Year posted:", year);
+          });
         });
     });
 
@@ -60,11 +60,11 @@
 
     function highlightYear(selectedEl) {
         document.querySelectorAll('.year-item').forEach(el => {
-        el.classList.remove('bg-primary', 'text-white');
-        el.classList.add('bg-light');
+          el.classList.remove('bg-primary', 'text-white');
+          el.classList.add('bg-light');
         });
         selectedEl.classList.remove('bg-light');
         selectedEl.classList.add('bg-primary', 'text-white');
-    }
+      }
     });
 </script>

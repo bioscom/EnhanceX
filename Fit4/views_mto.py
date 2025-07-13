@@ -9,6 +9,7 @@ from django.urls import reverse
 from .notifications import *
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, F, Prefetch
+from django.utils.timezone import now
 
 def add_mtoscoring(request, initiativeId):
     try:

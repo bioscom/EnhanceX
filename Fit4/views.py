@@ -21,6 +21,12 @@ from .views_mto import *
 from .views_workstream import *
 from .views_fcf_multiplier import *
 from .views_initiative_mgt import *
+from .views_workflow import *
+
+from dashboard.models import *
+
+from django.db.models import Q, F, Prefetch, FloatField, ExpressionWrapper
+from itertools import chain
 
 def custom_server_error(request):
     # Capture error info
@@ -94,8 +100,8 @@ def search(request):
 
 @login_required(login_url='account:login_page')
 def Home(request):
-    initiatives = Initiative.objects.filter(author=request.user).filter(is_active=True, last_modified_date__year=datetime.datetime.today().year).order_by('-Created_Date')
-    action_count = Initiative.objects.filter(author=request.user).filter(is_active=True, last_modified_date__year=datetime.datetime.today().year).annotate(action_count=Count('initiative_actions'))
+    initiatives = Initiative.objects.filter(author=request.user).filter(is_active=True, last_modified_date__year=now().year).order_by('-Created_Date')
+    action_count = Initiative.objects.filter(author=request.user).filter(is_active=True, last_modified_date__year=now().year).annotate(action_count=Count('initiative_actions'))
     ZipInitiativeAction = zip(initiatives, action_count)
     
     initiativesCount = initiatives.count()
@@ -203,7 +209,7 @@ def edit_actions(request, id):
                 o = form.save(commit=False)
                 o.last_modified_by = request.user
                 if (o.status == 'Completed'):
-                    o.completion_date = datetime.date.now()
+                    o.completion_date = now()
                 o.save()
                 return redirect('/en/actions_details/'+ str(id))
                 #return redirect(reverse("Fit4:initiative_details", args=[oInitiative.slug]))
@@ -327,5 +333,29 @@ def edit_note(request, id):
     except Exception as e:
         print(traceback.format_exc())
     return render(request, "partials/partial_edit_notes.html", {'form': form})
+
+#endregion =========================================================================================================================================
+
+
+
+#region================================================ Asset Heirarchy =============================================================================
+
+def get_level2(request):
+    level1_id = request.GET.get('level1_id')
+    options = Formula_Level_2.objects.filter(formula_Level_1=level1_id).values('id', 'name')
+    html = render_to_string('partials/option_list.html', {'options': options})
+    return JsonResponse({'options': html})
+
+def get_level3(request):
+    level2_id = request.GET.get('level2_id')
+    options = Formula_Level_3.objects.filter(formula_Level_2=level2_id).values('id', 'name')
+    html = render_to_string('partials/option_list.html', {'options': options})
+    return JsonResponse({'options': html})
+
+def get_level4(request):
+    level3_id = request.GET.get('level3_id')
+    options = Formula_Level_4.objects.filter(formula_Level_3=level3_id).values('id', 'name')
+    html = render_to_string('partials/option_list.html', {'options': options})
+    return JsonResponse({'options': html})
 
 #endregion =========================================================================================================================================

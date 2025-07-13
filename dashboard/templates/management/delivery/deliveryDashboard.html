@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            <div class="card col-md mb-1">
+            {% comment %} <div class="card col-md mb-1">
                 <div class="card-header">
                     <h6>Workstream</h6>
                 </div>
@@ -74,7 +74,7 @@
                         {% endfor %}
                     </select>
                 </div>
-            </div>
+            </div> {% endcomment %}
         
             <div class="card col-md mb-1">
                 <div class="card-header">
@@ -163,26 +163,25 @@
                         <h6>Banked YTD</h6>
                     </div>
                     <div class="card-body">
-                        <canvas id="DeliveryBankedYTDChart" class="resize"></canvas>
+                        <canvas id="DeliveryBankedYTDChart"></canvas>
                         {% comment %} {{ chart_labels|json_script:"chart-labels" }}
                         {{ chart_data|json_script:"chart-data" }} {% endcomment %}
                     </div>
                 </div>
             </div>
 
-            <div class="row mt-1 g-1">
-                <div class="card zoom-card col-md-6">
+            <div class="mt-1 g-1">
+                <div class="card zoom-card col-md-12">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h6>Funnel Value by Workstream</h6>
-                        {% comment %} <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span> {% endcomment %}
                     </div>
                     <div class="card-body">
-                        <canvas id="funnelTargetChart"></canvas>
+                        <canvas id="funnelTargetChart" style="height: 400px;"></canvas>
                     </div>
                 </div>
-            
-                <div class="col-md-6 g-1">
-                    <div class="card zoom-card col-md-12">
+
+                <div class="row mt-1 g-1">
+                    <div class="card zoom-card col-md-6">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h6>Initiative Movement to L3+ by Value & Count</h6>
                             {% comment %} <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span> {% endcomment %}
@@ -192,7 +191,7 @@
                         </div>
                     </div>
 
-                    <div class="card zoom-card col-md-12 mt-1">
+                    <div class="card zoom-card col-md-6 mt-1">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h6>Total Count, L3+ & New Initiative per Workstream</h6>
                             {% comment %} <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>  {% endcomment %}
@@ -231,14 +230,14 @@
                 </div>
             </div>
             
-            <div class="card zoom-card mb-1">
+            <div class="card zoom-card mb-1" id="topInitiativesCard">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h6>Top Initiatives</h6>
                     <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive shadow" style="height: 53vh; overflow-y: auto;">
-                        <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
+                    <div class="table-responsive shadow scroll-container">
+                        <table id="deliveryTopInitiatives" class="table table-bordered table-hover table-font">
                             <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
                                 <tr>
                                     <th></th>
@@ -272,14 +271,15 @@
             <div class="card zoom-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h6>Commitments</h6>
+                    <a href="/media/FileUploads/Weekly Commitments.xlsx" title="Download System Acceptable template here. Ensure you align your data in this format.">Download Template</a>
                     {% if request.user.is_staff %}
                         <a type="button" data-bs-toggle="modal" data-bs-target="#weeklyCommitmentModal" title="Click to upload weekly commitments for the week"><b>Upload Commitments</b></a>
                     {% endif %}
                     <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive shadow" style="height: 53vh; overflow-y: auto;">
-                        <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
+                    <div class="table-responsive shadow scroll-container">
+                        <table id="rptTable33" class="table table-bordered table-hover table-font">
                             <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
                                 <tr>
                                     <th></th>
@@ -316,18 +316,51 @@
         </div>
     </div>
     <!-- Row 4: Funnel Stage Summary -->
-    <div class="row mb-2 mt-2">
+    <div class="row mb-2 mt-2 text-light">
         <div class="col-sm-10 text-end">
             <b>Dashboard Last Updated</b>
         </div>
         <div class="col-sm-2">
-            <b>{{LastUpdated|date:'d-m-Y'}}</b>
+            <b>{{LastUpdated|date:'d-M-Y H:i'}}</b>
         </div>
     </div>
 </div>
 
+<script>
+  const table = document.getElementById("deliveryTopInitiatives");
+  const rows = table.querySelectorAll("tbody tr");
+
+  // Step 1: Collect values from column index 1 (Name column)
+  const names = Array.from(rows).map(row => row.cells[1].textContent.trim());
+
+  // Step 2: Count occurrences
+  const counts = {};
+  names.forEach(name => {
+    counts[name] = (counts[name] || 0) + 1;
+  });
+
+  // Step 3: Highlight cells with duplicates
+  rows.forEach(row => {
+    const nameCell = row.cells[1];
+    if (counts[nameCell.textContent.trim()] > 1) {
+      nameCell.style.color = "red";
+      // Or highlight entire row:
+      // row.style.backgroundColor = "#f8d7da";
+    }
+  });
+</script>
 
 {% comment %} <script>
+    document.querySelectorAll('[data-zoom-btn]').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const card = this.closest('.zoom-card');
+            card.classList.toggle('zoomed');
+        });
+    });
+</script>
+
+
+<script>
   $('#reportWeekSelect').change(function () {
     const week = $(this).val();
 

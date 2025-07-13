@@ -23,7 +23,7 @@
                         Level 1
                     </div>
                     <div class="col-sm">
-                        {% render_field assethierarchyForm.formula_Level_1 class="select form-select" placeholder="" %}
+                        {% render_field assethierarchyForm.formula_Level_1 class="select form-select" id="formula_Level_1" %}
                     </div>
                 </div>
 
@@ -32,7 +32,7 @@
                         Level 2
                     </div>
                     <div class="col-sm">
-                        {% render_field assethierarchyForm.formula_Level_2 class="select form-select" placeholder="" %}
+                        {% render_field assethierarchyForm.formula_Level_2 class="select form-select" id="formula_Level_2" %}
                     </div>
                 </div>
 
@@ -41,7 +41,7 @@
                         Level 3
                     </div>
                     <div class="col-sm">
-                        {% render_field assethierarchyForm.formula_Level_3 class="select form-select" placeholder="" %}
+                        {% render_field assethierarchyForm.formula_Level_3 class="select form-select" id="formula_Level_3" %}
                     </div>
                 </div>
 
@@ -50,7 +50,7 @@
                         Level 4
                     </div>
                     <div class="col-sm">
-                        {% render_field assethierarchyForm.formula_Level_4 class="select form-select" placeholder="" %}
+                        {% render_field assethierarchyForm.formula_Level_4 class="select form-select" id="formula_Level_4" %}
                     </div>
                 </div>
 
@@ -78,3 +78,28 @@
         </div>
     </div>
 </form>
+
+<script>
+  $(document).ready(function () {
+    $('#formula_Level_1').change(function () {
+      $.get('/get-level2/', { level1_id: $(this).val() }, function (data) {
+        $('#formula_Level_2').html(data.options);
+        $('#formula_Level_3').html('<option value="">---------</option>');
+        $('#formula_Level_4').html('<option value="">---------</option>');
+      });
+    });
+
+    $('#formula_Level_2').change(function () {
+      $.get('/get-level3/', { level2_id: $(this).val() }, function (data) {
+        $('#formula_Level_3').html(data.options);
+        $('#formula_Level_4').html('<option value="">---------</option>');
+      });
+    });
+
+    $('#formula_Level_3').change(function () {
+      $.get('/get-level4/', { level3_id: $(this).val() }, function (data) {
+        $('#formula_Level_4').html(data.options);
+      });
+    });
+  });
+</script>

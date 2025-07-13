@@ -36,7 +36,7 @@
                         </span>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive shadow" style="height: 30vh; overflow-y: auto;">
+                        <div class="table-responsive shadow scroll-container">
                             <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
                                 <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
                                     <tr>
@@ -71,13 +71,14 @@
                                         </tr>
                                     {% endfor %}
                                 </tbody>
-                                {% comment %} <tfoot class="table-light">
+                                <tfoot class="table-light">
                                     <tr>
                                         <th colspan="3" class="text-end">Total</th>
-                                        <th class="text-end">${{ west_total_planned|floatformat:2|intcomma }}</th>
-                                        <th class="text-end">${{ west_total_actual|floatformat:2|intcomma }}</th>
+                                        <th class="text-end">${{ fullybanked_total_planned|floatformat:2|intcomma }}</th>
+                                        <th class="text-end">${{ fullybanked_total_actual|floatformat:2|intcomma }}</th>
+                                        <th></th>
                                     </tr>
-                                </tfoot> {% endcomment %}
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -91,7 +92,7 @@
                         </span>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive shadow" style="height: 30vh; overflow-y: auto;">
+                        <div class="table-responsive shadow scroll-container">
                             <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
                                 <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
                                     <tr>
@@ -126,13 +127,14 @@
                                         </tr>
                                     {% endfor %}
                                 </tbody>
-                                {% comment %} <tfoot class="table-light">
+                                <tfoot class="table-light">
                                     <tr>
                                         <th colspan="3" class="text-end">Total</th>
-                                        <th class="text-end">${{ west_total_planned|floatformat:2|intcomma }}</th>
-                                        <th class="text-end">${{ west_total_actual|floatformat:2|intcomma }}</th>
+                                        <th class="text-end">${{ notFullybanked_total_planned|floatformat:2|intcomma }}</th>
+                                        <th class="text-end">${{ notFullybanked_total_actual|floatformat:2|intcomma }}</th>
+                                        <th></th>
                                     </tr>
-                                </tfoot> {% endcomment %}
+                                </tfoot>
                             </table>
                         </div>
                     </div>

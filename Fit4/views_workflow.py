@@ -8,7 +8,6 @@ from django.contrib.auth import get_user_model
 from user_visit.models import *
 from enum import Enum
 import datetime
-from datetime import datetime
 from django.utils.timezone import now
 from .notifications import *
 from .views_advance_to_next_gate import *
@@ -37,9 +36,9 @@ def workFlowStarts(request, oInitiative, o, oWorkstream):
 def gateZero(request, o, oInitiative):
     o.actual_Lgate = Actual_L_Gate.objects.get(GateIndex=LGateIndex.L1.value) # Change L Gate here. This will be the only place an initiative owner will change LGate, others will be changed on approval
     o.Planned_Date = o.L0_Completion_Date_Planned
-    o.L0_Completion_Date_Actual = datetime.now() # Close Actual Completion Date for L0
+    o.L0_Completion_Date_Actual = now() # Close Actual Completion Date for L0
     o.last_modified_by = request.user
-    o.update =datetime.now()
+    o.update =now()
     o.save()
 
     # Approval Request Submitted
@@ -48,7 +47,7 @@ def gateZero(request, o, oInitiative):
 
 def gateOne(request, o, oInitiative, oWorkstream):
     o.Planned_Date = o.L1_Completion_Date_Planned
-    o.L1_Completion_Date_Actual = datetime.now() # Close Actual Completion Date for L1
+    o.L1_Completion_Date_Actual = now() # Close Actual Completion Date for L1
     o.approval_status_visual = approvalStatusVisual.objects.get(id=ApprovalVisualStatus.Pending.value) # Change Approval Status Visual to Pending approval
     
     #Assign Workstream lead and Finance Sponsor to Initiative, if activate initiative approvers is false
@@ -64,7 +63,7 @@ def gateOne(request, o, oInitiative, oWorkstream):
     assign_initiative_approver(oInitiative, LGateIndex.L2.value, "Workstream Lead", request.user, initiativeApprover)
     
     o.last_modified_by = request.user
-    o.last_modified_date = datetime.now()
+    o.last_modified_date = now()
     o.save()
     
     messages.success(request, '<b>Initiative successfully sent for L2 approval.</b>') # message to show the initiative has been sent for L2 approval
@@ -87,7 +86,7 @@ def gateTwo(request, o, oInitiative, oWorkstream):
     assign_initiative_approver(oInitiative, LGateIndex.L3.value, "Workstream Lead", request.user, initiativeApprover)
     
     o.last_modified_by = request.user
-    o.last_modified_date = datetime.now()
+    o.last_modified_date = now()
     o.save()
     
     messages.success(request, '<b>Initiative successfully sent for L3 approval.</b>') # message to show the initiative has been sent for L3 approval
@@ -109,7 +108,7 @@ def gateThree(request, o, oInitiative, oWorkstream):
     assign_initiative_approver(oInitiative, LGateIndex.L4.value, "Workstream Lead", request.user, initiativeApprover)
     
     o.last_modified_by = request.user
-    o.last_modified_date = datetime.now()
+    o.last_modified_date = now()
     o.save()
     
     messages.success(request, '<b>Initiative successfully sent for L4 approval.</b>') # message to show the initiative has been sent for L4 approval
@@ -130,7 +129,7 @@ def gateFour(request, o, oInitiative, oWorkstream):
     assign_initiative_approver(oInitiative, LGateIndex.L5.value, "Finance Sponsor", request.user, initiativeApprover)
     
     o.last_modified_by = request.user
-    o.last_modified_date = datetime.now()
+    o.last_modified_date = now()
     o.save()
     
     messages.success(request, '<b>Initiative successfully sent for L5 approval.</b>') # message to show the initiative has been sent for L5 approval
@@ -153,7 +152,7 @@ def gateFive(request, o, oInitiative, oWorkstream):
     assign_initiative_approver(oInitiative, LGateIndex.L5.value, "Finance Sponsor", request.user, initiativeApprover)
     
     o.last_modified_by = request.user
-    o.last_modified_date = datetime.now()
+    o.last_modified_date = now()
     o.save()
     
     messages.success(request, '<b>Initiative successfully sent for L5-Complete approval.</b>') # message to show the initiative has been sent for L5 approval
@@ -210,13 +209,13 @@ def create_approval(initiative, gate_index, approver, role, user):
         actualApprover=approver,
         rolePlayed=role,
         created_by=user,
-        Created_Date=datetime.now()
+        Created_Date=now()
     )
 
 def update_initiative_gate(initiative, gate_index, visual_status_id, completion_date_field):
     setattr(initiative, 'actual_Lgate', Actual_L_Gate.objects.get(GateIndex=gate_index))
     initiative.approval_status_visual = approvalStatusVisual.objects.get(id=visual_status_id)
-    setattr(initiative, completion_date_field, datetime.now())
+    setattr(initiative, completion_date_field, now())
     initiative.Planned_Date = getattr(initiative, f"L{gate_index}_Completion_Date_Planned", None)
     initiative.save()
 

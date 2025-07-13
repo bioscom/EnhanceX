@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from Fit4.forms import *
 import traceback
 from user_visit.models import *
-
+from django.utils.timezone import now
 
 
 def FCF_Multiplier_list(request):
@@ -17,6 +17,7 @@ def add_fcf_multiplier(request):
             form = FCFMultiplierForm(request.POST)
             if form.is_valid():
                 oMultiplier = form.save(commit=False)
+                oMultiplier.last_modified_by = request.user
                 oMultiplier.save()
                 return redirect('/en/calculator')
         else:

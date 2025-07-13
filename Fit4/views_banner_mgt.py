@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from Fit4.forms import *
 from django.contrib import messages
+from django.utils.timezone import now
 import traceback
 from user_visit.models import *
 

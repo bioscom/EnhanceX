@@ -68,37 +68,9 @@
 
 </ul>
 
-
-  {% comment %} <ul id="myTab" class="navbar-nav">
-    <li class="nav-item active"><a href="{% url 'Fit4:home' %}" class="nav-link"><b>Home</b></a></li>
-    <li class="nav-item"><a href="{% url 'Fit4:workstream_List' %}" class="nav-link"><b>Workstreams</b></a></li>
-
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="{% url 'Fit4:initiatives_list' %}" data-bs-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false"><b>Initiatives</b></a>
-      <ul class="dropdown-menu connected">
-        <li><a class="dropdown-item" href="{% url 'Fit4:initiatives_list' %}" class="nav-link">Initiatives</a></li>
-        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#optionModal" class="nav-link">+ New Initiative</a></li>
-        <hr>
-        <li><b>Recent Records</b></li>
-        {% for o in Top5 %} <!-- Making functions global in Django. Check on your ChatGpt -->
-          <li><a class="dropdown-item"  href="{% url 'Fit4:initiative_details' o.slug %}" class="nav-link">{{o.initiative_name}}</a></li>
-        {% endfor %}
-      </ul>
-    </li>
-    <li class="nav-item"><a href="{% url 'reports:home_report' %}" class="nav-link"><b>Reports</b></a></li>
-    <li class="nav-item"><a href="{% url 'dashboard:home_dashboard' %}" class="nav-link"><b>Dashboards</b></a></li>
-    <li class="nav-item"><a href="{% url 'dashboard:dashboards_mto' %}" class="nav-link"><b>MTO Dashboard</b></a></li>
-
-    <li class="nav-item"><a href="{% url 'dashboard:opex_report' %}" class="nav-link"><b>Management Report</b></a></li>
-    {% if request.user.is_staff and request.user.is_superuser %}
-      <li class="nav-item"><a href="{% url 'Fit4:FCF_Multiplier_list' %}" class="nav-link"><b>FCF Calculator</b></a></li>
-      <li class="nav-item"><a href="/en/secretadmin/" class="nav-link"><b>Site Administration</b></a></li>
-      <li class="nav-item"><a href="{% url 'Fit4:banner_list' %}" class="nav-link"><b>Announcement</b></a></li>
-    {% endif %}
-  </ul> {% endcomment %}
   
   <span class="flex-grow-1"></span>
-  <ul class="dropdown pull-right">
+  <ul class="dropdown pull-right mt-3">
     <button class="btn btn-secondary border border-2 border-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">More</button>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
         {% if request.user.is_staff or request.user.is_superuser %}
@@ -114,6 +86,9 @@
         <li><a class="dropdown-item" href="{% url 'pdf2pptxsite:convert_to_pptx' %}">Convert PDF to PowerPoint</a></li>
     </ul>
   </ul>
-  {% comment %} <ul class="navbar-nav ml-4">
-    <li><a type="button" data-bs-toggle="modal" data-bs-target="#"><i class="fa fa-pencil fa-fw"></i></a></li>
-  </ul> {% endcomment %}
+
+  <ul class="dropdown pull-right mt-3">
+    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#rightSidebar" aria-label="Toggle Sidebar">
+      <span class="navbar-toggler-icon" title="Toggle right sidebar to View your initiatives Performance"></span>
+    </button>
+  </ul>

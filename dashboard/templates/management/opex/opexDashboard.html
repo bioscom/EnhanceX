@@ -18,7 +18,7 @@
                 </div>
             </div>
 
-            <div class="card col-md mb-1">
+            {% comment %} <div class="card col-md mb-1">
                 <div class="card-header">
                     <h6>Functions</h6>
                 </div>
@@ -43,7 +43,7 @@
                         {% endfor %}
                     </select>
                 </div>
-            </div>
+            </div> {% endcomment %}
         
             <div class="card col-md mb-1">
                 <div class="card-header">
@@ -65,7 +65,7 @@
 
             <div class="card col-md">
                 <div class="card-header">
-                    <h6 class="small" title="Initiative Count">Init. Count</h6>
+                    <h6 class="small" title="Initiative Count">Initiative Count</h6>
                 </div>
                 <div class="card-body">
                     <h2 class="text-center" title="Initiative Count">{{record}}</h2>
@@ -143,7 +143,7 @@
                             <h6>Banked YTD by Functions</h6>
                         </div>
                         <div class="card-body">
-                            <canvas id="bankedYTDChart" class="resize"></canvas>
+                            <canvas id="bankedYTDChart"></canvas>
                             {{ chart_labels|json_script:"chart-labels" }}
                             {{ chart_data|json_script:"chart-data" }}
                         </div>
@@ -217,7 +217,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive shadow" style="height: 30vh; overflow-y; auto;">
-                        <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
+                        <table id="opexTopInitiatives" class="table table-bordered table-hover table-font">
                             <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
                                 <tr>
                                     <th></th>
@@ -257,13 +257,72 @@
             </div>
         </div>
     </div> {% endcomment %}
-    <div class="row mb-2 mt-2">
+    <div class="row mb-2 mt-2 text-light">
         <div class="col-sm-10 text-end">
             <b>Dashboard Last Updated</b>
         </div>
         <div class="col-sm-2">
-            <b>{{LastUpdated|date:'d-m-Y'}}</b>
+            <b>{{LastUpdated|date:'d-M-Y H:i'}}</b>
         </div>
     </div>
 </div>
 
+<script>
+  const table = document.getElementById("opexTopInitiatives");
+  const rows = table.querySelectorAll("tbody tr");
+
+  // Step 1: Collect values from column index 1 (Name column)
+  const names = Array.from(rows).map(row => row.cells[1].textContent.trim());
+
+  // Step 2: Count occurrences
+  const counts = {};
+  names.forEach(name => {
+    counts[name] = (counts[name] || 0) + 1;
+  });
+
+  // Step 3: Highlight cells with duplicates
+  rows.forEach(row => {
+    const nameCell = row.cells[1];
+    if (counts[nameCell.textContent.trim()] > 1) {
+      nameCell.style.color = "red";
+      // Or highlight entire row:
+      // row.style.backgroundColor = "#f8d7da";
+    }
+  });
+</script>
+
+<script>
+    document.getElementById('reportWeek').addEventListener('change', function () {
+    const week = this.value;
+    const year = new Date().getFullYear(); // or pass actual year dynamically
+
+    fetch(`opex/ajax/load-week-data/?week=${week}&year=${year}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('ajaxReportContainer').innerHTML = data.html;
+                renderOpexCharts();
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Load Failed',
+                    html: `<strong>Error:</strong> ${data.error}`,
+                    confirmButtonText: 'Close'
+                });
+            }
+        })
+        .catch((error) => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Load Failed',
+                //text: 'Could not fetch week report. Try again.',
+                html: `<b>Error:</b> ${error.message || 'Unknown error occurred.'}`,
+                confirmButtonText: 'Close'
+            });
+        });
+    });
+</script>

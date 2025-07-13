@@ -29,7 +29,11 @@ urlpatterns = [
     path(_('edit_workstream/<str:slug>'), views.edit_workstream, name="edit_workstream"),
     path(_('delworkstream/<int:id>/'), views.delete_workstream, name='delete_workstream'),
     path(_('assethierarchy/<str:slug>/'), views.update_workstream_assethierarchy, name="update_workstream_assethierarchy"),
-    #d
+    
+    #Asset Hierarchy
+    path('get-level2/', views.get_level2, name='get_level2'),
+    path('get-level3/', views.get_level3, name='get_level3'),
+    path('get-level4/', views.get_level4, name='get_level4'),
     
     
     # Initiatives

@@ -1,12 +1,65 @@
+{% load humanize %}
+
 <div class="row p-2 bg-success">
     <div class="card col-md-12">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5>Opex Monthly Banking Plan</h5>
         </div>
         <div class="card-body">
-            <div class="table-responsive shadow" style="height: 60vh; overflow-y; auto;">
+            <div class="table-responsive shadow">
                 <canvas id="monthlyChart" height="100"></canvas>
             </div>
         </div>
     </div>
+
+    <div class="card zoom-card mt-2">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>Opex</h5>
+            <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                <i class="fas fa-expand-arrows-alt"></i>
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive shadow scroll-container">
+                <table id="rptTable" class="table table-bordered table-hover table-font">
+                    <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
+                        <tr>
+                            <th></th>
+                            <th>Function</th>
+                            <th>Initiative Name</th>
+                            <th>Actual Gate</th>
+                            <th>Planned Value($)</th>
+                            <th>Forecast Value($)</th>
+                            <th>Banked Value($)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for o in opexInitiatives %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{o.functions}}</td>
+                                <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                <td>{{o.actual_Lgate}}</td>
+                                <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
+                                <td class="text-end">{{o.Yearly_Forecast_Value|floatformat:2|intcomma}}</td>
+                                <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <th colspan="4" class="text-end">Total</th>
+                            <th class="text-end">${{ opex_total_planned|floatformat:2|intcomma }}</th>
+                            <th class="text-end">${{ opex_total_forecast|floatformat:2|intcomma }}</th>
+                            <th class="text-end">${{ opex_total_actual|floatformat:2|intcomma }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+
+    

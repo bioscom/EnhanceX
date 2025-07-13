@@ -1,149 +1,146 @@
 {% load humanize %}
 
-<div class="row p-2 bg-success">
-    <div class="card col-md-12">
-        <div class="row">
-            <div class="col-sm-9">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Delivery Monthly Banking Plan</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive shadow" style="height: 60vh; overflow-y; auto;">
-                        <canvas id="deliverymonthlyChart" height="100"></canvas>
-                    </div>
-                </div>
+<div class="p-2 bg-success">
+    <div class="card">
+        <div class="col-sm-12">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Delivery Monthly Banking Plan</h5>
             </div>
-            <div class="col-sm-3">
-                {% comment %} <div class="row"> {% endcomment %}
-                    <div class="card zoom-card mb-1">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6>East</h6>
-                            <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
-                                <i class="fas fa-expand-arrows-alt"></i>
-                            </span>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive shadow" style="height: 30vh; overflow-y: auto;">
-                                <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
-                                    <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
-                                        <tr>
-                                            <th></th>
-                                            <th>Initiative Name</th>
-                                            <th>Actual Gate</th>
-                                            <th>Planned Value($)</th>
-                                            <th>Banked Value($)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for o in eastAssetInitiatives %}
-                                            <tr>
-                                                <td>{{forloop.counter}}</td>
-                                                <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
-                                                <td>{{o.actual_Lgate}}</td>
-                                                <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
-                                                <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                    <tfoot class="table-light">
-                                        <tr>
-                                            <th colspan="3" class="text-end">Total</th>
-                                            <th class="text-end">${{ east_total_planned|floatformat:2|intcomma }}</th>
-                                            <th class="text-end">${{ east_total_actual|floatformat:2|intcomma }}</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card zoom-card mb-1">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6>West</h6>
-                            <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
-                                <i class="fas fa-expand-arrows-alt"></i>
-                            </span>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive shadow" style="height: 30vh; overflow-y: auto;">
-                                <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
-                                    <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
-                                        <tr>
-                                            <th></th>
-                                            <th>Initiative Name</th>
-                                            <th>Actual Gate</th>
-                                            <th>Planned Value($)</th>
-                                            <th>Banked Value($)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for o in westAssetInitiatives %}
-                                            <tr>
-                                                <td>{{forloop.counter}}</td>
-                                                <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
-                                                <td>{{o.actual_Lgate}}</td>
-                                                <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
-                                                <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                    <tfoot class="table-light">
-                                        <tr>
-                                            <th colspan="3" class="text-end">Total</th>
-                                            <th class="text-end">${{ west_total_planned|floatformat:2|intcomma }}</th>
-                                            <th class="text-end">${{ west_total_actual|floatformat:2|intcomma }}</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card zoom-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6>NOV</h6>
-                            <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
-                                <i class="fas fa-expand-arrows-alt"></i>
-                            </span>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive shadow" style="height: 30vh; overflow-y: auto;">
-                                <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
-                                    <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
-                                        <tr>
-                                            <th></th>
-                                            <th>Initiative Name</th>
-                                            <th>Actual Gate</th>
-                                            <th>Planned Value($)</th>
-                                            <th>Banked Value($)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for o in novAssetInitiatives %}
-                                            <tr>
-                                                <td>{{forloop.counter}}</td>
-                                                <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
-                                                <td>{{o.actual_Lgate}}</td>
-                                                <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
-                                                <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                    <tfoot class="table-light">
-                                        <tr>
-                                            <th colspan="3" class="text-end">Total</th>
-                                            <th class="text-end">${{ nov_total_planned|floatformat:2|intcomma }}</th>
-                                            <th class="text-end">${{ nov_total_actual|floatformat:2|intcomma }}</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                {% comment %} </div> {% endcomment %}
-
+            <div class="card-body">
+                <div class="table-responsive shadow">
+                    <canvas id="deliverymonthlyChart" height="100"></canvas>
+                </div>
             </div>
         </div>
-        
+    </div>
+
+    <div class="col-sm-12 p-3">
+        <div class="row">
+            <div class="card zoom-card col-sm-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>East</h6>
+                    <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive shadow scroll-container">
+                        <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
+                            <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
+                                <tr>
+                                    <th></th>
+                                    <th>Initiative Name</th>
+                                    <th>Actual Gate</th>
+                                    <th>Planned Value($)</th>
+                                    <th>Banked Value($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for o in eastAssetInitiatives %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                        <td>{{o.actual_Lgate}}</td>
+                                        <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
+                                        <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="3" class="text-end">Total</th>
+                                    <th class="text-end">${{ east_total_planned|floatformat:2|intcomma }}</th>
+                                    <th class="text-end">${{ east_total_actual|floatformat:2|intcomma }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card zoom-card col-sm-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>West</h6>
+                    <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive shadow scroll-container">
+                        <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
+                            <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
+                                <tr>
+                                    <th></th>
+                                    <th>Initiative Name</th>
+                                    <th>Actual Gate</th>
+                                    <th>Planned Value($)</th>
+                                    <th>Banked Value($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for o in westAssetInitiatives %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                        <td>{{o.actual_Lgate}}</td>
+                                        <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
+                                        <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="3" class="text-end">Total</th>
+                                    <th class="text-end">${{ west_total_planned|floatformat:2|intcomma }}</th>
+                                    <th class="text-end">${{ west_total_actual|floatformat:2|intcomma }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card zoom-card col-sm-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>NOV</h6>
+                    <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive shadow scroll-container">
+                        <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
+                            <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
+                                <tr>
+                                    <th></th>
+                                    <th>Initiative Name</th>
+                                    <th>Actual Gate</th>
+                                    <th>Planned Value($)</th>
+                                    <th>Banked Value($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for o in novAssetInitiatives %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                                        <td>{{o.actual_Lgate}}</td>
+                                        <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
+                                        <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="3" class="text-end">Total</th>
+                                    <th class="text-end">${{ nov_total_planned|floatformat:2|intcomma }}</th>
+                                    <th class="text-end">${{ nov_total_actual|floatformat:2|intcomma }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

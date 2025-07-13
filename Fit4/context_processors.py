@@ -1,6 +1,7 @@
 from .models import Initiative
 from Fit4.forms import *
 from reports.models import *
+from dashboard.utilities import *
 
 def global_function(request):
     Top5Initiatives = []
@@ -15,3 +16,6 @@ def global_Initiative(request):
     threatForm = InitiativeThreatForm(request.POST)
 
     return {'form': form, 'threatForm':threatForm, }
+
+def global_initiative_data(request):
+    return get_weekly_initiative_reports()

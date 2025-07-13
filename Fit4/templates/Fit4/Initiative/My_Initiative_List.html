@@ -16,7 +16,7 @@
                 <tr>
                     <th>...</th>
                     <th>Initiative Id</th>
-                    <th>Old Id</th>
+                    {% comment %} <th>Old Id</th> {% endcomment %}
                     <th>Initiative</th>
                     <th>Owner</th>
                     <th>Workstream</th>
@@ -34,7 +34,7 @@
                 <tr>
                     <td>{{forloop.counter}}</td>
                     <td>{{o.initiative_id}}</td>
-                    <td>{{o.oldinitiative_id|default_if_none:""}}</td>
+                    {% comment %} <td>{{o.oldinitiative_id|default_if_none:""}}</td> {% endcomment %}
                     {% if o.recordType.name == 'Opportunity' %}
                         <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
                     {% else %}

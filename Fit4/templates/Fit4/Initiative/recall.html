@@ -7,10 +7,32 @@
             <div class="col-sm-6 text-end">
                 <form method="POST" action="{% url 'Fit4:recall_initiative' initiative.slug %}" style="display: inline;">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to recall this initiative?');"><i class="fas fa-undo"></i>   Recall Initiative</button>
+                    <button type="submit" class="btn btn-success" onclick="recallInitiative(event)"><i class="fas fa-undo"></i>   Recall Initiative</button>
                 </form>
                 {% comment %} <a href="{% url 'Fit4:recall_initiative' initiative.slug %}" class="btn btn-success"><i class="fas fa-undo"></i>   Recall Initiative</a> {% endcomment %}
             </div>
         </div>
     </div>
 </div>
+
+<script>
+  function recallInitiative(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You are about to recall this initiative.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, recall it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Submit the form manually
+        const form = event.target.closest('form');
+        if (form) form.submit();
+      }
+    });
+  }
+</script>

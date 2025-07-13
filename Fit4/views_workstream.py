@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 import traceback
 from user_visit.models import *
+from django.utils.timezone import now
 
 
 def update_predefinedApprovers(request, id):
