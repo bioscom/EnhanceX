@@ -51,6 +51,9 @@
     <!-- Select2 Bootstrap 5 Theme -->
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
 
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
 
 
     <!-- Simple DataTables -->
@@ -3048,6 +3051,18 @@
 
 <!-- endregion-->
 
+  <!--Disable button immediately after it's clicked-->
+  <script>
+      document.querySelectorAll("form").forEach(form => {
+          form.addEventListener("submit", function(e) {
+              const submitButton = form.querySelector("button[type='submit']");
+              if (submitButton) {
+                  submitButton.disabled = true;
+                  submitButton.innerText = 'Submitting...';
+              }
+          });
+      });
+  </script>
 
     {% block js %}
       

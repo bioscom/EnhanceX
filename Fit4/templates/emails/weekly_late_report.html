@@ -1,0 +1,21 @@
+<h3>Hello {{ user.get_full_name }},</h3>
+
+{% if late_initiatives %}
+<p><strong>Your Late Initiatives:</strong></p>
+<ul>
+  {% for i in late_initiatives %}
+    <li>{{ i.title }} (Due: {{ i.planned_date|date:"D, d M Y" }})</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if late_actions %}
+<p><strong>Your Late Actions:</strong></p>
+<ul>
+  {% for a in late_actions %}
+    <li>{{ a.title }} (Due: {{ a.due_date|date:"D, d M Y" }})</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<p>Please take the necessary action.</p>

@@ -106,6 +106,7 @@ INSTALLED_APPS = [
     'chartjs',
     'django_htmx',
     'pdf2pptxsite',
+    'django_celery_beat',
 ]
 
 REST_FRAMEWORK = {
@@ -339,6 +340,9 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = "default"
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'  # Or your broker
+CELERY_TIMEZONE = 'Africa/Lagos'  # Set to your timezone
 
 # # Use Redis as cache backend (Disable when not on the server)
 # CACHES = {

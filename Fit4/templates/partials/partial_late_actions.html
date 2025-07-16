@@ -1,0 +1,43 @@
+
+{% comment %} <style>
+    th {
+      white-space: nowrap;
+    }
+  
+    td {
+      white-space: nowrap;
+    }
+</style> {% endcomment %}
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover" style="font-size: 0.9rem;">
+            <tr>
+                <th>...</th>
+                <th>Action Name</th>
+                <th>Initiative Name</th>
+                <th>Assign to Contact</th>
+                <th>Start Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+            </tr>
+            {% if lateactions %}
+                {% for o in lateactions %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><a href="{% url 'Fit4:action_details' o.id %}">{{o.action_name}}</a></td>
+                        <td>{{o.initiative.initiative_name}}</td>
+                        <td>{{o.assigned_to.first_name}}, {{o.assigned_to.last_name}}</td>
+                        <td>{{o.start_date|date:'d-m-Y'}}</td>
+                        <td>{{o.due_date|date:'d-m-Y'}}</td>
+                        <td>{{o.status}}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center"><b>No late actions found.</b></td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+</div>

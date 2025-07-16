@@ -13,11 +13,11 @@
 
     <style>
         th {
-            white-space: nowrap;
+            {% comment %} white-space: nowrap; {% endcomment %}
         }
     
         td {
-            white-space: nowrap;
+            {% comment %} white-space: nowrap; {% endcomment %}
         }
     </style>
 
@@ -169,7 +169,7 @@
         <div class="card-body">
             <div class="col-sm-12">
                 <div class="row ms-2">
-                    <div class="col-sm-2">
+                    <div class="col-sm-1">
                         <div class="col-sm fw-bold">Report Week</div>
                         <div class="col-sm">
                             <select name="reportWeek" id="reportWeek" class="form-select mb-2">
@@ -179,7 +179,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-1">
                         <div class="col-sm fw-bold">Functions</div>
                         <div class="col-sm">
                             <select id="functionFilter" class="form-select mb-2">
@@ -191,7 +191,7 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-6 text-center d-flex align-items-center">
+                    <div class="col-sm-8 text-center d-flex align-items-center">
                         <h2>{{oYear}} Renaissance Opex Dashboard (100%)</h2>
                     </div>
                     

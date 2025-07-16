@@ -9,6 +9,7 @@ from reports.models import *
 import pandas as pd
 from django.shortcuts import render
 import json
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Sum
 
 from datetime import datetime, timedelta, date
@@ -196,7 +197,7 @@ def funnel_movements(queryLW, queryTW):
     return result
 
 #11. Monthly Banking Plan
-def delivery_monthly_banking_plan(selected_year):
+def delivery_monthly_banking_plan_Old(selected_year):
     # Map of month names to their corresponding field prefixes
     month_fields = {
         "January": ["Jan_Plan", "Jan_Forecast", "Jan_Actual"],
@@ -242,6 +243,70 @@ def delivery_monthly_banking_plan(selected_year):
         "actual_data": actual_data,
     }
     
+    return context
+
+def delivery_monthly_banking_plan(selected_year):
+    month_fields = {
+        "January": ["Jan_Plan", "Jan_Forecast", "Jan_Actual"],
+        "February": ["Feb_Plan", "Feb_Forecast", "Feb_Actual"],
+        "March": ["Mar_Plan", "Mar_Forecast", "Mar_Actual"],
+        "April": ["Apr_Plan", "Apr_Forecast", "Apr_Actual"],
+        "May": ["May_Plan", "May_Forecast", "May_Actual"],
+        "June": ["Jun_Plan", "Jun_Forecast", "Jun_Actual"],
+        "July": ["Jul_Plan", "Jul_Forecast", "Jul_Actual"],
+        "August": ["Aug_Plan", "Aug_Forecast", "Aug_Actual"],
+        "September": ["Sep_Plan", "Sep_Forecast", "Sep_Actual"],
+        "October": ["Oct_Plan", "Oct_Forecast", "Oct_Actual"],
+        "November": ["Nov_Plan", "Nov_Forecast", "Nov_Actual"],
+        "December": ["Dec_Plan", "Dec_Forecast", "Dec_Actual"],
+    }
+
+    labels, plan_data, forecast_data, actual_data = [], [], [], []
+    monthly_initiatives = defaultdict(list)  # Store initiatives per month
+
+    queryset = InitiativeImpact.objects.filter(
+        YYear=selected_year,
+        initiative__Workstream__workstreamname__icontains='Renaissance Delivery',
+        benefittype__title__icontains='FCF'
+    ).select_related("initiative").order_by("initiative__Workstream__workstreamname")
+
+    for month, fields in month_fields.items():
+        month_plan_total = 0
+        month_forecast_total = 0
+        month_actual_total = 0
+
+        for record in queryset:
+            plan_val = getattr(record, fields[0], 0) or 0
+            forecast_val = getattr(record, fields[1], 0) or 0
+            actual_val = getattr(record, fields[2], 0) or 0
+
+            if plan_val or forecast_val or actual_val:
+                monthly_initiatives[month].append({
+                    "workstream": str(record.initiative.Workstream.workstreamname).replace("Renaissance Delivery - ", ""),
+                    "initiative": str(record.initiative),
+                    "slug": str(record.initiative.slug),
+                    "plan": plan_val,
+                    "forecast": forecast_val,
+                    "actual": actual_val
+                })
+
+            month_plan_total += plan_val
+            month_forecast_total += forecast_val
+            month_actual_total += actual_val
+
+        labels.append(month)
+        plan_data.append(month_plan_total)
+        forecast_data.append(month_forecast_total)
+        actual_data.append(month_actual_total)
+
+    context = {
+        "labels": labels,
+        "plan_data": plan_data,
+        "forecast_data": forecast_data,
+        "actual_data": actual_data,
+        "monthly_initiatives": dict(monthly_initiatives),  # convert defaultdict to regular dict
+    }
+
     return context
 
 # This copies data for the week to the Model
@@ -420,8 +485,32 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
     delivery_plan_data=delivery_banking_plan['plan_data']
     delivery_forecast_data=delivery_banking_plan['forecast_data']
     delivery_actual_data=delivery_banking_plan['actual_data']
+    monthly_initiatives=delivery_banking_plan['monthly_initiatives']
+    monthly_initiatives_json = json.dumps(monthly_initiatives, cls=DjangoJSONEncoder)
+    
+    #14. Lists of Initiatives from East, West and NOV that plotted the monthly Banking Plan
+    eastAssetInitiatives = queryTW.filter(Workstream__workstreamname__icontains='East').order_by('-Yearly_Planned_Value')
+    eastAssetTotals = eastAssetInitiatives.aggregate(
+        total_planned=Sum('Yearly_Planned_Value'),
+        total_actual=Sum('Yearly_Actual_value')
+    )
+    
+    westAssetInitiatives = queryTW.filter(Workstream__workstreamname__icontains='West').order_by('-Yearly_Planned_Value')
+    westAssetTotals = westAssetInitiatives.aggregate(
+        total_planned=Sum('Yearly_Planned_Value'),
+        total_actual=Sum('Yearly_Actual_value')
+    )
+    
+    novAssetInitiatives = queryTW.filter(Workstream__workstreamname__icontains='NOV').order_by('-Yearly_Planned_Value')
+    novAssetTotals = novAssetInitiatives.aggregate(
+        total_planned=Sum('Yearly_Planned_Value'),
+        total_actual=Sum('Yearly_Actual_value')
+    )
+    
+    
     
     #13 Initiatives Performance
+    #Actual Vs Planned Values
     fullybankedInitiatives=queryTW.filter(
         Yearly_Actual_value__gte=F('Yearly_Planned_Value'),
         Yearly_Actual_value__gt=0,
@@ -442,24 +531,29 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
         total_actual=Sum('Yearly_Actual_value')
     )
     
-    #14. Lists of Initiatives from East, West and NOV that plotted the monthly Banking Plan
-    eastAssetInitiatives = queryTW.filter(Workstream__workstreamname__icontains='East').order_by('-Yearly_Planned_Value')
-    eastAssetTotals = eastAssetInitiatives.aggregate(
-        total_planned=Sum('Yearly_Planned_Value'),
+    
+    #Actual Vs Forecast Values
+    fullybankedVsForecastInitiatives=queryTW.filter(
+        Yearly_Actual_value__gte=F('Yearly_Forecast_Value'),
+        Yearly_Actual_value__gt=0,
+        Yearly_Forecast_Value__gt=0,
+    ).annotate(achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Forecast_Value'), output_field=FloatField())).order_by('-achievement_pct')
+    
+    notFullybankedVsForecastInitiatives=queryTW.filter(Yearly_Actual_value__lt=F('Yearly_Forecast_Value')).annotate(
+        achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Forecast_Value'), output_field=FloatField())
+    ).order_by('-achievement_pct')
+    
+    totalFullyBankedVsForecast = fullybankedVsForecastInitiatives.aggregate(
+        total_forecast=Sum('Yearly_Forecast_Value'),
         total_actual=Sum('Yearly_Actual_value')
     )
     
-    westAssetInitiatives = queryTW.filter(Workstream__workstreamname__icontains='West').order_by('-Yearly_Planned_Value')
-    westAssetTotals = westAssetInitiatives.aggregate(
-        total_planned=Sum('Yearly_Planned_Value'),
+    totalNotFullyBankedVsForecast = notFullybankedVsForecastInitiatives.aggregate(
+        total_forecast=Sum('Yearly_Forecast_Value'),
         total_actual=Sum('Yearly_Actual_value')
     )
     
-    novAssetInitiatives = queryTW.filter(Workstream__workstreamname__icontains='NOV').order_by('-Yearly_Planned_Value')
-    novAssetTotals = novAssetInitiatives.aggregate(
-        total_planned=Sum('Yearly_Planned_Value'),
-        total_actual=Sum('Yearly_Actual_value')
-    )
+    
     
     #15. Upload Commitment Report
     formUploadWeeklyCommitments = ExcelUploadForm(request.POST) #upload_weekly_commitment_excel(request)
@@ -657,6 +751,8 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
         'delivery_plan_data':json.dumps(delivery_plan_data, default=str),
         'delivery_forecast_data':json.dumps(delivery_forecast_data, default=str),
         'delivery_actual_data':json.dumps(delivery_actual_data, default=str),
+        'monthly_initiatives':monthly_initiatives,
+        'monthly_initiatives_json':monthly_initiatives_json,
         
         #12 Initiatives by Delivery
         'eastAssetInitiatives':eastAssetInitiatives,
@@ -673,6 +769,7 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
         'nov_total_actual': novAssetTotals['total_actual'] or 0,
         
         #13 Initiatives Performance
+        #Actual Vs Plan
         'fullybankedInitiatives':fullybankedInitiatives,
         'fullybanked_total_planned': totalFullyBanked['total_planned'] or 0,
         'fullybanked_total_actual': totalFullyBanked['total_actual'] or 0,
@@ -680,6 +777,15 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
         'notFullybankedInitiatives':notFullybankedInitiatives,
         'notFullybanked_total_planned': totalNotFullyBanked['total_planned'] or 0,
         'notFullybanked_total_actual': totalNotFullyBanked['total_actual'] or 0,
+        
+        #Actual Vs Forecast
+        'fullybankedVsForecastInitiatives':fullybankedVsForecastInitiatives,
+        'fullybanked_total_forecast': totalFullyBankedVsForecast['total_forecast'] or 0,
+        'fullybankedVsForecast_total_actual': totalFullyBankedVsForecast['total_actual'] or 0,
+        
+        'notFullybankedVsForecastInitiatives':notFullybankedVsForecastInitiatives,
+        'notFullybanked_total_forecast': totalNotFullyBankedVsForecast['total_forecast'] or 0,
+        'notFullybankedVsForecast_total_actual': totalNotFullyBankedVsForecast['total_actual'] or 0,
 
         #14 Upload Commitment Report
         'formUploadWeeklyCommitments': formUploadWeeklyCommitments,

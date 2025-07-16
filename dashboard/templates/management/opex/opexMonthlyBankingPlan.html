@@ -6,11 +6,23 @@
             <h5>Opex Monthly Banking Plan</h5>
         </div>
         <div class="card-body">
+            <div class="d-flex align-items-end text-end mb-3">
+                <label for="monthSelect" class="form-label me-2">Month:</label>
+                <select id="monthSelect" class="form-select w-auto me-2">
+                    <option>--Select Month--</option>
+                    {% for month in opex_labels %}
+                        <option value="{{ month }}">{{ month }}</option>
+                    {% endfor %}
+                </select>
+                <button id="openPane" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#breakdownPane"> View Breakdown</button>
+            </div>
             <div class="table-responsive shadow">
-                <canvas id="monthlyChart" height="100"></canvas>
+                <canvas id="monthlyChart" height="90"></canvas>
             </div>
         </div>
     </div>
+
+
 
     <div class="card zoom-card mt-2">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -61,5 +73,142 @@
 
 </div>
 
+<!-- Offcanvas side‑pane -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="breakdownPane" aria-labelledby="breakdownPaneLabel">
+  <div class="offcanvas-header">
+    <h5 id="breakdownPaneLabel">Initiative Breakdown</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body" id="offcanvasContent">
+    <!-- Loaded via JavaScript -->
+  </div>
+</div>
 
+<!-- Serialized JSON Initiative Data -->
+<script id="initiative-data" type="application/json">
+    {{ monthly_initiatives_json|safe }}
+</script>
     
+<script>
+    const initiativeData = JSON.parse(document.getElementById("initiative-data").textContent);
+
+    function renderPaneContent() {
+        const container = document.getElementById("offcanvasContent");
+        const title = document.getElementById("breakdownPaneLabel");
+        title.textContent = `Opex Monthly Banking Schedule`;
+
+        let html = '';
+        let monthIndex = 0;
+        for (const [month, initiatives] of Object.entries(initiativeData)) {
+            const collapseId = `collapse-${monthIndex++}`;
+            const iconId = `arrow-icon-${monthIndex}`;
+            monthIndex++;
+
+            html += `
+                <div class="mb-3 border rounded">
+                    <button class="btn btn-light w-100 text-start d-flex justify-content-between align-items-center"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}"
+                            aria-expanded="true" aria-controls="${collapseId}"
+                            onclick="document.getElementById('${iconId}').classList.toggle('rotate')">
+                        <strong>${month}</strong>
+                        <span id="${iconId}" class="arrow">&#9660;</span>
+                    </button>
+                    <div class="collapse show" id="${collapseId}">
+                        <div class="p-2">`;
+
+            if (!initiatives.length) {
+                html += `<div class="alert alert-warning">No data for ${month}.</div>`;
+            } 
+            else 
+            {
+                let totalPlan = 0;
+                let totalForecast = 0;
+                let totalActual = 0;
+
+                html += `<table class="table table-sm table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Function</th>
+                                <th>Initiative</th>
+                                <th>Plan ($)</th>
+                                <th>Forecast ($)</th>
+                                <th>Actual ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                        initiatives.forEach(i => {
+                            // Parse numbers safely
+                            const plan = parseFloat(i.plan) || 0;
+                            const forecast = parseFloat(i.forecast) || 0;
+                            const actual = parseFloat(i.actual) || 0;
+
+                            totalPlan += plan;
+                            totalForecast += forecast;
+                            totalActual += actual;
+
+                            html += `<tr>
+                                <td>${i.functions}</td>
+                                <td><a href="/en/initiative/${i.slug}">${i.initiative}</a></td>
+                                <td class="text-end">${plan.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                                <td class="text-end">${forecast.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                                <td class="text-end">${actual.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                            </tr>`;
+                        });
+
+                        html += `</tbody>
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <th>Total</th>
+                                    <th class="text-end">${totalPlan.toLocaleString(undefined, {minimumFractionDigits: 2})}</th>
+                                    <th class="text-end">${totalForecast.toLocaleString(undefined, {minimumFractionDigits: 2})}</th>
+                                    <th class="text-end">${totalActual.toLocaleString(undefined, {minimumFractionDigits: 2})}</th>
+                                </tr>
+                            </tfoot>
+                        </table>`;
+            }
+            html += `</div></div></div>`;
+        }
+        container.innerHTML = html;
+    }
+
+    function renderSingleMonthPane(month) {
+        const container = document.getElementById("offcanvasContent");
+        const title = document.getElementById("breakdownPaneLabel");
+        title.textContent = `Initiatives for ${month}`;
+
+        const initiatives = initiativeData[month];
+        if (!initiatives || !initiatives.length) {
+            container.innerHTML = `<div class='alert alert-warning'>No data for ${month}.</div>`;
+            return;
+        }
+
+        let html = `<table class="table table-sm table-bordered">
+                        <thead><tr><th>Initiative</th><th>Plan</th><th>Forecast</th><th>Actual</th></tr></thead>
+                        <tbody>`;
+        initiatives.forEach(i => {
+            html += `<tr><td>${i.initiative}</td><td>${i.plan}</td><td>${i.forecast}</td><td>${i.actual}</td></tr>`;
+        });
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const openBtn = document.getElementById("openPane");
+        openBtn.addEventListener("click", () => {
+            try {
+                renderPaneContent();
+            } catch (e) {
+                Swal.fire('Render Error', e.message, 'error');
+            }
+        });
+    });
+
+    function formatNumber(num) {
+        return num.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+</script>

@@ -27,117 +27,25 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="card zoom-card col-md-6">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6>Initiatives Fully Banked</h6>
-                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
-                            <i class="fas fa-expand-arrows-alt"></i>
-                        </span>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive shadow scroll-container">
-                            <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
-                                <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
-                                    <tr>
-                                        <th></th>
-                                        <th>Initiative Name</th>
-                                        <th>Actual Gate</th>
-                                        <th>Planned Value($)</th>
-                                        <th>Banked Value($)</th>
-                                        <th>Performance(%)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for o in fullybankedInitiatives %}
-                                        <tr>
-                                            <td>{{forloop.counter}}</td>
-                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
-                                            <td>{{o.actual_Lgate}}</td>
-                                            <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
-                                            <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
-                                            <td style="
-                                                {% if o.achievement_pct >= 50 %}
-                                                    background-color: green;
-                                                    color: white;
-                                                {% elif o.achievement_pct < 50 %}
-                                                    background-color: red;
-                                                    color: white;
-                                                {% endif %}
-                                                font-weight: bold; text-align: center;
-                                            ">
-                                                {{o.achievement_pct|floatformat:1}}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                                <tfoot class="table-light">
-                                    <tr>
-                                        <th colspan="3" class="text-end">Total</th>
-                                        <th class="text-end">${{ fullybanked_total_planned|floatformat:2|intcomma }}</th>
-                                        <th class="text-end">${{ fullybanked_total_actual|floatformat:2|intcomma }}</th>
-                                        <th></th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+            <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#ActualPlan" type="button" role="tab" aria-controls="delivery" aria-selected="true">
+                        <b>Actual Vs Plan Performance</b>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="delivery-movement-tab" data-bs-toggle="tab" data-bs-target="#ActualForecast" type="button" role="tab" aria-controls="deliverymovement" aria-selected="false">
+                        <b>Actual Vs Forecast Performance</b>
+                    </button>
+                </li>
+            </ul>
 
-                <div class="card zoom-card col-md-6">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6>Initiatives Not Fully Banked</h6>
-                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
-                            <i class="fas fa-expand-arrows-alt"></i>
-                        </span>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive shadow scroll-container">
-                            <table id="rptTableNoExport" class="table table-bordered table-hover table-font">
-                                <thead class="table-light" style="position: sticky; top:0; z-index:1";>     
-                                    <tr>
-                                        <th></th>
-                                        <th>Initiative Name</th>
-                                        <th>Actual Gate</th>
-                                        <th>Planned Value($)</th>
-                                        <th>Banked Value($)</th>
-                                        <th>Performance(%)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for o in notFullybankedInitiatives %}
-                                        <tr>
-                                            <td>{{forloop.counter}}</td>
-                                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
-                                            <td>{{o.actual_Lgate}}</td>
-                                            <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
-                                            <td class="text-end">{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
-                                            <td style="
-                                                {% if o.achievement_pct >= 50 %}
-                                                    background-color: green;
-                                                    color: white;
-                                                {% elif o.achievement_pct < 50 %}
-                                                    background-color: red;
-                                                    color: white;
-                                                {% endif %}
-                                                font-weight: bold; text-align: center;
-                                            ">
-                                                {{o.achievement_pct|floatformat:1}}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                                <tfoot class="table-light">
-                                    <tr>
-                                        <th colspan="3" class="text-end">Total</th>
-                                        <th class="text-end">${{ notFullybanked_total_planned|floatformat:2|intcomma }}</th>
-                                        <th class="text-end">${{ notFullybanked_total_actual|floatformat:2|intcomma }}</th>
-                                        <th></th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
+            <div class="tab-content ms-2">
+                <div class="tab-pane fade show active" id="ActualPlan">
+                   {% include 'management/delivery/PlanActualPerformance.html' %}
+                </div>
+                <div class="tab-pane fade" id="ActualForecast">
+                   {% include 'management/delivery/ForecastActualPerformance.html' %}
                 </div>
             </div>
         </div>

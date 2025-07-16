@@ -1,6 +1,8 @@
 from django.contrib import admin
-
 from .models import *
+
+from django_celery_beat.models import PeriodicTask, CrontabSchedule
+import json
 
 #admin.site.register(Asset_Hierarchy)
 admin.site.register(Workstream)
@@ -79,3 +81,15 @@ class InitiativeApprovalsAdmin(admin.ModelAdmin):
 @admin.register(Banner)
 class BannerAdmin(admin.ModelAdmin):
     list_display = ('title', 'is_active', 'uploaded_at')
+    
+    
+
+# Create crontab schedule: Every Monday at 9 AM
+schedule, _ = CrontabSchedule.objects.get_or_create(minute='0', hour='9', day_of_week='1')
+
+# # Schedule the task
+# PeriodicTask.objects.create(
+#     crontab=schedule,
+#     name='Send Weekly Late Email',
+#     task='your_app.tasks.send_weekly_late_items_email',
+# )

@@ -1,0 +1,55 @@
+
+{% comment %} <style>
+    th {
+      white-space: nowrap;
+    }
+  
+    td {
+      white-space: nowrap;
+    }
+</style> {% endcomment %}
+
+<div class="card mb-2">
+    <div class="card-body">
+        <table class="cell-border table table-hover" style="font-size: 0.9rem;">
+            <thead>
+                <tr>
+                    <th>...</th>
+                    <th>Initiative Id</th>
+                    <th>Initiative</th>
+                    <th>Owner</th>
+                    <th>Workstream</th>
+                    <th>Actual Gate</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if lateinitiatives %}
+                {% for o in lateinitiatives %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{o.initiative_id}}</td>
+                        {% if o.recordType.name == 'Opportunity' %}
+                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                        {% else %}
+                            <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
+                        {% endif %}
+                        <td><a href="{% url 'account:user_detailed' o.author.id %}">{{o.author.get_full_name}}</a></td>
+                        <td><a href="{% url 'Fit4:workstream_details' o.Workstream.slug %}">{{o.Workstream.workstreamname}}</a></td>
+                        <td>{{o.actual_Lgate}}</td>
+                        <td>{{o.overall_status}}</td>
+                        <td>{{o.Planned_Date|date:'d-m-Y'}}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="8" class="text-center"><b>No late initiatives found.</b></td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

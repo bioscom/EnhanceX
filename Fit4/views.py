@@ -10,7 +10,8 @@ from user_visit.models import *
 import datetime
 from datetime import datetime
 from django.core.mail import mail_admins
-from django.utils.timezone import now
+#from django.utils.timezone import now
+from django.utils import timezone
 from django.urls import reverse
 from .notifications import *
 from django.db.models import Q, F, Prefetch
@@ -101,6 +102,8 @@ def search(request):
 @login_required(login_url='account:login_page')
 def Home(request):
     initiatives = Initiative.objects.filter(author=request.user).filter(is_active=True, last_modified_date__year=now().year).order_by('-Created_Date')
+    lateinitiatives = Initiative.objects.filter(author=request.user).filter(is_active=True, Planned_Date__lt=now().date()).order_by('-Created_Date').exclude(overall_status__name='Completed').exclude(overall_status__name='Cancelled').exclude(overall_status__name='On hold').exclude(overall_status__name='Defer')
+    show_late_modal = lateinitiatives.exists()
     action_count = Initiative.objects.filter(author=request.user).filter(is_active=True, last_modified_date__year=now().year).annotate(action_count=Count('initiative_actions'))
     ZipInitiativeAction = zip(initiatives, action_count)
     
@@ -113,13 +116,17 @@ def Home(request):
 
     oAction = Actions.objects.filter(assigned_to=request.user.id).exclude(status__name='Completed')
     noOfActions = oAction.count()
+    lateactions = Actions.objects.filter(assigned_to=request.user.id, due_date__lt=now().date()).exclude(status__name='Completed').exclude(status__name='Cancelled')
+    show_late_actions = lateactions.exists()
 
     banners = Banner.objects.filter(is_active=True).order_by('-uploaded_at')
 
     return render(request, 'Fit4/home.html', {'initiatives': initiatives, 'form': form, 'threatForm':threatForm, 
                                               'formAction':oAction, 'noOfActions':noOfActions, 'initiativesCount':initiativesCount, 
-                                              'oApprovals':oApprovals, 'noOfApprovals':noOfApprovals, 'banners': banners, 'initiative':ZipInitiativeAction})
-    
+                                              'oApprovals':oApprovals, 'noOfApprovals':noOfApprovals, 'banners': banners, 'initiative':ZipInitiativeAction, 
+                                              'lateinitiatives':lateinitiatives, 'show_late_modal': show_late_modal,
+                                              'lateactions': lateactions, 'show_late_actions': show_late_actions}) 
+
 def recycleBin(request):
     initiatives = Initiative.objects.filter(author=request.user).filter(is_active=False).order_by('-Created_Date')
     action_count = Initiative.objects.filter(author=request.user).filter(is_active=False).annotate(action_count=Count('initiative_actions'))

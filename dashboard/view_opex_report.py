@@ -24,6 +24,8 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 
 from dashboard.utilities import *
+from collections import defaultdict
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 def get_banked_by_function(queryTW):
@@ -173,25 +175,45 @@ def opex_monthly_banking_plan(selected_year):
     }
 
     labels, plan_data, forecast_data, actual_data = [], [], [], []
+    monthly_initiatives = defaultdict(list)  # Store initiatives per month
 
     # Filter records by year
     queryset = InitiativeImpact.objects.filter(
+        Q(benefittype__title__icontains='Opex') | Q(benefittype__title__icontains='Other Income'),
         YYear=selected_year,
-        initiative__Workstream__workstreamname__icontains='Opex'
-    )
+        initiative__Workstream__workstreamname__icontains='Opex',
+    ).select_related("initiative").order_by("initiative__functions__title") 
     
     # Aggregate manually
     for month, fields in month_fields.items():
-        agg = queryset.aggregate(
-            plan=Sum(fields[0]),
-            forecast=Sum(fields[1]),
-            actual=Sum(fields[2])
-        )
+        month_plan_total = 0
+        month_forecast_total = 0
+        month_actual_total = 0
+
+        for record in queryset:
+            plan_val = getattr(record, fields[0], 0) or 0
+            forecast_val = getattr(record, fields[1], 0) or 0
+            actual_val = getattr(record, fields[2], 0) or 0
+
+            if plan_val or forecast_val or actual_val:
+                monthly_initiatives[month].append({
+                    "functions": record.initiative.functions.title if record.initiative.functions and record.initiative.functions.title else "",
+                    "initiative": str(record.initiative),
+                    "slug": str(record.initiative.slug),
+                    "plan": plan_val,
+                    "forecast": forecast_val,
+                    "actual": actual_val
+                })
+
+            month_plan_total += plan_val
+            month_forecast_total += forecast_val
+            month_actual_total += actual_val
 
         labels.append(month)
-        plan_data.append(agg["plan"] or 0)
-        forecast_data.append(agg["forecast"] or 0)
-        actual_data.append(agg["actual"] or 0)
+        plan_data.append(month_plan_total)
+        forecast_data.append(month_forecast_total)
+        actual_data.append(month_actual_total)
+
 
     # Pass to template
     context = {
@@ -199,6 +221,7 @@ def opex_monthly_banking_plan(selected_year):
         "plan_data": plan_data,
         "forecast_data": forecast_data,
         "actual_data": actual_data,
+        "monthly_initiatives": dict(monthly_initiatives),  # convert defaultdict to regular dict
     }
     
     return context
@@ -328,183 +351,216 @@ def OpexPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, opex
     lgateValues = []
     lgateLabels = []
     
-    try:
-        #1. Planned Values
-        PlannedTW=queryTW.aggregate(total=Sum('Yearly_Planned_Value'))['total'] or 0
-        PlannedLW=queryLW.aggregate(total=Sum('Yearly_Planned_Value'))['total'] or 0
-        PlannedTW=round(PlannedTW/1000000, 1)
-        PlannedLW=round(PlannedLW/1000000, 1)
-        
-        #2. Actuval Values (Banked YTD)
-        BankedTW = queryTW.aggregate(total=Sum('Yearly_Actual_value'))['total'] or 0
-        BankedLW = queryLW.aggregate(total=Sum('Yearly_Actual_value'))['total'] or 0
-        BankedTW=round(BankedTW/1000000, 1)
-        BankedLW=round(BankedLW/1000000, 1)
-        
-        #3. Forecast Values
-        ForecastTW = queryTW.aggregate(total=Sum('Yearly_Forecast_Value'))['total'] or 0
-        ForecastLW = queryLW.aggregate(total=Sum('Yearly_Forecast_Value'))['total'] or 0
-        ForecastTW=round(ForecastTW/1000000, 1)
-        ForecastLW=round(ForecastLW/1000000, 1)
-        
-        #4. Funnel Below L3
-        funnelBelowG3=queryTW.filter(actual_Lgate__GateIndex__lt=3).aggregate(total=Sum('Yearly_Planned_Value'))['total'] or 0 # Only below L3
-        if funnelBelowG3 > 0:
-            funnelBelowG3=round(funnelBelowG3/1000000, 1)
-        else: 
-            funnelBelowG3=0
-        
-        #5. Funnel Growth
-        FunnelGrowthTW = (PlannedTW - PlannedLW).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
+    # try:
+    #1. Planned Values
+    PlannedTW=queryTW.aggregate(total=Sum('Yearly_Planned_Value'))['total'] or 0
+    PlannedLW=queryLW.aggregate(total=Sum('Yearly_Planned_Value'))['total'] or 0
+    PlannedTW=round(PlannedTW/1000000, 1)
+    PlannedLW=round(PlannedLW/1000000, 1)
     
-        #6. Total Banked Value
-        TotalBankedTW = (BankedTW - BankedLW).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
-        
-        
-        #6. Total Record Count
-        #totalRecordCount=queryTW.filter(condition=True).count()
-        if queryTW.exists():
-            totalRecordCount = queryTW.count()
-        else:
-            totalRecordCount = 0
-        
-        #7. Top Initiatives by Value
-        topInitiatives=queryTW.order_by('-Yearly_Planned_Value')
-        
-        opexInitiatives = queryTW.all().order_by('-Yearly_Planned_Value')
-        opexTotals = opexInitiatives.aggregate(
-            total_planned=Sum('Yearly_Planned_Value'),
-            total_forecast=Sum('Yearly_Forecast_Value'),
+    #2. Actuval Values (Banked YTD)
+    BankedTW = queryTW.aggregate(total=Sum('Yearly_Actual_value'))['total'] or 0
+    BankedLW = queryLW.aggregate(total=Sum('Yearly_Actual_value'))['total'] or 0
+    BankedTW=round(BankedTW/1000000, 1)
+    BankedLW=round(BankedLW/1000000, 1)
+    
+    #3. Forecast Values
+    ForecastTW = queryTW.aggregate(total=Sum('Yearly_Forecast_Value'))['total'] or 0
+    ForecastLW = queryLW.aggregate(total=Sum('Yearly_Forecast_Value'))['total'] or 0
+    ForecastTW=round(ForecastTW/1000000, 1)
+    ForecastLW=round(ForecastLW/1000000, 1)
+    
+    #4. Funnel Below L3
+    funnelBelowG3=queryTW.filter(actual_Lgate__GateIndex__lt=3).aggregate(total=Sum('Yearly_Planned_Value'))['total'] or 0 # Only below L3
+    if funnelBelowG3 > 0:
+        funnelBelowG3=round(funnelBelowG3/1000000, 1)
+    else: 
+        funnelBelowG3=0
+    
+    #5. Funnel Growth
+    FunnelGrowthTW = (PlannedTW - PlannedLW).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
+
+    #6. Total Banked Value
+    TotalBankedTW = (BankedTW - BankedLW).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
+    
+    
+    #6. Total Record Count
+    #totalRecordCount=queryTW.filter(condition=True).count()
+    if queryTW.exists():
+        totalRecordCount = queryTW.count()
+    else:
+        totalRecordCount = 0
+    
+    #7. Top Initiatives by Value
+    topInitiatives=queryTW.order_by('-Yearly_Planned_Value')
+    
+    opexInitiatives = queryTW.all().order_by('-Yearly_Planned_Value')
+    opexTotals = opexInitiatives.aggregate(
+        total_planned=Sum('Yearly_Planned_Value'),
+        total_forecast=Sum('Yearly_Forecast_Value'),
+        total_actual=Sum('Yearly_Actual_value')
+    )
+    
+    #8. Pipeline Robustness
+    pipeLineRobustness = round(((float(PlannedTW)/50)*100)) #TODO:Note: where 50 is the value in the Opex target. Replace with {{OpexTarget}}
+    
+    LastUpdated = queryTW.first().Date_Downloaded if queryTW.exists() else None
+    
+    oReports = SavedFilter.objects.all()
+    
+    #9. Opex Movements
+    results = opex_movements(queryLW, queryTW)
+    
+    #10. Funnel Movement
+    funnel = funnel_movements(queryLW, queryTW)
+    
+    #11. Opex Monthly Banking Plan
+    opex_banking_plan = opex_monthly_banking_plan(oYear)
+    opex_labels=opex_banking_plan['labels']
+    opex_plan_data=opex_banking_plan['plan_data']
+    opex_forecast_data=opex_banking_plan['forecast_data']
+    opex_actual_data=opex_banking_plan['actual_data']
+    monthly_initiatives=opex_banking_plan['monthly_initiatives']
+    monthly_initiatives_json = json.dumps(monthly_initiatives, cls=DjangoJSONEncoder)
+    
+    #13 Initiatives Performance
+    fullybankedInitiatives=queryTW.filter(
+        Yearly_Actual_value__gte=F('Yearly_Planned_Value'),
+        Yearly_Actual_value__gt=0,
+        Yearly_Planned_Value__gt=0,
+    ).annotate(achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Planned_Value'), output_field=FloatField())).order_by('-achievement_pct')
+    
+    notFullybankedInitiatives=queryTW.filter(Yearly_Actual_value__lt=F('Yearly_Planned_Value')).annotate(
+        achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Planned_Value'), output_field=FloatField())
+    ).order_by('-achievement_pct')
+    
+    totalFullyBanked = fullybankedInitiatives.aggregate(
+        total_planned=Sum('Yearly_Planned_Value'),
+        total_actual=Sum('Yearly_Actual_value')
+    )
+    
+    totalNotFullyBanked = notFullybankedInitiatives.aggregate(
+        total_planned=Sum('Yearly_Planned_Value'),
+        total_actual=Sum('Yearly_Actual_value')
+    )
+    
+    #Actual Vs Forecast Values
+    fullybankedVsForecastInitiatives=queryTW.filter(
+        Yearly_Actual_value__gte=F('Yearly_Forecast_Value'),
+        Yearly_Actual_value__gt=0,
+        Yearly_Forecast_Value__gt=0,
+    ).annotate(achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Forecast_Value'), output_field=FloatField())).order_by('-achievement_pct')
+    
+    notFullybankedVsForecastInitiatives=queryTW.filter(Yearly_Actual_value__lt=F('Yearly_Forecast_Value')).annotate(
+        achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Forecast_Value'), output_field=FloatField())
+    ).order_by('-achievement_pct')
+    
+    totalFullyBankedVsForecast = fullybankedVsForecastInitiatives.aggregate(
+        total_forecast=Sum('Yearly_Forecast_Value'),
+        total_actual=Sum('Yearly_Actual_value')
+    )
+    
+    totalNotFullyBankedVsForecast = notFullybankedVsForecastInitiatives.aggregate(
+        total_forecast=Sum('Yearly_Forecast_Value'),
+        total_actual=Sum('Yearly_Actual_value')
+    )
+    
+    #region ========================== Data for the charts start from here ==============================================================
+    
+    #1. Opex Funnel Chart Data
+    actual=BankedTW
+    TotalPlan=PlannedTW
+    plan=PlannedTW-BankedTW
+    
+    #2. Banked YTD Pie Chart Data
+    chart_data=get_banked_by_function(queryTW)
+    labels = chart_data['labels']
+    data = chart_data['data']
+    
+    # #3 Funnel Value by Functions/Assets Dataset
+    # functions_labels = list(queryTW.values('functions__title', flat=True))
+    # functions_plan_data = list(queryTW.values_list('Yearly_Planned_Value', flat=True))
+    # functions_actual_data = list(queryTW.values_list('Yearly_Actual_value', flat=True))
+    # functions_datasets = [
+    #     {'label': 'Plan', 'data': functions_plan_data, 'backgroundColor': '#e0b100'},
+    #     {'label': 'Actual', 'data': functions_actual_data, 'backgroundColor': "#375f02"},
+    # ]
+    
+    # ✅ Group by function title and sum values
+    aggregated = (
+        queryTW
+        .values('functions__title')
+        .annotate(
+            total_plan=Sum('Yearly_Planned_Value'),
             total_actual=Sum('Yearly_Actual_value')
         )
-        
-        #8. Pipeline Robustness
-        pipeLineRobustness = round(((float(PlannedTW)/50)*100)) #TODO:Note: where 50 is the value in the Opex target. Replace with {{OpexTarget}}
-        
-        LastUpdated = queryTW.first().Date_Downloaded if queryTW.exists() else None
-        
-        oReports = SavedFilter.objects.all()
-        
-        #9. Opex Movements
-        results = opex_movements(queryLW, queryTW)
-        
-        #10. Funnel Movement
-        funnel = funnel_movements(queryLW, queryTW)
-        
-        #11. Opex Monthly Banking Plan
-        opex_banking_plan = opex_monthly_banking_plan(oYear)
-        opex_labels=opex_banking_plan['labels']
-        opex_plan_data=opex_banking_plan['plan_data']
-        opex_forecast_data=opex_banking_plan['forecast_data']
-        opex_actual_data=opex_banking_plan['actual_data']
-        
-        #13 Initiatives Performance
-        fullybankedInitiatives=queryTW.filter(
-            Yearly_Actual_value__gte=F('Yearly_Planned_Value'),
-            Yearly_Actual_value__gt=0,
-            Yearly_Planned_Value__gt=0,
-        ).annotate(achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Planned_Value'), output_field=FloatField())).order_by('-achievement_pct')
-        
-        notFullybankedInitiatives=queryTW.filter(Yearly_Actual_value__lt=F('Yearly_Planned_Value')).annotate(
-            achievement_pct=ExpressionWrapper(F('Yearly_Actual_value') * 100.0 / F('Yearly_Planned_Value'), output_field=FloatField())
-        ).order_by('-achievement_pct')
-        
-        #region ========================== Data for the charts start from here ==============================================================
-        
-        #1. Opex Funnel Chart Data
-        actual=BankedTW
-        TotalPlan=PlannedTW
-        plan=PlannedTW-BankedTW
-        
-        #2. Banked YTD Pie Chart Data
-        chart_data=get_banked_by_function(queryTW)
-        labels = chart_data['labels']
-        data = chart_data['data']
-        
-        # #3 Funnel Value by Functions/Assets Dataset
-        # functions_labels = list(queryTW.values('functions__title', flat=True))
-        # functions_plan_data = list(queryTW.values_list('Yearly_Planned_Value', flat=True))
-        # functions_actual_data = list(queryTW.values_list('Yearly_Actual_value', flat=True))
-        # functions_datasets = [
-        #     {'label': 'Plan', 'data': functions_plan_data, 'backgroundColor': '#e0b100'},
-        #     {'label': 'Actual', 'data': functions_actual_data, 'backgroundColor': "#375f02"},
-        # ]
-        
-        # ✅ Group by function title and sum values
-        aggregated = (
-            queryTW
-            .values('functions__title')
-            .annotate(
-                total_plan=Sum('Yearly_Planned_Value'),
-                total_actual=Sum('Yearly_Actual_value')
-            )
-            .order_by('-total_plan')  # Optional: for consistent label order
-        )
+        .order_by('-total_plan')  # Optional: for consistent label order
+    )
 
-        # ✅ Extract labels and data lists
-        functions_labels = []
-        functions_plan_data = []
-        functions_actual_data = []
+    # ✅ Extract labels and data lists
+    functions_labels = []
+    functions_plan_data = []
+    functions_actual_data = []
 
-        for row in aggregated:
-            functions_labels.append(row['functions__title'] or '(Blank)')
-            functions_plan_data.append(round((row['total_plan'] or 0) / 1_000_000, 1))   # optional: convert to millions
-            functions_actual_data.append(round((row['total_actual'] or 0) / 1_000_000, 1))
+    for row in aggregated:
+        functions_labels.append(row['functions__title'] or '(Blank)')
+        functions_plan_data.append(round((row['total_plan'] or 0) / 1_000_000, 1))   # optional: convert to millions
+        functions_actual_data.append(round((row['total_actual'] or 0) / 1_000_000, 1))
 
-        functions_datasets = [
-            {'label': 'Plan', 'data': functions_plan_data, 'backgroundColor': '#e0b100'},
-            {'label': 'Actual', 'data': functions_actual_data, 'backgroundColor': "green"},
-        ]
-        
-        #4 Initiative Movement to L3+  
-        aggregated = queryTW.filter(actual_Lgate__GateIndex__gte=3).values('functions__title').annotate(
-            total_value=Sum('Yearly_Planned_Value'),
-            total_count=Count('id')
-        )
-        
-        for item in aggregated:
-            movement_labels.append(item['functions__title'] or '(Blank)')
-            value_to_l3.append(item['total_value'] or 0)
-            count_to_l3.append(item['total_count'] or 0)
-        
-        # Convert all Decimal values to float
-        #value_to_l3_serializable = {k: str(v) if isinstance(v, Decimal) else v for k, v in value_to_l3.items()}
-        
-        #5 Total count, L3+ & New Initiative per workstream
-        initiativeCountTW = queryTW.all().values('functions__title').annotate(total_count=Count('id')) # This week
-        initiativeCountLW = queryLW.all().values('functions__title').annotate(total_count=Count('id')) # Last week
-        
-        # Convert last week data to a lookup dictionary for quick access
-        last_week_dict = {item['functions__title']: item['total_count'] for item in initiativeCountLW}
-        
-        # Prepare final merged result
-        
-        
-        for item in initiativeCountTW:
-            func = item['functions__title'] or '(Blank)'
-            count_this_week = item['total_count']
-            count_last_week = last_week_dict.get(func, 0)  # fallback to 0 if not present
-            diff = count_this_week - count_last_week
-            
-            initiative_count_labels.append(func)
-            initiative_count_counts.append(count_this_week)
-            initiative_count_diffs.append(diff)
-
-        
-        #6 Initiative Movement to L3+  
-        aggregatedLgate = queryTW.all().values('actual_Lgate__LGate').annotate(
-            total_value=Sum('Yearly_Planned_Value'),
-        )
-        
-        for item in aggregatedLgate:
-            lgateLabels.append(item['actual_Lgate__LGate'] or '(Blank)')
-            lgateValues.append(round((item['total_value'] or 0) / 1_000_000, 1))
-            #functions_actual_data.append(round((row['total_actual'] or 0) / 1_000_000, 1))
+    functions_datasets = [
+        {'label': 'Plan', 'data': functions_plan_data, 'backgroundColor': '#e0b100'},
+        {'label': 'Actual', 'data': functions_actual_data, 'backgroundColor': "green"},
+    ]
     
-        #endregion =============================================================================================================================
+    #4 Initiative Movement to L3+  
+    aggregated = queryTW.filter(actual_Lgate__GateIndex__gte=3).values('functions__title').annotate(
+        total_value=Sum('Yearly_Planned_Value'),
+        total_count=Count('id')
+    )
+    
+    for item in aggregated:
+        movement_labels.append(item['functions__title'] or '(Blank)')
+        value_to_l3.append(item['total_value'] or 0)
+        count_to_l3.append(item['total_count'] or 0)
+    
+    # Convert all Decimal values to float
+    #value_to_l3_serializable = {k: str(v) if isinstance(v, Decimal) else v for k, v in value_to_l3.items()}
+    
+    #5 Total count, L3+ & New Initiative per workstream
+    initiativeCountTW = queryTW.all().values('functions__title').annotate(total_count=Count('id')) # This week
+    initiativeCountLW = queryLW.all().values('functions__title').annotate(total_count=Count('id')) # Last week
+    
+    # Convert last week data to a lookup dictionary for quick access
+    last_week_dict = {item['functions__title']: item['total_count'] for item in initiativeCountLW}
+    
+    # Prepare final merged result
+    
+    
+    for item in initiativeCountTW:
+        func = item['functions__title'] or '(Blank)'
+        count_this_week = item['total_count']
+        count_last_week = last_week_dict.get(func, 0)  # fallback to 0 if not present
+        diff = count_this_week - count_last_week
+        
+        initiative_count_labels.append(func)
+        initiative_count_counts.append(count_this_week)
+        initiative_count_diffs.append(diff)
+
+    
+    #6 Initiative Movement to L3+  
+    aggregatedLgate = queryTW.all().values('actual_Lgate__LGate').annotate(
+        total_value=Sum('Yearly_Planned_Value'),
+    )
+    
+    for item in aggregatedLgate:
+        lgateLabels.append(item['actual_Lgate__LGate'] or '(Blank)')
+        lgateValues.append(round((item['total_value'] or 0) / 1_000_000, 1))
+        #functions_actual_data.append(round((row['total_actual'] or 0) / 1_000_000, 1))
+
+    #endregion =============================================================================================================================
          
-    except Exception as e:
-        print(traceback.format_exc())
+    # except Exception as e:
+    #     print(traceback.format_exc())
     return render(request, 'management/opex/opex.html', {'xfunctions':oFunction, 
                                                          "year_range": year_range, 
                                                          'oWeeks':oWeeks, 
@@ -560,6 +616,8 @@ def OpexPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, opex
                                                         'opex_plan_data':json.dumps(opex_plan_data, default=str),
                                                         'opex_forecast_data':json.dumps(opex_forecast_data, default=str),
                                                         'opex_actual_data':json.dumps(opex_actual_data, default=str),
+                                                        'monthly_initiatives':monthly_initiatives,
+                                                        'monthly_initiatives_json':monthly_initiatives_json,
                                                         
                                                         'opexInitiatives':opexInitiatives,
                                                         'opex_total_planned': opexTotals['total_planned'] or 0,
@@ -567,8 +625,23 @@ def OpexPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, opex
                                                         'opex_total_actual': opexTotals['total_actual'] or 0,
                                                         
                                                         #13 Initiatives Performance
+                                                        #Actual Vs Plan
                                                         'fullybankedInitiatives':fullybankedInitiatives,
+                                                        'fullybanked_total_planned': totalFullyBanked['total_planned'] or 0,
+                                                        'fullybanked_total_actual': totalFullyBanked['total_actual'] or 0,
+                                                        
                                                         'notFullybankedInitiatives':notFullybankedInitiatives,
+                                                        'notFullybanked_total_planned': totalNotFullyBanked['total_planned'] or 0,
+                                                        'notFullybanked_total_actual': totalNotFullyBanked['total_actual'] or 0,
+                                                        
+                                                        #Actual Vs Forecast
+                                                        'fullybankedVsForecastInitiatives':fullybankedVsForecastInitiatives,
+                                                        'fullybanked_total_forecast': totalFullyBankedVsForecast['total_forecast'] or 0,
+                                                        'fullybankedVsForecast_total_actual': totalFullyBankedVsForecast['total_actual'] or 0,
+                                                        
+                                                        'notFullybankedVsForecastInitiatives':notFullybankedVsForecastInitiatives,
+                                                        'notFullybanked_total_forecast': totalNotFullyBankedVsForecast['total_forecast'] or 0,
+                                                        'notFullybankedVsForecast_total_actual': totalNotFullyBankedVsForecast['total_actual'] or 0,
                                                     })
 
 def ajax_show_opex_last_week(request):

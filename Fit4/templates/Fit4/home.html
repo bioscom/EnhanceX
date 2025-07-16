@@ -90,6 +90,23 @@
         </div>
     </form>
 
+    <div class="modal fade" id="lateInitiativeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 50%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">My Late Initiatives and Late Actions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="height: 50vh; overflow-y: auto;">
+                    <b><small>Late Initiatives:</small></b>
+                    {% include 'partials/partial_late_initiatives.html' %}
+                    <b><small>Late Actions:</small></b>
+                    {% include 'partials/partial_late_actions.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card mb-2" style="height: 153px; background:#FCE883">{% comment %} Clover Lime {% endcomment %}
         <div id="lottie-banner" class="border border-1 w-100 h-100">
             <div class="row">
@@ -152,25 +169,12 @@
                             <a href="#myapprovals" class="nav-link" data-bs-toggle="tab"><b>My Approvals</b> <img src="/media/logo/bell_notification.png" alt="" loading="lazy" /></a>
                         {% endif %}
                     </li>
+                    
+                    <span class="flex-grow-1"></span>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#lateInitiativeModal" class="btn btn-danger me-5">My Late Initiatives and Late Actions</button>
+                
                     <span class="flex-grow-1"></span>
                     <button type="button" data-bs-toggle="modal" data-bs-target="#optionModal" class="btn btn-primary">+ New Initiative</button>
-                    {% comment %} {% if user.is_authenticated %}
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#optionModal" class="btn btn-primary">+ New Initiative</button>
-                    {% else %}
-                        <a href="{% url 'account:login' %}">Login to create an Initiative</a>
-                    {% endif %} {% endcomment %}
-                    {% comment %} <span class="flex-grow-1"></span> {% endcomment %}
-                    {% comment %} <div class="col-sm">
-                        {% if user.is_authenticated %}
-                        <div class="nav-item pull-right">
-                            <a class="nav-link" href="/en/login_page">{{request.user.get_full_name}} ({{request.user}}) (Log out)</a>
-                        </div>
-                        {% else %}
-                        <a class="nav-link active">{% trans "Welcome, Guest:" %}
-                            <a href="{% url 'account:register' %}" class="nav-link active">{% trans "Register" %},<a href="#" class="nav-link active s" hx-get="{% url 'account:login' %}" hx-target="#dialog">{% trans "Login" %}</a></a>
-                        </a>
-                        {% endif %}
-                    </div> {% endcomment %}
                 </ul>
                 
                 <div class="tab-content ms-2">
@@ -211,6 +215,25 @@
         showImage(); // Initial display
     </script>
 
+    <!-- Show Late Initiatives Modal on Page Load -->
+    {% if show_late_modal or show_late_actions %}
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var myModal = new bootstrap.Modal(document.getElementById('lateInitiativeModal'));
+            myModal.show();
+        });
+        </script>
+    {% endif %}
+
+    <!-- Show Late Actions Modal on Page Load -->
+    {% comment %} {% if show_late_actions %}
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var myModal = new bootstrap.Modal(document.getElementById('lateActionsModal'));
+            myModal.show();
+        });
+        </script>
+    {% endif %} {% endcomment %}
 
 {% endblock %}
 
