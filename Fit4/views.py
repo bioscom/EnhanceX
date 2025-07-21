@@ -226,6 +226,21 @@ def edit_actions(request, id):
         print(traceback.format_exc())
     return render(request, "Fit4/actions_update.html", {'form': form})
 
+def delete_action(request, id):
+    o = Actions.objects.get(id=id)
+    oInitiative = Initiative.objects.get(id=o.initiative.id)
+    # Check if the user is the owner of the action
+    try:
+        if request.method == "POST":
+            if request.user == o.assigned_to or request.user == o.created_by:
+                o.delete()
+                messages.success(request, '<b>'+ o.action_name + '</b> successfully deleted.')
+            else:
+                messages.error(request, 'You are not authorized to delete this action.')
+    except Exception as e:
+        print(traceback.format_exc())
+    return redirect(reverse("Fit4:initiative_details", args=[oInitiative.slug]))
+
 #endregion============================================= End Actions ================================================================================
 
 #region================================================ Members ===================================================================================
@@ -342,8 +357,6 @@ def edit_note(request, id):
     return render(request, "partials/partial_edit_notes.html", {'form': form})
 
 #endregion =========================================================================================================================================
-
-
 
 #region================================================ Asset Heirarchy =============================================================================
 

@@ -30,26 +30,22 @@
     </div>
 </form>
 
-{% comment %} <form action="{% url 'Fit4:edit_benefits' initiative.id %}" method="POST">
+<form action="{% url 'Fit4:cat_list' %}" method="POST">
     {% csrf_token %}
-    <div class="modal fade" id="editImpactModal" tabindex="-1" aria-labelledby="editImpactModalLabel" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+    <div class="modal fade" id="fcfcalculatorModal" tabindex="-1" aria-labelledby="fcfcalculatorLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 50%;">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="impactModalLabel">Update Benefits</h5>
+                <div class="modal-header cursor-move" id="modalDragHandle">
+                    <h5 class="modal-title" id="impactModalLabel">FCF Calculator</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    {% include 'partials/partial_edit_benefits.html' %}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    {% include 'Fit4/FCF/partial_fcf_calc.html' %}
                 </div>
             </div>
         </div>
     </div>
-</form> {% endcomment %}
+</form>
 
 
 
@@ -71,27 +67,23 @@
         </div>
 
         <div class="row">
-            <div class="col-sm">
+            <div class="col-sm-5">
                 <div class="col-sm-2">
                     {% render_field initiativeForm.currency class="select form-select" %} {# TODO let selected currency show, not showing right now #}
                 </div>
                 <div class="invalid-feedback">{{ initiativeForm.currency.errors|first }}</div>
             </div>
+            <div class="d-flex justify-content-center col-sm">
+                <button type="button" class="btn btn-success border" data-bs-toggle="modal" data-bs-target="#fcfcalculatorModal">FCF Calculator</button>
+            </div>
             <div class="col-sm">
                 <ul class="nav nav-tabs">
                     <span class="flex-grow-1"></span>
                     <button type="button" class="btn btn-secondary border" data-bs-toggle="modal" data-bs-target="#impactModal">+Add New Benefits</button>
-                    {% comment %} < action="{% url 'Fit4:edit_benefits' initiative.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary border">Save</button>
-                    </> {% endcomment %}
-                    
                 </ul>
             </div>
         </div>
-        
-        {% comment %} {{ Zipformsets.management_form }} {% endcomment %}
-        {% comment %} {% for f, formset in formsets %} {% endcomment %}
+
         {% for f, form in Zipformsets %}
             <form id="benefitForm_{{f.id}}" action="{% url 'Fit4:edit_benefits' f.id %}" method="POST">
                 {% csrf_token %}

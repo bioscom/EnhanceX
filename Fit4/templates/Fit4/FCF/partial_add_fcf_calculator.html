@@ -1,0 +1,68 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+<div class="p-3 mb-1 bg-body rounded">
+    <div class="col-sm-12">
+        <div class="row mb-2">
+            <div class="col-sm-3">
+                <label for="{{ form.category_name.id_for_label }}" class="form-label">Category Name:</label>
+            </div>
+            <div class="col-sm-9">
+                {% render_field form.category_name class="form-control required" placeholder="" %}
+                <div class="invalid-feedback">{{ form.category_name.errors|first }}</div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-sm-3">
+                <label for="{{ form.renaissance_share.id_for_label }}" class="form-label">Renaissance Share:</label>
+            </div>
+            <div class="col-sm-3">
+                {% render_field form.renaissance_share class="form-control required" placeholder="" %}
+                <div class="invalid-feedback">{{ form.renaissance_share.errors|first }}</div>
+            </div>
+        
+            <div class="col-sm-3">
+                <label for="{{ form.capex_factor.id_for_label }}" class="form-label">Capex Factor*:</label>
+            </div>
+            <div class="col-sm-3">
+                {% render_field form.capex_factor class="form-control required" placeholder="" %}
+                <div class="invalid-feedback">{{ form.capex_factor.errors|first }}</div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-sm-3">
+                <label for="{{ form.opex_factor.id_for_label }}" class="form-label">Opex Factor*:</label>
+            </div>
+            <div class="col-sm-3">
+                {% render_field form.opex_factor class="form-control required" placeholder="" %}
+            </div>
+
+            <div class="col-sm-3">
+                <label for="{{ form.oil_factor.id_for_label }}" class="form-label">Oil Factor*:</label>
+            </div>
+            <div class="col-sm-3">
+                {% render_field form.oil_factor class="form-control required" placeholder="" %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <label for="{{ form.domgas_factor.id_for_label }}" class="form-label">Domgas Factor:</label>
+            </div>
+            <div class="col-sm-3">
+                {% render_field form.domgas_factor class="form-control required" placeholder="" %}
+                <div class="invalid-feedback">{{ form.domgas_factor.errors|first }}</div>
+            </div>
+            
+            <div class="col-sm-3">
+                <label for="{{ form.export_gas_factor.id_for_label }}" class="form-label">Export Gas Factor:</label>
+            </div>
+            <div class="col-sm-3">
+                {% render_field form.export_gas_factor class="form-control required" placeholder="" %}
+                <div class="invalid-feedback">{{ form.export_gas_factor.errors|first }}</div>
+            </div>
+        </div>
+    </div>
+</div>

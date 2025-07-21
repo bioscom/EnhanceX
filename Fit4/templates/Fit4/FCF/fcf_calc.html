@@ -1,0 +1,477 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load table_tags %}
+{% load i18n %}
+{% load humanize %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %} FCF Calculator | Renaissance {% endblock %}
+
+{% block body %}
+
+{% comment %}
+
+<form action="{% url 'Fit4:edit_fcf_calculator' form.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="editfcfcalculatorModal" aria-labelledby="editfcfcalculatorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editfcfcalculatorModalLabel">Update FCF calculator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include 'Fit4/FCF/edit_partial_fcfcalculator.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="save_changes" type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>{% endcomment %}
+
+<form action="{% url 'Fit4:add_fcf_calculator' %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="addfcfcalculatorModal" aria-labelledby="addfcfcalculatorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addfcfcalculatorModalLabel">Add FCF Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include 'Fit4/FCF/partial_add_fcf_calculator.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="save_changes" type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+<div class="mx-3 mt-2">
+    {% if request.user.is_staff or request.user.is_superuser %}
+        <div class="d-flex justify-content-center">
+            <div class="card col-sm-7">
+                <div class="card-header">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <img src="/media/logo/initiative_img.png" alt="" loading="lazy"/>
+                                        </td>
+                                        <td>
+                                            <small>FCF Calculator</small>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-sm-2 text-end">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addfcfcalculatorModal">Add Category</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="fcfAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFCF">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFCF" aria-expanded="false" aria-controls="collapseFCF">
+                                    View Asset Factor Table
+                                </button>
+                            </h2>
+                            <div id="collapseFCF" class="accordion-collapse collapse" aria-labelledby="headingFCF" data-bs-parent="#fcfAccordion">
+                                <div class="accordion-body">
+                                    <table id="rptTable" class="cell-border table table-hover" style="font-size: 0.9rem;">
+                                        <thead>
+                                            <tr>
+                                                <th>...</th>
+                                                <th>Asset</th>
+                                                <th>Renaissance Share</th>
+                                                <th>Capex Factor</th>
+                                                <th>Opex Factor</th>
+                                                <th>Oil Factor</th>
+                                                <th>Domgas Factor</th>
+                                                <th>Export gas Factor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for o in assets %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{o.asset}}</td>
+                                                <td>{{o.renaissance_share}}</td>
+                                                <td>{{o.capex_factor}}</td>
+                                                <td>{{o.opex_factor}}</td>
+                                                <td>{{o.oil_factor}}</td>
+                                                <td>{{o.domgas_factor}}</td>
+                                                <td>{{o.export_gas_factor}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <div class="d-flex justify-content-center">
+        <div class="card col-sm-7 mt-2">
+            <div class="card-body">
+                <div class="col-sm-12">
+                    <table class="cell-border table" style="font-size: 0.9rem;">
+                        <thead>
+                            <tr>
+                                <th style="width:50%">Guide Line (Please Read)</th>
+                                <th style="width:50%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-justify border rounded p-3" style="border: 2px solid #dee2e6;">
+                                    <b>Note:</b> The FCF Calculator is designed to help you calculate the Free Cash Flow (FCF) for various categories based on the factors provided.<br><br>
+                                    This calculator helps you quickly compute the Renaissance Share FCF value for your initiatives.<br>
+                                    <b>Please follow the steps to carry out your calculation:</b><br>
+                                    <b>1.</b> Determine if your initiative will be saving cost or increasing Production<br>
+                                    <b>2.</b> Use Table 1 for Savings and Table 2 for Production<br><hr>
+                                    <b>3a.</b> For Savings <b>(Table 1)</b>, use the first drop down to select the Asset<br>
+                                    <b>3b.</b> Use the second drop down to select <b>Opex (including Feasex and Expex)/Capex</b><br>
+                                    <b>3c.</b> Then, enter the Savings value (100%) and Implementation cost in the  <b style="color: green;">green cells</b><br>
+                                    <b>3d.</b> Read off the FCF values in the <b style="color: orange;">orange cells</b><br><hr>
+                                    <b>4a.</b> For Production <b>(Table 2)</b>, Use the first drop down to select the Asset<br>
+                                    <b>4b.</b> Use the second drop down to select <b>Oil/Domgas/Export gas</b><br>
+                                    <b>4c.</b> Then, enter the production value, no of days the production target was met in current year and Implementation cost in the <b style="color: green;">green cells</b><br>
+                                    <b>4d.</b> Read off the FCF values in the <b style="color: orange;">orange cells</b>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <div><b>Table 1</b></div>
+                                        <table class="table table-bordered w-100" style="border: 1px solid #dee2e6;">
+                                            <thead>
+                                                <tr style="background-color: #dee2e6;">
+                                                    <th>Opex/Capex FCF ('000 USD)</th>
+                                                    <th>Factor</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="width:50%;">
+                                                        <select class="asset-dropdown select form-select">
+                                                            <option>--Select Asset--</option>
+                                                            {% for o in assets %}
+                                                                <option value="{{ o.asset }}">{{ o.asset }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:20%;">
+                                                        <input class="renaissance-share form-control" readonly>
+                                                    </td>
+                                                    <td style="width:30%; background-color: #068622ff;">
+                                                        <input type="number" id="savingsValue" class="form-control" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Implementation Cost ('000 USD)</td>
+                                                    <td></td>
+                                                    <td style="background-color: #068622ff;">
+                                                        <input type="number" id="implementationCost" class="form-control" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <select id="savingsSelect" class="select form-select">
+                                                            <option>--Savings Factor--</option>
+                                                            {% for o in savings %}
+                                                                <option value="{{ o.name }}">{{ o.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input id="dummy-factor1" class="form-control" style="display:block;" readonly>
+                                                        <div id="capexInput" style="display:none;">
+                                                            <input class="capex-factor form-control" id="capexFactor" style="border: 2px solid green;" readonly>
+                                                        </div>
+
+                                                        <div id="opexInput" style="display:none;">
+                                                            <input class="opex-factor form-control" id="opexFactor" style="border: 2px solid orange;" readonly>
+                                                        </div>
+                                                        
+                                                    </td>
+                                                    <td class="bg-warning text-end"><span id="savingsResult" class="fw-bold"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div><b>Table 2</b></div>
+                                        <table class="table table-bordered w-100" style="border: 1px solid #dee2e6;">
+                                            <thead>
+                                                <tr style="background-color: #dee2e6;">
+                                                    <td><b>Production FCF ('000 USD)</b></td>
+                                                    <th>Factor</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="width:50%;">
+                                                        <select class="asset-dropdown select form-select">
+                                                            <option>--Select Asset--</option>
+                                                            {% for o in assets %}
+                                                                <option value="{{ o.asset}}">{{ o.asset }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:20%;">
+                                                        <input class="renaissance-share form-control" id="renProductionShare" readonly>
+                                                    </td>
+                                                    <td style="width:30%; background-color: #068622ff;">
+                                                        <input type="number" id="productionValue" class="form-control" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Production Days (nr)</td>
+                                                    <td><input type="number" id="renShare" class="form-control" readonly/></td>
+                                                    <td style="background-color: #068622ff;">
+                                                        <input type="number" id="productionDays" class="form-control" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Implementation Cost ('000 USD)</td>
+                                                    <td><input type="number" id="prodOpexFactor" class="form-control" readonly/></td>
+                                                    <td style="background-color: #068622ff;">
+                                                        <input type="number" id="productionCost" class="form-control" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <select id="productionSelect" class="select form-select">
+                                                            <option>--Production Factor--</option>
+                                                            {% for o in production_fcf %}
+                                                                <option value="{{ o.name }}">{{ o.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input id="dummy-factor2" class="form-control" style="display:block;" readonly>
+                                                        <div id="oilFactorInput" style="display:none;">
+                                                            <input class="oil-factor form-control" id="oilFactor" style="border: 2px solid green;" readonly>
+                                                        </div>
+
+                                                        <div id="domgasFactorInput" style="display:none;">
+                                                            <input class="domgas-factor form-control" id="domgasFactor" style="border: 2px solid orange;" readonly>
+                                                        </div>
+
+                                                        <div id="exportGasFactorInput" style="display:none;">
+                                                            <input class="export-gas-factor form-control" id="exportGasFactor" style="border: 2px solid red;" readonly>
+                                                        </div>
+                                                    </td>
+                                                    <td class="bg-warning text-end">
+                                                        <span id="productionResult" class="fw-bold"></span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-center">
+                        <div class="alert alert-info mt-2">Note: For initiatives not related to cost savings/production, contact your finance advisor or the PMO for support</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br><br><br>
+
+
+{% endblock %}
+
+
+
+
+{% block js %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Attach change listeners for production table
+        document.getElementById("savingsSelect").addEventListener("change", calculateSavingsFCF);
+        document.getElementById("savingsValue").addEventListener("input", calculateSavingsFCF);
+        document.getElementById("implementationCost").addEventListener("input", calculateSavingsFCF);
+
+        // When production asset dropdown changes, fetch factors
+        document.querySelectorAll(".asset-dropdown").forEach(function (dropdown) {
+            dropdown.addEventListener("change", function () {
+                const selectedAsset = this.value;
+                const container = this.closest("tr") || document;
+
+                const currentLangPrefix = window.location.pathname.split('/')[1];
+                const url = `/${currentLangPrefix}/api/get-asset-factors/?asset=${encodeURIComponent(selectedAsset)}`;
+
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert("Asset not found");
+                        } else {
+                            container.querySelector(".renaissance-share")?.setAttribute("data-val", data.renaissance_share);
+                            document.getElementById("capexFactor")?.setAttribute("data-val", data.capex_factor);
+                            document.getElementById("opexFactor")?.setAttribute("data-val", data.opex_factor);
+                            // Optional: populate readonly fields
+                            container.querySelector(".renaissance-share").value = data.renaissance_share;
+                            document.getElementById("capexFactor").value = data.capex_factor;
+                            document.getElementById("opexFactor").value = data.opex_factor;
+                            
+                            calculateSavingsFCF();
+                        }
+                    });
+            });
+        });
+
+        // Recalculate when input changes
+        document.getElementById("savingsValue").addEventListener("input", calculateSavingsFCF);
+        document.getElementById("implementationCost").addEventListener("input", calculateSavingsFCF);
+        document.getElementById("savingsSelect").addEventListener("change", calculateSavingsFCF);
+
+        function calculateSavingsFCF() {
+            const savings = parseFloat(document.getElementById("savingsValue").value) || 0;
+            const implementationCost = parseFloat(document.getElementById("implementationCost").value) || 0;
+            const selectedFactorType = document.getElementById("savingsSelect").value;
+
+            let factor = 0;
+            if (selectedFactorType.includes("CAPEX")) {
+                factor = parseFloat(document.querySelector(".capex-factor")?.getAttribute("data-val")) || 0;
+            } else if (selectedFactorType.includes("OPEX")) {
+                factor = parseFloat(document.querySelector(".opex-factor")?.getAttribute("data-val")) || 0;
+            }
+
+            const renaissanceShare = parseFloat(document.querySelector(".renaissance-share")?.getAttribute("data-val")) || 0;
+
+            const result = (savings * factor * renaissanceShare) - implementationCost;
+            document.getElementById("savingsResult").textContent = result.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Attach change listeners for production table
+        document.getElementById("productionSelect").addEventListener("change", calculateProductionFCF);
+        document.getElementById("productionValue").addEventListener("input", calculateProductionFCF);
+        document.getElementById("productionDays").addEventListener("input", calculateProductionFCF);
+        document.getElementById("productionCost").addEventListener("input", calculateProductionFCF);
+
+        // When production asset dropdown changes, fetch factors
+        document.querySelectorAll(".asset-dropdown").forEach(function (dropdown) {
+            dropdown.addEventListener("change", function () {
+                const selectedAsset = this.value;
+                const container = this.closest("tr") || document;
+
+                const currentLangPrefix = window.location.pathname.split('/')[1];
+                const url = `/${currentLangPrefix}/api/get-asset-factors/?asset=${encodeURIComponent(selectedAsset)}`;
+
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert("Asset not found");
+                        } else {
+                            // Set hidden factor values via data-val
+                            document.getElementById("oilFactor")?.setAttribute("data-val", data.oil_factor);
+                            document.getElementById("domgasFactor")?.setAttribute("data-val", data.domgas_factor);
+                            document.getElementById("exportGasFactor")?.setAttribute("data-val", data.export_gas_factor);
+
+                            document.getElementById("prodOpexFactor")?.setAttribute("data-val", data.opex_factor);
+                            document.getElementById("renShare")?.setAttribute("data-val", data.renaissance_share);
+
+                            container.querySelector(".renaissance-share")?.setAttribute("data-val", data.renaissance_share);
+
+                            // Optional: populate readonly fields
+                            document.getElementById("oilFactor").value = data.oil_factor;
+                            document.getElementById("domgasFactor").value = data.domgas_factor;
+                            document.getElementById("exportGasFactor").value = data.export_gas_factor;
+
+                            document.getElementById("prodOpexFactor").value = data.opex_factor;
+                            document.getElementById("renShare").value = data.renaissance_share;
+
+                            container.querySelector(".renaissance-share").value = data.renaissance_share;
+
+                            calculateProductionFCF();
+                        }
+                    });
+            });
+        });
+
+        function calculateProductionFCF() {
+            const factorType = document.getElementById("productionSelect").selectedOptions[0]?.textContent || "";
+            const production = parseFloat(document.getElementById("productionValue").value) || 0;
+            const days = parseFloat(document.getElementById("productionDays").value) || 0;
+            const cost = parseFloat(document.getElementById("productionCost").value) || 0;
+
+            const renShare = parseFloat(document.getElementById("renShare").value) || 0;
+            const prodOpexFactor = parseFloat(document.getElementById("prodOpexFactor").value) || 0;
+
+            let factor = 0;
+            if (factorType.includes("Oil")) {
+                factor = parseFloat(document.getElementById("oilFactor")?.getAttribute("data-val")) || 0;
+            } else if (factorType.includes("Domgas")) {
+                factor = parseFloat(document.getElementById("domgasFactor")?.getAttribute("data-val")) || 0;
+            } else if (factorType.includes("Export")) {
+                factor = parseFloat(document.getElementById("exportGasFactor")?.getAttribute("data-val")) || 0;
+            }
+
+            const share = parseFloat(document.getElementById("renProductionShare")?.getAttribute("data-val")) || 0;
+
+            const result = (((days/365) * production *  factor * share)*1000) - (cost * prodOpexFactor * renShare);
+            document.getElementById("productionResult").textContent = result.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+    });
+</script>
+
+<script>
+    document.getElementById("savingsSelect").addEventListener("change", function () {
+        const selected = this.value;
+        // Show/hide input blocks based on selection
+        document.getElementById("dummy-factor1").style.display = "none";
+        document.getElementById("capexInput").style.display = selected === "CAPEX Savings ('000 USD)" ? "block" : "none";
+        document.getElementById("opexInput").style.display = selected === "OPEX Savings ('000 USD)" ? "block" : "none";
+    });
+</script>
+
+<script>
+    document.getElementById("productionSelect").addEventListener("change", function () {
+        const selected = this.value;
+        // Show/hide input blocks based on selection
+        document.getElementById("dummy-factor2").style.display = "none";
+        document.getElementById("oilFactorInput").style.display = selected === "Oil Production (kbopd)" ? "block" : "none";
+        document.getElementById("domgasFactorInput").style.display = selected === "Domgas Production (MMscf/d)" ? "block" : "none";
+        document.getElementById("exportGasFactorInput").style.display = selected === "Exp Gas Production (MMscf/d)" ? "block" : "none";
+    });
+</script>
+
+
+
+{% endblock %}
+
+

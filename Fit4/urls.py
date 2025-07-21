@@ -82,7 +82,7 @@ urlpatterns = [
     path(_('add_actions/<int:id>'), views.add_actions, name="add_actions"),
     path(_('actions_details/<int:id>'), views.action_details, name="action_details"),
     path(_('edit_actions/<int:id>'), views.edit_actions, name="edit_actions"),
-    #path(_('my_actions/<int:id>'), views.my_actions, name="my_actions"),
+    path(_('delete-action/<int:id>/'), views.delete_action, name='delete_action'),
     
     # Members
     path(_('add_member/<int:id>'), views.add_member, name="add_member"),
@@ -100,6 +100,11 @@ urlpatterns = [
     path("FCF_Calculator/<int:id>", views.fcf_calculator_details, name="fcf_calculator_details"),
     path("edit_FCF_Calculator/<int:id>", views.edit_fcf_multiplier, name="edit_fcf_multiplier"),
     
+    path("cat-list", views.FCF_calculator_list, name="cat_list"),
+    path("add-calc", views.add_fcf_calculator, name="add_fcf_calculator"),
+    path("edit-calc/<int:id>", views.edit_fcf_calculator, name="edit_fcf_calculator"),
+    path('api/get-asset-factors/', views.get_asset_factors, name='get_asset_factors'),
+
     # Banner Management
     path("banners/", views.banner_list, name="banner_list"),
     path("add_banner/", views.add_banner, name="add_banner"),

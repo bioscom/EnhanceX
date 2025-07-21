@@ -61,7 +61,7 @@
 
   <li class="nav-item"><a href="{% url 'dashboard:opex_report' %}" class="nav-link px-2 py-3 fw-bold" role="tab" aria-controls="report" aria-selected="false"><b>Management Report</b></a></li>
   {% if request.user.is_staff and request.user.is_superuser %}
-    <li class="nav-item"><a href="{% url 'Fit4:FCF_Multiplier_list' %}" class="nav-link px-2 py-3 fw-bold" role="tab" aria-controls="report" aria-selected="false"><b>FCF Calculator</b></a></li>
+    <li class="nav-item"><a href="{% url 'Fit4:cat_list' %}" class="nav-link px-2 py-3 fw-bold" role="tab" aria-controls="report" aria-selected="false"><b>FCF Calculator</b></a></li>
     <li class="nav-item"><a href="/en/secretadmin/" class="nav-link px-2 py-3 fw-bold" role="tab" aria-controls="report" aria-selected="false"><b>Site Administration</b></a></li>
     <li class="nav-item"><a href="{% url 'Fit4:banner_list' %}" class="nav-link px-2 py-3 fw-bold" role="tab" aria-controls="report" aria-selected="false"><b>Announcement</b></a></li>
   {% endif %}

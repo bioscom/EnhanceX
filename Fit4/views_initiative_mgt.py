@@ -327,6 +327,15 @@ def initiative_details(request, slug):
             }
         
         #saved_data = {s.cell_index: s.value for s in selections.values.all()}
+        # FCF_calculator_list(request):
+        assets = Asset.objects.all().order_by('id')
+        savings = Savings.objects.all().order_by('id')
+        production_fcf = ProductionFCF.objects.all().order_by('id')
+        assetform = AssetForm(request.POST)
+        savingsForm = SavingsForm(request.POST)
+        productionFCFForm = ProductionFCFForm(request.POST)
+        #return render(request, 'Fit4/FCF/fcf_calc.html', {'assets': assets, 'savings': savings, 'production_fcf': production_fcf, 'assetform': assetform})
+
     
         return render(request, 'Fit4/Initiative/Init_Details.html', {
             'initiative':oInitiative, 
@@ -367,6 +376,12 @@ def initiative_details(request, slug):
             'ZipUnits':ZipUnits, 
             'initiative_id': oInitiative.id, 
             'saved_data': json.dumps(saved_data), 
+            
+            # FCF Calculator
+            'assets': assets, 
+            'savings': savings, 
+            'production_fcf': production_fcf, 
+            'assetform': assetform,
         })
     except Exception as e:
         import traceback

@@ -135,8 +135,37 @@ class FCFMultiplierForm(forms.ModelForm):
         model = FCFMultiplier
 
         fields = ['name', 'benefittype', 'actual_volume_multiplier', 'forecast_volume_multiplier', 'planned_volume_multiplier', 'fcf_multiplier', 'YYear']
+
+class AssetForm(forms.ModelForm):
+    class Meta:
+        model = Asset
+        fields = ['asset', 'renaissance_share', 'capex_factor', 'opex_factor', 'oil_factor', 'domgas_factor', 'export_gas_factor']
+        widgets = {
+            # 'category_name': forms.TextInput(attrs={'placeholder': 'Category Name'}),
+            'renaissance_share': forms.NumberInput(attrs={'placeholder': 'Renaissance Share'}),
+            'capex_factor': forms.NumberInput(attrs={'placeholder': 'Capex Factor'}),
+            'opex_factor': forms.NumberInput(attrs={'placeholder': 'Opex Factor'}),
+            'oil_factor': forms.NumberInput(attrs={'placeholder': 'Oil Factor'}),
+            'domgas_factor': forms.NumberInput(attrs={'placeholder': 'Domestic Gas Factor'}),
+            'export_gas_factor': forms.NumberInput(attrs={'placeholder': 'Export Gas Factor'}),
+        }
+
+class SavingsForm(forms.ModelForm):
+    class Meta:
+        model = Savings
+        fields = ['name']
+        # widgets = {
+        #     'name': forms.TextInput(attrs={'placeholder': 'Savings Name'}),
+        # }
         
-    
+class ProductionFCFForm(forms.ModelForm):
+    class Meta:
+        model = ProductionFCF
+        fields = ['name']
+        # widgets = {
+        #     'name': forms.TextInput(attrs={'placeholder': 'Production FCF Name'}),
+        # }
+
 class InitiativeThreatForm(forms.ModelForm):
     description = forms.CharField(widget=CKEditorUploadingWidget())
     class Meta:

@@ -1,0 +1,274 @@
+
+{% load static %}
+{% load table_tags %}
+{% load i18n %}
+{% load humanize %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+
+{% comment %}
+
+<form action="{% url 'Fit4:edit_fcf_calculator' form.id %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="editfcfcalculatorModal" aria-labelledby="editfcfcalculatorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editfcfcalculatorModalLabel">Update FCF calculator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include 'Fit4/FCF/edit_partial_fcfcalculator.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="save_changes" type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form action="{% url 'Fit4:add_fcf_calculator' %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="addfcfcalculatorModal" aria-labelledby="addfcfcalculatorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addfcfcalculatorModalLabel">Add FCF Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% include 'Fit4/FCF/partial_add_fcf_calculator.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="save_changes" type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>{% endcomment %}
+
+<style>
+    .cursor-move {
+        cursor: move;
+    }
+</style>
+
+<div class="accordion mb-2" id="fcfAccordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingFCF">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFCF" aria-expanded="false" aria-controls="collapseFCF">
+                View Asset Factor Table
+            </button>
+        </h2>
+        <div id="collapseFCF" class="accordion-collapse collapse" aria-labelledby="headingFCF" data-bs-parent="#fcfAccordion">
+            <div class="accordion-body">
+                <table id="rptTable" class="cell-border table table-hover" style="font-size: 0.9rem;">
+                    <thead>
+                        <tr>
+                            <th>...</th>
+                            <th>Asset</th>
+                            <th>Renaissance Share</th>
+                            <th>Capex Factor</th>
+                            <th>Opex Factor</th>
+                            <th>Oil Factor</th>
+                            <th>Domgas Factor</th>
+                            <th>Export gas Factor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for o in assets %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{o.asset}}</td>
+                            <td>{{o.renaissance_share}}</td>
+                            <td>{{o.capex_factor}}</td>
+                            <td>{{o.opex_factor}}</td>
+                            <td>{{o.oil_factor}}</td>
+                            <td>{{o.domgas_factor}}</td>
+                            <td>{{o.export_gas_factor}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'Fit4/FCF/calc.html' %}
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Attach change listeners for production table
+        document.getElementById("savingsSelect").addEventListener("change", calculateSavingsFCF);
+        document.getElementById("savingsValue").addEventListener("input", calculateSavingsFCF);
+        document.getElementById("implementationCost").addEventListener("input", calculateSavingsFCF);
+
+        // When production asset dropdown changes, fetch factors
+        document.querySelectorAll(".asset-dropdown").forEach(function (dropdown) {
+            dropdown.addEventListener("change", function () {
+                const selectedAsset = this.value;
+                const container = this.closest("tr") || document;
+
+                const currentLangPrefix = window.location.pathname.split('/')[1];
+                const url = `/${currentLangPrefix}/api/get-asset-factors/?asset=${encodeURIComponent(selectedAsset)}`;
+
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert("Asset not found");
+                        } else {
+                            container.querySelector(".renaissance-share")?.setAttribute("data-val", data.renaissance_share);
+                            document.getElementById("capexFactor")?.setAttribute("data-val", data.capex_factor);
+                            document.getElementById("opexFactor")?.setAttribute("data-val", data.opex_factor);
+                            // Optional: populate readonly fields
+                            container.querySelector(".renaissance-share").value = data.renaissance_share;
+                            document.getElementById("capexFactor").value = data.capex_factor;
+                            document.getElementById("opexFactor").value = data.opex_factor;
+                            
+                            calculateSavingsFCF();
+                        }
+                    });
+            });
+        });
+
+        // Recalculate when input changes
+        document.getElementById("savingsValue").addEventListener("input", calculateSavingsFCF);
+        document.getElementById("implementationCost").addEventListener("input", calculateSavingsFCF);
+        document.getElementById("savingsSelect").addEventListener("change", calculateSavingsFCF);
+
+        function calculateSavingsFCF() {
+            const savings = parseFloat(document.getElementById("savingsValue").value) || 0;
+            const implementationCost = parseFloat(document.getElementById("implementationCost").value) || 0;
+            const selectedFactorType = document.getElementById("savingsSelect").value;
+
+            let factor = 0;
+            if (selectedFactorType.includes("CAPEX")) {
+                factor = parseFloat(document.querySelector(".capex-factor")?.getAttribute("data-val")) || 0;
+            } else if (selectedFactorType.includes("OPEX")) {
+                factor = parseFloat(document.querySelector(".opex-factor")?.getAttribute("data-val")) || 0;
+            }
+
+            const renaissanceShare = parseFloat(document.querySelector(".renaissance-share")?.getAttribute("data-val")) || 0;
+
+            const result = (savings * factor * renaissanceShare) - implementationCost;
+            document.getElementById("savingsResult").textContent = result.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Attach change listeners for production table
+        document.getElementById("productionSelect").addEventListener("change", calculateProductionFCF);
+        document.getElementById("productionValue").addEventListener("input", calculateProductionFCF);
+        document.getElementById("productionDays").addEventListener("input", calculateProductionFCF);
+        document.getElementById("productionCost").addEventListener("input", calculateProductionFCF);
+
+        // When production asset dropdown changes, fetch factors
+        document.querySelectorAll(".asset-dropdown").forEach(function (dropdown) {
+            dropdown.addEventListener("change", function () {
+                const selectedAsset = this.value;
+                const container = this.closest("tr") || document;
+
+                const currentLangPrefix = window.location.pathname.split('/')[1];
+                const url = `/${currentLangPrefix}/api/get-asset-factors/?asset=${encodeURIComponent(selectedAsset)}`;
+
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert("Asset not found");
+                        } else {
+                            // Set hidden factor values via data-val
+                            document.getElementById("oilFactor")?.setAttribute("data-val", data.oil_factor);
+                            document.getElementById("domgasFactor")?.setAttribute("data-val", data.domgas_factor);
+                            document.getElementById("exportGasFactor")?.setAttribute("data-val", data.export_gas_factor);
+
+                            document.getElementById("prodOpexFactor")?.setAttribute("data-val", data.opex_factor);
+                            document.getElementById("renShare")?.setAttribute("data-val", data.renaissance_share);
+
+                            container.querySelector(".renaissance-share")?.setAttribute("data-val", data.renaissance_share);
+
+                            // Optional: populate readonly fields
+                            document.getElementById("oilFactor").value = data.oil_factor;
+                            document.getElementById("domgasFactor").value = data.domgas_factor;
+                            document.getElementById("exportGasFactor").value = data.export_gas_factor;
+
+                            document.getElementById("prodOpexFactor").value = data.opex_factor;
+                            document.getElementById("renShare").value = data.renaissance_share;
+
+                            container.querySelector(".renaissance-share").value = data.renaissance_share;
+
+                            calculateProductionFCF();
+                        }
+                    });
+            });
+        });
+
+        function calculateProductionFCF() {
+            const factorType = document.getElementById("productionSelect").selectedOptions[0]?.textContent || "";
+            const production = parseFloat(document.getElementById("productionValue").value) || 0;
+            const days = parseFloat(document.getElementById("productionDays").value) || 0;
+            const cost = parseFloat(document.getElementById("productionCost").value) || 0;
+
+            const renShare = parseFloat(document.getElementById("renShare").value) || 0;
+            const prodOpexFactor = parseFloat(document.getElementById("prodOpexFactor").value) || 0;
+
+            let factor = 0;
+            if (factorType.includes("Oil")) {
+                factor = parseFloat(document.getElementById("oilFactor")?.getAttribute("data-val")) || 0;
+            } else if (factorType.includes("Domgas")) {
+                factor = parseFloat(document.getElementById("domgasFactor")?.getAttribute("data-val")) || 0;
+            } else if (factorType.includes("Export")) {
+                factor = parseFloat(document.getElementById("exportGasFactor")?.getAttribute("data-val")) || 0;
+            }
+
+            const share = parseFloat(document.getElementById("renProductionShare")?.getAttribute("data-val")) || 0;
+
+            const result = (((days/365) * production *  factor * share)*1000) - (cost * prodOpexFactor * renShare);
+            document.getElementById("productionResult").textContent = result.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+    });
+</script>
+
+<script>
+    document.getElementById("savingsSelect").addEventListener("change", function () {
+        const selected = this.value;
+        // Show/hide input blocks based on selection
+        document.getElementById("dummy-factor1").style.display = "none";
+        document.getElementById("capexInput").style.display = selected === "CAPEX Savings ('000 USD)" ? "block" : "none";
+        document.getElementById("opexInput").style.display = selected === "OPEX Savings ('000 USD)" ? "block" : "none";
+    });
+</script>
+
+<script>
+    document.getElementById("productionSelect").addEventListener("change", function () {
+        const selected = this.value;
+        // Show/hide input blocks based on selection
+        document.getElementById("dummy-factor2").style.display = "none";
+        document.getElementById("oilFactorInput").style.display = selected === "Oil Production (kbopd)" ? "block" : "none";
+        document.getElementById("domgasFactorInput").style.display = selected === "Domgas Production (MMscf/d)" ? "block" : "none";
+        document.getElementById("exportGasFactorInput").style.display = selected === "Exp Gas Production (MMscf/d)" ? "block" : "none";
+    });
+</script>
+
+<script>
+$(function () {
+    $("#fcfcalculatorModal").on("shown.bs.modal", function () {
+        $(".modal-dialog").draggable({
+            handle: "#modalDragHandle"
+        });
+    });
+});
+</script>

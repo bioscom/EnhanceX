@@ -647,7 +647,23 @@ class FCFMultiplier(BaseModel):
     fcf_multiplier = models.DecimalField(max_digits=18, decimal_places=4, blank=True, null=True)
     YYear = models.IntegerField(blank=True, null=True, choices=get_years, default = datetime.now().year)
     
+class Asset(BaseModel):
+    asset = models.CharField(max_length=100, blank=True, null=True)
+    renaissance_share=models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    capex_factor=models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    opex_factor=models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    oil_factor=models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    domgas_factor=models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    export_gas_factor=models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    
+    def __str__(self):
+        return self.asset
 
+class Savings(BaseModel):
+    name = models.CharField(max_length=100)
+    
+class ProductionFCF(BaseModel):
+    name = models.CharField(max_length=100)
 
 #region ================== MTO Models Phase 2 ===========================================
 

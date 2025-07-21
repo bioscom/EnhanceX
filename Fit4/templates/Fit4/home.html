@@ -171,7 +171,9 @@
                     </li>
                     
                     <span class="flex-grow-1"></span>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#lateInitiativeModal" class="btn btn-danger me-5">My Late Initiatives and Late Actions</button>
+                    {% if show_late_modal or show_late_actions %}
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#lateInitiativeModal" class="btn btn-danger me-5">My Late Initiatives and Late Actions</button>
+                    {% endif %}
                 
                     <span class="flex-grow-1"></span>
                     <button type="button" data-bs-toggle="modal" data-bs-target="#optionModal" class="btn btn-primary">+ New Initiative</button>

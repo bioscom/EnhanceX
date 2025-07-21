@@ -74,7 +74,9 @@
             </div>
         </div>
         <div class="card-footer text-center">
-            <button id="save_changes" type="submit" class="btn btn-primary">  <i class="fa fa-save"></i>   Save  </button>
+            {% if request.user.is_staff or request.user.is_superuser %}
+                <button id="save_changes" type="submit" class="btn btn-primary">  <i class="fa fa-save"></i>   Save  </button>
+            {% endif %}
         </div>
     </div>
 </form>

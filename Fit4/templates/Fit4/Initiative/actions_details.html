@@ -35,6 +35,27 @@
         </form>
     {% comment %} {% endwith %} {% endcomment %}
 
+    <form action="{% url 'Fit4:delete_action' form.id %}" method="POST">
+        {% csrf_token %}
+        <div class="modal fade" id="deleteActionModal" tabindex="-1" aria-labelledby="actionModalLabel" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="actionModalLabel">Delete Action</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete the Action? <br> <b><small>{{form.action_name}}</small></b>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
 <div class="container-flux mb-2">
     <div class="card">
         <div class="card-header">
@@ -48,7 +69,7 @@
                         <div class="btn-group pull-right" role="group">
                             <button type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal" class="btn btn-light border border-2 border-secondary">Edit</button>
                             <button type="button" hx-get="{% url 'Fit4:add_initiative' %}" hx-target="#dialog" class="btn btn-light border border-2 border-secondary">Clone</button>
-                            <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-light border border-2 border-secondary">Delete</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#deleteActionModal" class="btn btn-light border border-2 border-secondary">Delete</button>
                         </div>
                     </div>
                 </ul>
