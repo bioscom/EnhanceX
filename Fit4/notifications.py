@@ -21,9 +21,9 @@ def ChangeInitiativeOwnerMail(request, oInitiative, selected_user_id):
     html_content += "<p>" + request.user.get_full_name() + ", has reassigned this Initiative to you as the new Initiative Owner </p>"
     html_content += "</div>"
     html_content += "<div class='card-body text-center'>"
-    html_content += "<p>Initiative name </p>"
+    html_content += "<p>Initiative name: </p>"
     url = request.build_absolute_uri(reverse('Fit4:initiative_details', args=[oInitiative.slug]))
-    html_content += f'<p><a href="{url}">' + oInitiative.initiative_name + '</a></p><br><br><br>'
+    html_content += f'<a href="{url}">' + oInitiative.initiative_name + '</a><br>'
     html_content += "<p>Previous Owner</p>"
     html_content += "<p>" + oInitiative.author.first_name + ", " + oInitiative.author.last_name + "</p>"
     html_content += "</div>"
@@ -54,9 +54,9 @@ def InitiativeOwnerSendmailToWorkStreamLead(request, oInitiative):
     html_content += "<p>" + request.user.get_full_name() + " has requested your approval for the following item: </p>"
     html_content += "</div>"
     html_content += "<div class='card-body text-center'>"
-    html_content += "<p>Initiative name </p>"
+    html_content += "<p>Initiative name: </p>"
     url = request.build_absolute_uri(reverse('Fit4:initiative_details', args=[oInitiative.slug]))
-    html_content += f'<p><a href="{url}">' + oInitiative.initiative_name + '</a></p><br><br><br>'
+    html_content += f'<a href="{url}">' + oInitiative.initiative_name + '</a><br>'
     html_content += "<p>Owner</p>"
     html_content += "<p>" + oInitiative.author.first_name + ", " + oInitiative.author.last_name + "</p>"
     html_content += "<p>Comments</p>"
@@ -89,9 +89,9 @@ def InitiativeOwnerSendmailToFinanceSponsor(request, oInitiative):
     html_content += "<p>" + request.user.get_full_name() + " has requested your approval for the following item: </p>"
     html_content += "</div>"
     html_content += "<div class='card-body text-center'>"
-    html_content += "<p>Initiative name </p>"
+    html_content += "<p>Initiative name: </p>"
     url = request.build_absolute_uri(reverse('Fit4:initiative_details', args=[oInitiative.slug]))
-    html_content += f'<p><a href="{url}">' + oInitiative.initiative_name + '</a></p><br><br><br>'
+    html_content += f'<a href="{url}">' + oInitiative.initiative_name + '</a><br>'
     html_content += "<p>Owner</p>"
     html_content += "<p>" + oInitiative.author.first_name + ", " + oInitiative.author.last_name + "</p>"
     html_content += "<p>Comments</p>"
@@ -129,9 +129,9 @@ def WorkStreamLeadSendmailToFinanceSponsorCopyInitiativeOwner(request, oInitiati
     html_content += "<p>" + request.user.get_full_name() + " has requested your approval for the following item: </p>"
     html_content += "</div>"
     html_content += "<div class='card-body text-center'>"
-    html_content += "<p>Initiative name </p>"
+    html_content += "<p>Initiative name: </p>"
     url = request.build_absolute_uri(reverse('Fit4:initiative_details', args=[oInitiative.slug]))
-    html_content += f'<p><a href="{url}">' + oInitiative.initiative_name + '</a></p><br><br><br>'
+    html_content += f'<a href="{url}">' + oInitiative.initiative_name + '</a><br>'
     html_content += "<p>Owner</p>"
     html_content += "<p>" + oInitiative.author.first_name + ", " + oInitiative.author.last_name + "</p>"
     html_content += "<p>Comments</p>"
