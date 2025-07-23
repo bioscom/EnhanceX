@@ -187,7 +187,7 @@
               {% for obj in duped %}
                   <tr>
                     {% comment %} <td>{{ forloop.counter }}</td> {% endcomment %}
-                    <td><a href="{% url 'Fit4:workstream_details' obj.initiative.Workstream.id %}">{{ obj.initiative.Workstream }}</a></td>
+                    <td><a href="{% url 'Fit4:workstream_details' obj.initiative.Workstream.slug %}">{{ obj.initiative.Workstream }}</a></td>
                     <td><a href="{% url 'Fit4:initiative_details' obj.initiative.slug %}">{{ obj.initiative.initiative_name }}</a></td>
                     <td>{{ obj.initiative.initiative_id }}</td>
                     <td class="amountPlan">{{ obj.sum_plan|currency }}</td>
