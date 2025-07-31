@@ -39,9 +39,14 @@
                 <label for="{{ initiativeForm.actual_Lgate.id_for_label }}"  class="form-label">Initial L-Gate*:</label>
             </div>
             <div class="col-sm-12">
-                {% render_field initiativeForm.actual_Lgate class="select form-select required" placeholder="" %}
+                <select name="actualLGate" id="actualLGate" class="form-select mb-2" required>
+                    <option value="" disabled selected>---------</option>
+                    <option value="1">G0 Idea</option>
+                    <option value="2">G1 Identify</option>
+                </select>
+                {% comment %} {% render_field initiativeForm.actual_Lgate class="select form-select required" placeholder="" %} {% endcomment %}
             </div>
-            <div class="invalid-feedback">{{ initiativeForm.actual_Lgate.errors|first }}</div>
+            {% comment %} <div class="invalid-feedback">{{ initiativeForm.actual_Lgate.errors|first }}</div> {% endcomment %}
         </div>
     </div>
 
@@ -64,7 +69,7 @@
             <label for="{{ initiativeForm.description.id_for_label }}" class="form-label">Description:</label>
         </div>
         <div class="col-sm-12">
-            {{ initiativeForm.description|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:5" }}
+            {% render_field initiativeForm.description class="form-control" id="initiative_description" placeholder="" %}
         </div>
         <div class="invalid-feedback">{{ initiativeForm.description.errors|first }}</div>
     </div>

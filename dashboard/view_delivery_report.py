@@ -22,7 +22,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from django.utils.timezone import now
 
 from dashboard.utilities import *
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 
 def get_banked_by_function(queryTW):
@@ -125,6 +125,48 @@ def edit_delivery_recognition(request, id):
     except Exception as e:
         print(traceback.format_exc())
     return render(request, "partials/partial_edit_delivery_recognition.html", {'opex': form})
+
+def add_delivery_target(request, id=None):
+    try:
+        # Check if Recognition already exists for the current week
+        deliveryTarget = delivery_target.objects.filter(YYear=datetime.now().today().year).first()
+        if deliveryTarget:
+            return edit_delivery_target(request, deliveryTarget.id)
+        
+        if request.method == "POST":
+            form = deliveryTargetForm(request.POST)
+            if form.is_valid():
+                o = form.save(commit=False)
+                o.created_by = request.user
+                o.last_modified_by = request.user
+                o.YYear = datetime.now().today().year
+                o.save()
+                messages.success(request, '<b>Delivery Target added successfully.</b>')
+                return redirect(reverse("dashboard:delivery_report"))
+        else:
+            form = deliveryTargetForm()
+    except Exception as e:
+        print(traceback.format_exc())
+    return render(request, "partials/partial_add_delivery_target.html", {'delivery': form})
+
+def edit_delivery_target(request, id):
+    try:
+        target = get_object_or_404(delivery_target, id=id)
+        if request.method == "POST":
+            form = deliveryTargetForm(data=request.POST, instance=target)
+            if form.is_valid():
+                o = form.save(commit=False)
+                o.last_modified_by = request.user
+                o.save()
+                messages.success(request, '<b>Delivery Target updated successfully.</b>')
+                return redirect(reverse("dashboard:delivery_report"))
+        else:
+            form = deliveryTargetForm(instance=target)
+    except Exception as e:
+        print(traceback.format_exc())
+    return render(request, "partials/partial_edit_delivery_target.html", {'delivery': form})
+
+
 
 #9. Delivery Movements
 def delivery_movements(queryLW, queryTW):
@@ -425,6 +467,24 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
     lgateValues = []
     lgateLabels = []
     
+    #16. Delivery Target
+    delTargetForm = request.POST
+    deliveryTarget = delivery_target.objects.filter(YYear=oYear).first()
+    if deliveryTarget is None:
+        #Copy previous year's target to current year if it exists
+        previousYearTarget = delivery_target.objects.filter(YYear=oYear-1).first()
+        if previousYearTarget:
+            #create entry for the current year with previous year's target
+            deliveryTarget = delivery_target.objects.create(YYear=oYear, target=previousYearTarget.target)
+            delTargetForm = deliveryTargetForm(instance=previousYearTarget)
+    else:
+        delTargetForm = deliveryTargetForm(instance=deliveryTarget)
+
+    # if deliveryTarget:
+    #     deliveryTargetForm = deliveryTargetForm(instance=deliveryTarget)
+    # else:
+    #     deliveryTargetForm = deliveryTargetForm()
+    
     #region ====================  Dashboard Data Points =====================================
     #try:
     #1. Planned Values
@@ -465,9 +525,12 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
     
     #7. Top Initiatives by Value (This just orders list by Planned value, it may be required to show just top 10 :[10])
     topInitiatives=queryTW.order_by('-Yearly_Planned_Value')
+    # Detect duplicates by initiative name
+    names = [item.initiative_name for item in topInitiatives]
+    duplicates = {name for name, count in Counter(names).items() if count > 1}
     
     #8. Pipeline Robustness
-    pipeLineRobustness = round(((float(PlannedTW)/100)*100)) #TODO:Note: where 100 is the value in the Delivery target. Replace with {{OpexTarget}}
+    pipeLineRobustness = round(((float(PlannedTW)/float(deliveryTarget.target))*100))
     
     LastUpdated = queryTW.first().Date_Downloaded if queryTW.exists() else None
     
@@ -558,6 +621,10 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
     #15. Upload Commitment Report
     formUploadWeeklyCommitments = ExcelUploadForm(request.POST) #upload_weekly_commitment_excel(request)
     weeklyCommitments = weekly_commitment_report.objects.filter(report_week=oWeekTWLW, date_downloaded__year=oYear)
+    
+    
+        
+    
     #deliveryRecogForm = deliveryRecognitionForm(instance=deliveryRecognition)
     #endregion ====================  Dashboard Data Points =====================================
     
@@ -711,6 +778,7 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
         'deliveryRecogForm':deliveryRecogForm, 
         'deliveryRecognition':deliveryRecognition, 
         'topInitiatives':topInitiatives,
+        'duplicates':duplicates,
         'LastUpdated':LastUpdated,
                                                              
         #1. Opex Funnel Chart Data
@@ -790,4 +858,15 @@ def DeliveryPageLoader(request, queryTW, queryLW, oYear, oFunction, year_range, 
         #14 Upload Commitment Report
         'formUploadWeeklyCommitments': formUploadWeeklyCommitments,
         'weeklyCommitments':weeklyCommitments,
+
+        'deliveryTarget': deliveryTarget,
+        'delTargetForm': delTargetForm,
     })
+    
+    
+#@require_POST
+def delete_delivery_duplicate(request, id):
+    initiative = get_object_or_404(delivery_weekly_Initiative_Report, id=id)
+    initiative.delete()
+    return redirect(reverse("dashboard:delivery_report"))
+    #return redirect(request.META.get('HTTP_REFERER', 'your-fallback-url'))

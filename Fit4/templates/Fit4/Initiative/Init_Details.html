@@ -38,11 +38,12 @@
 
 <form action="{% url 'Fit4:clone_initiative' %}" method="POST">
     {% csrf_token %}
+    {{ initiativeForm.media }}
     <div class="modal fade" id="cloneModal" aria-labelledby="cloneModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="cloneModalLabel">Clone This Initiative</h5>
+                    <h5 class="modal-title" id="cloneModalLabel"><i class="fas fa-clone"></i> Clone Initiative</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -50,7 +51,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Clone Inititive</button>
+                    <button type="submit" class="btn btn-primary">Clone <i class="fas fa-clone"></i> </button>
                 </div>
             </div>
         </div>
@@ -59,11 +60,12 @@
 
 <form action="{% url 'Fit4:clone_MTO_initiative' %}" method="POST">
     {% csrf_token %}
+    {{ initiativeThreatForm.media }}
     <div class="modal fade" id="cloneMTOModal" aria-labelledby="cloneMTOModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="cloneMTOModalLabel">Clone This Initiative</h5>
+                    <h5 class="modal-title" id="cloneMTOModalLabel"><i class="fas fa-clone"></i> Clone MTO</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -71,7 +73,37 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Clone MTO</button>
+                    <button type="submit" class="btn btn-primary">Clone <i class="fas fa-clone"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form action="{% url 'Fit4:edit_initiative' initiative.slug %}" method="POST">
+    {% csrf_token %}
+    {{ initiativeForm.media }}
+    <div class="modal fade" id="editInitiativeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 60%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Initiative: Initiative - Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="height: 75vh; overflow-y: auto;">
+                    {% include 'partials/partial_edit_initiative.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    {% if request.user.is_staff or request.user.is_superuser %}
+                        <button id="save_changes" type="submit" class="btn btn-primary">Save changes...</button>
+                    {% else %}
+                        {% if initiative.approval_status_visual.id != 2 %} {#TODO: Check you remove the hard code #}
+                            <button id="save_changes" type="submit" class="btn btn-primary">Save changes</button>
+                        {% else %}
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#snagModal">Save changes</button>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -131,40 +163,6 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
-
-<form action="{% url 'Fit4:edit_initiative' initiative.slug %}" method="POST">
-    {% csrf_token %}
-    {{ initiativeForm.media }}
-    <div class="modal fade" id="initiativeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 70%;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Update Initiative: Initiative - Update</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="height: 75vh; overflow-y: auto;">
-                    {% include 'partials/partial_edit_initiative.html' %}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    {% comment %} class ApprovalVisualStatus(Enum):
-                        Approved = 1
-                        Pending = 2
-                        Recalled = 3 {% endcomment %}
-                    {% if request.user.is_staff or request.user.is_superuser %}
-                        <button id="save_changes" type="submit" class="btn btn-primary">Save changes...</button>
-                    {% else %}
-                        {% if initiative.approval_status_visual.id != 2 %} {#TODO: Check you remove the hard code #}
-                            <button id="save_changes" type="submit" class="btn btn-primary">Save changes</button>
-                        {% else %}
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#snagModal">Save changes</button>
-                        {% endif %}
-                    {% endif %}
                 </div>
             </div>
         </div>

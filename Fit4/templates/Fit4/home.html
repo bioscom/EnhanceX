@@ -11,7 +11,7 @@
 
 <!-- Modal -->
 
-    <form action="" method="POST">
+    {% comment %} <form action="" method="POST">
         {% csrf_token %}
         <div class="modal fade" id="optionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -66,7 +66,7 @@
                 </div>
             </div>
         </div>
-    </form>
+    </form> 
 
     <form action="{% url 'Fit4:add_threat' %}" method="POST">
         {% csrf_token %}
@@ -88,7 +88,7 @@
                 </div>
             </div>
         </div>
-    </form>
+    </form> {% endcomment %}
 
     <div class="modal fade" id="lateInitiativeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 50%;">

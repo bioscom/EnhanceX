@@ -58,3 +58,56 @@ class commercialRecognitionForm(forms.ModelForm):
         
 class ExcelUploadForm(forms.Form):
     file = forms.FileField()
+    
+    
+
+class deliveryTargetForm(forms.ModelForm):
+    class Meta:
+        model = delivery_target
+        fields = ['target']
+        widgets = {
+            'target': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+    
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['YYear'].queryset = delivery_target.objects.values_list('YYear', flat=True).distinct().order_by('YYear')
+        
+
+class opexTargetForm(forms.ModelForm):
+    class Meta:
+        model = opex_target
+        fields = ['target']
+        widgets = {
+            'target': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+    
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['YYear'].queryset = opex_target.objects.values_list('YYear', flat=True).distinct().order_by('YYear')
+
+
+class capexTargetForm(forms.ModelForm):
+    class Meta:
+        model = capex_target
+        fields = ['target']
+        widgets = {
+            'target': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+    
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['YYear'].queryset = capex_target.objects.values_list('YYear', flat=True).distinct().order_by('YYear')
+
+
+class commercialTargetForm(forms.ModelForm):
+    class Meta:
+        model = commercial_target
+        fields = ['target']
+        widgets = {
+            'target': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+    
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['YYear'].queryset = commercial_target.objects.values_list('YYear', flat=True).distinct().order_by('YYear')

@@ -99,7 +99,7 @@
         </div>
     </form>
 
-    <form method="POST">
+    <form action="{% url 'dashboard:add_delivery_target' %}" method="POST">
         {% csrf_token %}
         <div class="modal fade" id="deliveryTargetModal" tabindex="-1" aria-labelledby="impactModalLabel" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -109,7 +109,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        {% include 'partials/partial_delivery_target.html' %}
+                        {% include 'partials/partial_add_delivery_target.html' %}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

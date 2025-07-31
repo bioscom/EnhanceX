@@ -114,11 +114,12 @@ class WorkStreamForm(forms.ModelForm):
         # }
         
 class InitiativeForm(forms.ModelForm):
-    description = forms.CharField(widget=CKEditorUploadingWidget())
+    description = forms.CharField(widget=CKEditorUploadingWidget(),  required=False)
     class Meta:
         model = Initiative
 
-        fields = ['initiative_name', 'Workstream', 'overall_status', 'actual_Lgate', 'description', 'mark_as_confidential']
+        #fields = ['initiative_name', 'Workstream', 'overall_status', 'actual_Lgate', 'description', 'mark_as_confidential']
+        fields = ['initiative_name', 'Workstream', 'overall_status', 'description', 'mark_as_confidential']
         widgets = {
             'initiative_name': forms.TextInput(attrs={'placeholder': 'Initiative Name'}),
         }
@@ -171,7 +172,8 @@ class InitiativeThreatForm(forms.ModelForm):
     class Meta:
         model = Initiative
 
-        fields = ('initiative_name', 'Workstream', 'overall_status', 'actual_Lgate', 'description', 'mark_as_confidential', 'unit', 'infrastructureCategory')
+        #fields = ('initiative_name', 'Workstream', 'overall_status', 'actual_Lgate', 'description', 'mark_as_confidential', 'unit', 'infrastructureCategory')
+        fields = ('initiative_name', 'Workstream', 'overall_status', 'description', 'mark_as_confidential', 'unit', 'infrastructureCategory')
         widgets = {
             'initiative_name': forms.TextInput(attrs={'placeholder': 'Initiative Name'}),
         }

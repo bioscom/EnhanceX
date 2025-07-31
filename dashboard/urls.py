@@ -29,6 +29,14 @@ urlpatterns = [
     path(_("sync-delivery-data/"), views.trigger_delivery_data_copy, name="trigger_delivery_data_copy"),
     path(_("add_delivery_recognition"), views.add_delivery_recognition, name="add_delivery_recognition"),
     path(_("edit_delivery_recognition"), views.edit_delivery_recognition, name="edit_delivery_recognition"),
+    
+    path(_("add-delivery-target"), view_delivery_report.add_delivery_target, name="add_delivery_target"),
+    path(_("edit-delivery-target"), view_delivery_report.edit_delivery_target, name="edit_delivery_target"),
+    path(_("delivery/delete/<int:id>"), views.delete_delivery_duplicate, name='delete_delivery_duplicate'),
+    path(_("opex/delete/<int:id>"), views.delete_opex_duplicate, name='delete_opex_duplicate'),
+
+    path(_("add-opex-target"), view_opex_report.add_opex_target, name="add_opex_target"),
+    path(_("edit-opex-target"), view_opex_report.edit_opex_target, name="edit_opex_target"),
     #
     path('upload-excel/', views.upload_weekly_commitment_excel, name='upload_excel'),
     

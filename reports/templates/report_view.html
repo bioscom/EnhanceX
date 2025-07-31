@@ -151,18 +151,18 @@
           <div id="demo-output" style="margin-bottom: 1em;" class="chart-display"></div>
           <table id="rptTable" class="cell-border table table-hover" style="width:100%; font:small">
             <thead>
-              {% comment %} <th></th> {% endcomment %}
+              <th></th>
               <th>Workstream Name</th>
               <th>Initiative Name</th>
               <th>Idn</th>
-              <th>Yearly Planned Value(USD)</th>
-              <th>Yearly Forecast Value(USD)</th>
-              <th>Yearly Actual Value(USD)</th>
-              <th>MTO Score</th>
               <th>Owner: Full Name</th>
               <th>Workstream Sponsor</th>
               <th>Workstream Lead: Full Name</th>
               <th>Finance Sponsor: Full Name</th>
+              <th>Yearly Planned Value(USD)</th>
+              <th>Yearly Forecast Value(USD)</th>
+              <th>Yearly Actual Value(USD)</th>
+              <th>MTO Score</th>
               <th>Planned Date</th>
               <th>Plan Relevance</th>
               <th>Actual L-Gate</th>
@@ -186,14 +186,10 @@
             <tbody>
               {% for obj in duped %}
                   <tr>
-                    {% comment %} <td>{{ forloop.counter }}</td> {% endcomment %}
+                    <td>{{ forloop.counter }}</td>
                     <td><a href="{% url 'Fit4:workstream_details' obj.initiative.Workstream.slug %}">{{ obj.initiative.Workstream }}</a></td>
                     <td><a href="{% url 'Fit4:initiative_details' obj.initiative.slug %}">{{ obj.initiative.initiative_name }}</a></td>
                     <td>{{ obj.initiative.initiative_id }}</td>
-                    <td class="amountPlan">{{ obj.sum_plan|currency }}</td>
-                    <td class="amountForecast">{{ obj.sum_forecast|currency }}</td>
-                    <td class="amountActual">{{ obj.sum_actual|currency }}</td>
-                    <td class="amountPlan">{{ obj.initiative.mto_score|currency|default_if_none:"" }}</td>
                     <td>
                       <a href="{% url 'account:user_detailed' obj.initiative.author.id %}">{{ obj.initiative.author.get_full_name }}</a>
                     </td>
@@ -212,6 +208,11 @@
                         <a href="{% url 'account:user_detailed' obj.initiative.financesponsor.id %}">{{ obj.initiative.financesponsor.get_full_name }}</a>
                       {% endif %}
                     </td>
+                    <td class="amountPlan">{{ obj.sum_plan|currency }}</td>
+                    <td class="amountForecast">{{ obj.sum_forecast|currency }}</td>
+                    <td class="amountActual">{{ obj.sum_actual|currency }}</td>
+                    <td class="amountPlan">{{ obj.initiative.mto_score|currency|default_if_none:"" }}</td>
+
                     <td>{{ obj.initiative.Planned_Date|default_if_none:""|date:"d-M-Y" }}</td>
                     <td>  
                         {% for o in obj.initiative.Plan_Relevance.all %}
@@ -244,13 +245,14 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
                 <td id="totalPlan" class="fw-bold"></td>
                 <td id="totalForecast" class="fw-bold"></td>
                 <td id="totalActual" class="fw-bold"></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>

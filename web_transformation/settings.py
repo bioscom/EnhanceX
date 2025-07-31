@@ -188,9 +188,11 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                
                 'Fit4.context_processors.global_function',
                 'Fit4.context_processors.global_Initiative',
                 'Fit4.context_processors.global_initiative_data',
+                'Fit4.context_processors.global_forms',  # Add this line
                 #'django.core.context_processors.media',
                 #'django.core.context_processors.request',
             ],
@@ -371,6 +373,23 @@ CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = "pillow"
 CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js' 
+
+# CKEDITOR_CONFIGS = {
+#     'default': {
+#         'skin': 'moono',
+#         'toolbar': [
+#             ['Source', 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', 'RemoveFormat',
+#              'NumberedList', 'BulletedList', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+#              'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'BidiLtr', 'BidiRtl', 'Language',
+#              'Link', 'Unlink', 'Anchor',
+#              'Styles', 'Format', 'Font', 'FontSize']
+#         ],
+#         'toolbarCanCollapse': False,  # Optional
+#         'toolbarStartupExpanded': True,
+#         'height': 150,  # Adjust height if needed
+#     }
+# }
+
 CKEDITOR_CONFIGS = {
     'default': {
         'skin': 'moono',
@@ -383,12 +402,12 @@ CKEDITOR_CONFIGS = {
             {'name': 'paragraph', 'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-',
                        'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl',
                        'Language']},
-            # {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
-            # {'name': 'insert', 'items': ['Image', 'Flash', 'Html5video', 'Youtube', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
-            # '/',
-            # {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
-            # {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-            # {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
+            {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
+            #{'name': 'insert', 'items': ['Image', 'Flash', 'Html5video', 'Youtube', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
+            #'/',
+            {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
+            #{'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            #{'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
             #{'name': 'about', 'items': ['About']},
         ],
         'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here

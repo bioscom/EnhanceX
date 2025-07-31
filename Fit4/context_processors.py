@@ -19,3 +19,13 @@ def global_Initiative(request):
 
 def global_initiative_data(request):
     return get_weekly_initiative_reports()
+
+
+def global_forms(request):
+    return {
+        'initiativeForm': InitiativeForm(),         # Or any default initialization you want
+        'threatForm': InitiativeThreatForm()
+    }
+    
+    #form = InitiativeForm(request.POST)
+    #threatForm = InitiativeThreatForm(request.POST)

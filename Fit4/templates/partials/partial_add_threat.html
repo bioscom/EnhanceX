@@ -6,101 +6,106 @@
 
 {% block body %} {% endcomment %}
     
-    <div class="shadow p-3 mb-2 bg-body rounded">
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="col-sm-12">
-                    <label for="{{ threatForm.initiative_name.id_for_label }}" class="form-label">Initiative Name*:</label>
-                </div>
-                <div class="col-sm-12">
-                    {% render_field threatForm.initiative_name class="form-control required" placeholder="" %}
-                </div>
-                <div class="invalid-feedback">{{ threatForm.initiative_name.errors|first }}</div>
-            </div>
-            <div class="col-md-6">
-                <div class="col-sm-12">
-                    <label for="{{ threatForm.overall_status.id_for_label }}" class="form-label">Overrall Status*:</label>
-                </div>
-                <div class="col-sm-12">
-                    {% render_field threatForm.overall_status class="select form-select required" placeholder="" %}
-                </div>
-                <div class="invalid-feedback">{{ threatForm.overall_status.errors|first }}</div>
-            </div>
-        </div>
-        
-        <div class="row mt-2">
-            <div class="col-sm-6">
-                <div class="col-sm-12">
-                    <label for="{{ threatForm.Workstream.id_for_label }}" class="form-label">Workstream*:</label>
-                </div>
-                <div class="col-sm-12">
-                    {% render_field threatForm.Workstream class="select form-select required" placeholder="" %}
-                </div>
-                <div class="invalid-feedback">{{ threatForm.Workstream.errors|first }}</div>
-            </div>
-            <div class="col-md-6">
-                <div class="col-sm-12">
-                    <label for="{{ threatForm.actual_Lgate.id_for_label }}"  class="form-label">Initial L-Gate*:</label>
-                </div>
-                <div class="col-sm-12">
-                    {% render_field threatForm.actual_Lgate class="select form-select required" placeholder="" %}
-                </div>
-                <div class="invalid-feedback">{{ threatForm.actual_Lgate.errors|first }}</div>
-            </div>
-        </div>
-
-
-        <div class="row mt-2">
-            <div class="col-sm-6">
-                <div class="col-sm-12">
-                    <label for="{{ threatForm.infrastructureCategory.id_for_label }}" class="form-label">Infrastructure Category:</label>
-                </div>
-                <div class="col-sm-12">
-                    {% render_field threatForm.infrastructureCategory class="select form-select required" placeholder="" %}
-                </div>
-                <div class="invalid-feedback">{{ threatForm.infrastructureCategory.errors|first }}</div>
-            </div>
-            <div class="col-md-6">
-                <div class="col-sm-12">
-                    <label for="{{ threatForm.unit.id_for_label }}"  class="form-label">Unit:</label>
-                </div>
-                <div class="col-sm-12">
-                    {% render_field threatForm.unit class="select form-select required" placeholder="" %}
-                </div>
-                <div class="invalid-feedback">{{ threatForm.unit.errors|first }}</div>
-            </div>
-        </div>
-
-
-        <div class="row mt-2">
-            <div class="col-sm-6">
-                
-            </div>
-            <div class="col-md-6">
-                <div class="col-sm-12">
-                    <label for="{{ threatForm.mark_as_confidential.id_for_label }}" class="form-label">Mark as Confidential:</label>
-                </div>
-                <div class="col-sm-12">
-                    {% render_field threatForm.mark_as_confidential class="form-check check" placeholder="" %}
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-2">
+<div class="shadow p-3 mb-2 bg-body rounded">
+    <div class="row">
+        <div class="col-sm-6">
             <div class="col-sm-12">
-                <label for="{{ threatForm.description.id_for_label }}" class="form-label">Description:</label>
+                <label for="{{ threatForm.initiative_name.id_for_label }}" class="form-label">Initiative Name*:</label>
             </div>
             <div class="col-sm-12">
-                {% render_field threatForm.description class="form-control" id="addThreat" %}
-                {% comment %} {{ threatForm.description|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:5" }} {% endcomment %}
+                {% render_field threatForm.initiative_name class="form-control required" placeholder="" %}
             </div>
-            <div class="invalid-feedback">{{ threatForm.description.errors|first }}</div>
+            <div class="invalid-feedback">{{ threatForm.initiative_name.errors|first }}</div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-sm-12">
+                <label for="{{ threatForm.overall_status.id_for_label }}" class="form-label">Overrall Status*:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field threatForm.overall_status class="select form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ threatForm.overall_status.errors|first }}</div>
         </div>
     </div>
-    {% comment %} {% if threatForm.errors %}
-        <ul>
-            {% for key,value in threatForm.errors.items %} 
-                <li>{{ key|escape }} : {{ value|escape }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %} {% endcomment %}
+    
+    <div class="row mt-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ threatForm.Workstream.id_for_label }}" class="form-label">Workstream*:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field threatForm.Workstream class="select form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ threatForm.Workstream.errors|first }}</div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-sm-12">
+                <label for="{{ threatForm.actual_Lgate.id_for_label }}"  class="form-label">Initial L-Gate*:</label>
+            </div>
+            <div class="col-sm-12">
+                <select name="actualLGate" id="actualLGate" class="form-select mb-2" required>
+                    <option value="" disabled selected>---------</option>
+                    <option value="1">G0 Idea</option>
+                    <option value="2">G1 Identify</option>
+                </select>
+                {% comment %} {% render_field threatForm.actual_Lgate class="select form-select required" placeholder="" %} {% endcomment %}
+            </div>
+            <div class="invalid-feedback">{{ threatForm.actual_Lgate.errors|first }}</div>
+        </div>
+    </div>
+
+
+    <div class="row mt-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ threatForm.infrastructureCategory.id_for_label }}" class="form-label">Infrastructure Category:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field threatForm.infrastructureCategory class="select form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ threatForm.infrastructureCategory.errors|first }}</div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-sm-12">
+                <label for="{{ threatForm.unit.id_for_label }}"  class="form-label">Unit:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field threatForm.unit class="select form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ threatForm.unit.errors|first }}</div>
+        </div>
+    </div>
+
+
+    <div class="row mt-2">
+        <div class="col-sm-6">
+            
+        </div>
+        <div class="col-md-6">
+            <div class="col-sm-12">
+                <label for="{{ threatForm.mark_as_confidential.id_for_label }}" class="form-label">Mark as Confidential:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field threatForm.mark_as_confidential class="form-check check" placeholder="" %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-sm-12">
+            <label for="{{ threatForm.description.id_for_label }}" class="form-label">Description:</label>
+        </div>
+        <div class="col-sm-12">
+            {% render_field threatForm.description class="form-control" id="addThreat" %}
+            {% comment %} {{ threatForm.description|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:5" }} {% endcomment %}
+        </div>
+        <div class="invalid-feedback">{{ threatForm.description.errors|first }}</div>
+    </div>
+</div>
+{% comment %} {% if threatForm.errors %}
+    <ul>
+        {% for key,value in threatForm.errors.items %} 
+            <li>{{ key|escape }} : {{ value|escape }}</li>
+        {% endfor %}
+    </ul>
+{% endif %} {% endcomment %}

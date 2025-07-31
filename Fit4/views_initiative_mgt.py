@@ -26,6 +26,7 @@ from .views_mto import *
 def add_initiative(request):
     try:
         if request.method == "POST":
+            actualLGate = request.POST.get('actualLGate')
             form = InitiativeForm(request.POST)
             if form.is_valid():
                 oInitiative = form.save(commit=False)
@@ -36,6 +37,7 @@ def add_initiative(request):
                 oInitiative.recordType = record_type.objects.get(name='Opportunity')
                 oInitiative.last_modified_by = request.user
                 oInitiative.created_by = request.user
+                oInitiative.actual_Lgate = Actual_L_Gate.objects.get(id=actualLGate) 
                 oInitiative.save()
                 return redirect(reverse("Fit4:initiative_details", args=[oInitiative.slug]))
         else:
@@ -56,7 +58,7 @@ def clone_initiative(request):
                 o.YYear = datetime.datetime.now().year
                 o.currency = Currency.objects.get(title='US Dollar')
                 o.recordType = record_type.objects.get(name='Opportunity')
-                o.actual_Lgate = Actual_L_Gate.objects.get(GateIndex=LGateIndex.L0.value)
+                o.actual_Lgate = Actual_L_Gate.objects.get(GateIndex=LGateIndex.L1.value)
                 o.overall_status = overall_status.objects.first()
                 o.last_modified_by = request.user
                 o.created_by = request.user
@@ -72,6 +74,7 @@ def clone_initiative(request):
 def add_threat(request):
     try:
         if request.method == "POST":
+            actualLGate = request.POST.get('actualLGate')
             form = InitiativeThreatForm(request.POST)
             if form.is_valid():
                 oInitiative = form.save(commit=False)
@@ -82,6 +85,7 @@ def add_threat(request):
                 oInitiative.recordType = record_type.objects.get(name='Threat')
                 oInitiative.last_modified_by = request.user
                 oInitiative.created_by = request.user
+                oInitiative.actual_Lgate = Actual_L_Gate.objects.get(id=actualLGate)
                 oInitiative.save()
 
                 return redirect(reverse("Fit4:initiative_details", args=[oInitiative.slug]))
@@ -105,6 +109,7 @@ def clone_MTO_initiative(request):
                 oInitiative.recordType = record_type.objects.get(name='Threat')
                 oInitiative.last_modified_by = request.user
                 oInitiative.created_by = request.user
+                oInitiative.actual_Lgate = Actual_L_Gate.objects.get(GateIndex=LGateIndex.L1.value)
                 oInitiative.save()
 
                 return redirect(reverse("Fit4:initiative_details", args=[oInitiative.slug]))

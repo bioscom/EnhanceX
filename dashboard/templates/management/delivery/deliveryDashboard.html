@@ -36,7 +36,7 @@
                     {% endif %}
                 </div>
                 <div class="card-body">
-                    <h3 class="text-center">$100M</h3>
+                    <h3 class="text-center">${{deliveryTarget.target}}M</h3>
                 </div>
             </div>
 
@@ -247,12 +247,17 @@
                                     <th>Planned Value</th>
                                     <th>Banked delivery</th>
                                     <th>Benefit Type</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% comment %} {% for o in topInitiatives|slice:":20" %} {% endcomment %}
                                 {% for o in topInitiatives %}
-                                    <tr>
+                                    {% if o.initiative_name in duplicates %}
+                                        <tr class="table-danger">
+                                    {% else %}
+                                        <tr>
+                                    {% endif %}
                                         <td>{{forloop.counter}}</td>
                                         <td>{{o.initiative_id}}</td>
                                         <td><a href="{% url 'Fit4:initiative_details' o.slug %}">{{o.initiative_name}}</a></td>
@@ -260,7 +265,17 @@
                                         <td class="text-end">{{o.Yearly_Planned_Value|floatformat:2|intcomma}}</td>
                                         <td>{{o.Yearly_Actual_value|floatformat:2|intcomma}}</td>
                                         <td>{{o.benefittype.title}}</td>
+                                        <td>
+                                            {% if o.initiative_name in duplicates %}
+                                                <!-- Only show delete on first duplicate -->
+                                                <form method="POST" action="{% url 'dashboard:delete_delivery_duplicate' o.id %}" style="display:inline;">
+                                                    {% csrf_token %}
+                                                    <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this duplicate?')">Delete</button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
                                     </tr>
+                                 
                                 {% endfor %}
                             </tbody>
                         </table>

@@ -14,37 +14,6 @@
 
 {% block body %}
 
-    <style>
-        .zoom-card {
-            transition: transform 0.4s ease, top 0.4s ease, left 0.4s ease;
-            position: relative;
-            z-index: 1;
-        }
-
-        .zoomed-in {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 80vw;  /* 80% of viewport width */
-            max-height: 80vh; /* optional: prevent vertical overflow */
-            transform: translate(-50%, -50%) scale(1.2);
-            z-index: 1050; /* above Bootstrap modals */
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
-            background-color: white;
-        }
-
-        .zoom-toggle-icon {
-            float: right;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-
-        .table-font{
-            font-size: 14px
-        }
-
-    </style> 
-
     <div class="container-flux">
         <div class="card shadow mb-2 bg-body rounded">
             <div class="card-header">
@@ -67,7 +36,7 @@
                     </div>
                     <div class="col-sm text-end">
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#initiativeModal">Refresh</button>
+                            <button type="button" class="btn btn-light border border-2 border-secondary" onclick="location.reload();">Refresh</button>
                             <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#cloneModal">Edit</button>
                             <button type="button" class="btn btn-light border border-2 border-secondary" data-bs-toggle="modal" data-bs-target="#ownerModal">Subscribe</button>
                         </div>
@@ -136,10 +105,13 @@
                 <div class="card zoom-card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h6># of MTO Actions Overdue with summary</h6>
-                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
+                        <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                            <i class="fas fa-expand-arrows-alt"></i>
+                        </span>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                        <div class="table-responsive shadow scroll-container">
+                        {% comment %} <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;"> {% endcomment %}
                             <table class="table table-bordered table-hover table-font">
                                 <thead class="table-light" style="position: sticky; top:0; z-index:1;">                    
                                     <tr>
@@ -147,7 +119,7 @@
                                         <th>Action Name</th>
                                         <th>Initiative Name</th>
                                         <th>Assigned To</th>
-                                        <th>Due Date</th>
+                                        <th>Due_Date</th>
                                         <th>Commentary</th>
                                     </tr>
                                 </thead>
@@ -160,7 +132,7 @@
                                             <td><a href="{% url 'Fit4:initiative_details' o.initiative.slug %}">{{o.initiative.initiative_name}}</a></td>
                                             <td>{{o.assigned_to.get_full_name}}</td>
                                             <td>{{o.due_date|date:'d-m-Y'}}</td>
-                                            <td>{{o.initiative.overallstatuscommentary|default_if_none:""}}</td>
+                                            <td>{{o.initiative.overallstatuscommentary|safe|default_if_none:""}}</td>
                                         </tr>
                                     {% endfor %}
                                 {% else %}
@@ -183,7 +155,7 @@
                         <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                         <div class="table-responsive shadow scroll-container">
                             <table class="table table-bordered table-hover table-font">
                                 <thead class="table-light" style="position: sticky; top:0; z-index:1;">                    
                                     <tr>
@@ -227,7 +199,7 @@
                         <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                         <div class="table-responsive shadow scroll-container">
                             <table class="table table-bordered table-hover table-font">
                                 <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
                                     <tr>
@@ -276,7 +248,7 @@
                         <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                         <div class="table-responsive shadow scroll-container">
                             <table class="table table-bordered table-hover table-font">
                                 <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
                                     <tr>
@@ -324,7 +296,7 @@
                         <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                         <div class="table-responsive shadow scroll-container">
                             <table class="table table-bordered table-hover table-font">
                                 <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
                                     <tr>
@@ -374,7 +346,7 @@
                         <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive shadow" style="max-height: 300px; overflow-y; auto;">
+                         <div class="table-responsive shadow scroll-container">
                             <table class="table table-bordered table-hover table-font">
                                 <thead class="table-light" style="position: sticky; top:0; z-index:1">                    
                                     <tr>
@@ -481,11 +453,13 @@
     <div class="card zoom-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6>All Active Threats and Opportunities</h6>
-            {% comment %} <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span> {% endcomment %}
+            <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn>
+                <i class="fas fa-expand-arrows-alt"></i>
+            </span>
         </div>
         <div class="card-body">
             <div class="col-sm-12 row">
-                <div class="table-responsive shadow" style="max-height: 500px; overflow-y; auto;">
+                 <div class="table-responsive shadow scroll-container">
                     <table id="rptTable" class="table table-bordered table-hover table-font">
                         <thead class="table-light" style="position: sticky; top:0; z-index:1";>                    
                             <tr>

@@ -251,6 +251,91 @@
 
     {% include "Fit4/header.html" %}
 
+    
+      <form action="" method="POST">
+          {% csrf_token %}
+          <div class="modal fade" id="optionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg modal-dialog-centered">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel"> New Initiative</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          <div class="col-sm-6 ms-4">
+                              <span class="text-danger">*</span><b>Select Record Type</b><br>
+                              <div class="form-check">
+                                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                  <label class="form-check-label" for="flexRadioDefault1">
+                                      Opportunity - New
+                                  </label>
+                              </div>
+                              <div class="form-check">
+                                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                                  <label class="form-check-label" for="flexRadioDefault2">
+                                      Threat - New
+                                  </label>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="modal-footer">
+                          <button id="initiativeOption" type="button" data-bs-toggle="modal" data-bs-target="#initiativeModal" class="btn btn-primary">Create Initiative</button>
+                          <button id="threatOption" display:none type="button" data-bs-toggle="modal" data-bs-target="#threatModal" class="btn btn-danger">Create Initiative</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </form>
+
+    {% if initiativeForm %}
+      <!-- Global Modal: Initiative Form -->
+      <form action="{% url 'Fit4:add_initiative' %}" method="POST">
+          {% csrf_token %}
+          {{ form.media }}
+          <div class="modal fade" id="initiativeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel"> New Initiative: Initiative - New</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          {% include "partials/partial_add_initiative.html" %}
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Save changes</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </form>
+    {% endif %}
+    <!-- Threat Modal -->
+    {% if threatForm %}
+      <form action="{% url 'Fit4:add_threat' %}" method="POST">
+          {% csrf_token %}
+          {{ threatForm.media }}
+          <div class="modal fade" id="threatModal" tabindex="-1" aria-labelledby="threatModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="threatModalLabel"> New Threat: Threat - New</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          {% include "partials/partial_add_threat.html" %}
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Save changes</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </form>
+    {% endif %}
+
     <!-- Collapsible Pane -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="rightSidebar" aria-labelledby="rightSidebarLabel">
       {% comment %} <div class="offcanvas-header">
@@ -704,15 +789,15 @@
             $('.select2-initiative').select2({
                 theme: 'bootstrap-5',
                 width: '100%',
-                dropdownParent: $('#initiativeModal')
+                dropdownParent: $('#editInitiativeModal')
             });
 
             // Optional: Reinitialize if modal is dynamically loaded
-            $('#initiativeModal').on('shown.bs.modal', function () {
+            $('#editInitiativeModal').on('shown.bs.modal', function () {
                 $('.select2-initiative').select2({
                     theme: 'bootstrap-5',
                     width: '100%',
-                    dropdownParent: $('#initiativeModal')
+                    dropdownParent: $('#editInitiativeModal')
                 });
             });
         });

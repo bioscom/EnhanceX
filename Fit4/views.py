@@ -121,7 +121,7 @@ def Home(request):
 
     banners = Banner.objects.filter(is_active=True).order_by('-uploaded_at')
 
-    return render(request, 'Fit4/home.html', {'initiatives': initiatives, 'form': form, 'threatForm':threatForm, 
+    return render(request, 'Fit4/home.html', {'initiatives': initiatives, 'formAddInitiative': form, 'threatForm':threatForm, 
                                               'formAction':oAction, 'noOfActions':noOfActions, 'initiativesCount':initiativesCount, 
                                               'oApprovals':oApprovals, 'noOfApprovals':noOfApprovals, 'banners': banners, 'initiative':ZipInitiativeAction, 
                                               'lateinitiatives':lateinitiatives, 'show_late_modal': show_late_modal,
@@ -205,7 +205,7 @@ def add_actions(request, id):
 def action_details(request, id):  
     oAction = Actions.objects.get(id=id)
     actionForm = ActionsForm(instance=oAction)
-    return render(request, 'Fit4/Initiative/actions_details.html', {'form':oAction, 'actionsForm':actionForm})
+    return render(request, 'Fit4/Initiative/actions_details.html', {'action':oAction, 'form':actionForm})
 
 def edit_actions(request, id):
     try:

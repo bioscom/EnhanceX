@@ -1,477 +1,111 @@
-
 {% load widget_tweaks %}
 {% load crispy_forms_tags %}
 
-{% comment %} <div class="modal-body" style="height: 75vh; overflow-y: auto;"> {% endcomment %}
-    <div class="accordion mb-5" id="accordionPanels">
-        <div class="accordion-item">
-            <h1 class="accordion-header" id="panelsStayOpen-headingOneUpdate">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOneModal" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-                <b>Details</b>
-                </button>
-            </h1>
-            <div id="panelsStayOpen-collapseOneModal" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOneUpdate">
-                <div class="accordion-body">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>Workstream</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.Workstream class="select form-select select2" id="workstreamSelect" placeholder="" %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Id</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {{initiative.initiative_id}}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>Initiative Name</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.initiative_name class="form-control required" placeholder="" %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Problem statement</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {{ initiativeForm.problem_statement|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:3" }}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>Description</small>
-                                
-                            </div>
-                            <div class="col-sm-12">
-                                {{ initiativeForm.description|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:3" }}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Overall status</small>
-                            
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.overall_status class="select form-select" placeholder="" %}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>Hashtag #</small>
-                                
-                            </div>
-                            <div class="col-sm-12">
-                                {{ initiativeForm.HashTag|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:3" }}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Overrall Status Commentary</small>
-                            
-                            </div>
-                            <div class="col-sm-12">
-                                {{ initiativeForm.overallstatuscommentary|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:3" }}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row mb-3">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>L-Gate</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% if user.is_superuser %}
-                                    {% render_field initiativeForm.actual_Lgate class="select form-select" placeholder="" %}
-                                {% else %}
-                                    {{ initiative.actual_Lgate }}
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Discipline</small>
-                            
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.discipline class="select form-select" placeholder="" %}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <div class="col-sm">
-                                   
-                                </div>
-                                <div class="col-sm-12">
-                                    
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Marked as Confidential</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.mark_as_confidential class="form-check-input" placeholder="" %}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <div class="col-sm">
-                                    <small>Enabled by</small><span class="flex-grow-1"></span><i class="text-danger">* Note: Press control key to select multiple rows</i>
-                                </div>
-                                <div class="col-sm-12">
-                                    {% render_field initiativeForm.enabledby class="select form-select" placeholder="" %}
-                                    {% comment %} {{initiativeForm.enabledby|add_class:"select form-select"|attr:"rows:10"}} {% endcomment %}
-                                </div>
-                            </div>
-                        </div>
+{% comment %} {% block css %}
+{% endblock %}
 
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Plan Relevance</small>  <span class="flex-grow-1"></span><i class="text-danger">* Note: Press control key to select multiple rows</i>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.Plan_Relevance class="form-control" placeholder="" %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <div class="col-sm">
-                                   
-                                </div>
-                                <div class="col-sm-12">
-                                    
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Note</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.note class="form-control" placeholder="" %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+{% block body %} {% endcomment %}
     
-        <div class="accordion-item">
-            <h1 class="accordion-header" id="panelsStayOpen-headingTwoUpdate">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwoModal" aria-expanded="true" aria-controls="panelsStayOpen-collapseTwo">
-                    <b>Default Workstream Approvers</b>
-                </button>
-            </h1>
-            <div id="panelsStayOpen-collapseTwoModal" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingTwoUpdate">
-                <div class="accordion-body">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>Workstream Lead (From workstream)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {{workstream.user_workstreamlead.first_name}}, {{workstream.user_workstreamlead.last_name}}
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Workstream sponsor (From workstream)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {{workstream.user_workstreamsponsor.first_name}}, {{workstream.user_workstreamsponsor.last_name}}
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                            <small>Finance sponsor (From workstream)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {{workstream.user_financesponsor.first_name}}, {{workstream.user_financesponsor.last_name}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="shadow p-3 mb-2 bg-body rounded">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeThreatForm.initiative_name.id_for_label }}" class="form-label">Initiative Name*:</label>
             </div>
+            <div class="col-sm-12">
+                {% render_field initiativeThreatForm.initiative_name class="form-control required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeThreatForm.initiative_name.errors|first }}</div>
         </div>
-    
-        <div class="accordion-item">
-            <h1 class="accordion-header" id="panelsStayOpen-headingThreeUpdate">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThreeModal" aria-expanded="true" aria-controls="panelsStayOpen-collapseThree">
-                    <b>Intiative Approvers</b>
-                </button>
-            </h1>
-            <div id="panelsStayOpen-collapseThreeModal" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingThreeUpdate">
-                <div class="accordion-body">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                Activate Initiative Approvers
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.activate_initiative_approvers class="form-check-input" placeholder="" %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Initiative Sponsor</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.initiativesponsor class="select form-select select2" id="InitiativeSponsorSelect" placeholder="" %}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                
-                            </div>
-                            <div class="col-sm-12">
-                            
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Workstream Sponsor - approver</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.workstreamsponsor class="select form-select select2" id="WorkStreamSponsorSelect" placeholder="" %}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                
-                            </div>
-                            <div class="col-sm-12">
-                            
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Workstream Lead - approver</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.workstreamlead class="select form-select select2" id="WorkStreamLeadSelect" placeholder="" %}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                
-                            </div>
-                            <div class="col-sm-12">
-                            
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>Finance Sponsor - approver</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.financesponsor class="select form-select select2" id="FinanceSponsorSelect" placeholder="" %}
-                            </div>
-                        </div>
-                    </div>
-        
-                </div>
+        <div class="col-md-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeThreatForm.overall_status.id_for_label }}" class="form-label">Overrall Status*:</label>
             </div>
-        </div>
-    
-        <div class="accordion-item">
-            <h1 class="accordion-header" id="panelsStayOpen-headingFourUpdate">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFourModal" aria-expanded="true" aria-controls="panelsStayOpen-collapseFour">
-                    <b>Schedule</b>
-                </button>
-            </h1>
-            <div id="panelsStayOpen-collapseFourModal" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingFourUpdate">
-                <div class="accordion-body">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>L0 Completion Date (Planned)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.L0_Completion_Date_Planned class="form-control datetimepicker-input" placeholder="" %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>L0 Completion Date (Actual)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {{initiativeForm.L0_Completion_Date_Actual}} 
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>L1 Completion Date (Planned)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.L1_Completion_Date_Planned class="form-control datetimepicker-input" placeholder="" %}
-                            </div>
-                            <div class="invalid-feedback">{{ initiativeForm.L1_Completion_Date_Planned.errors|first }}</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>L1 Completion Date (Actual)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {{initiativeForm.L1_Completion_Date_Actual}}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>L2 Completion Date (Planned)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.L2_Completion_Date_Planned class="form-control datetimepicker-input" placeholder="" %}
-                            </div>
-                            <div class="invalid-feedback">{{ initiativeForm.L2_Completion_Date_Planned.errors|first }}</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>L2 Completion Date (Actual)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {{initiativeForm.L2_Completion_Date_Actual}}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>L3 Completion Date (Planned)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.L3_Completion_Date_Planned class="form-control datetimepicker-input" placeholder="" %}
-                            </div>
-                            <div class="invalid-feedback">{{ initiativeForm.L3_Completion_Date_Planned.errors|first }}</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>L3 Completion Date (Actual)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {{initiativeForm.L3_Completion_Date_Actual}}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>L4 Completion Date (Planned)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.L4_Completion_Date_Planned class="form-control datetimepicker-input" placeholder="" %}
-                            </div>
-                            <div class="invalid-feedback">{{ initiativeForm.L4_Completion_Date_Planned.errors|first }}</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>L4 Completion Date (Actual)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {{initiativeForm.L4_Completion_Date_Actual}}
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <small>L5 Completion Date (Planned)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {% render_field initiativeForm.L5_Completion_Date_Planned class="form-control" placeholder="" %}
-                                {% comment %} <button type="button" class="btn btn-primary" id="liveToastBtn">Show live toast</button> {% endcomment %}
-                            </div>
-                            <div class="invalid-feedback">{{ initiativeForm.L5_Completion_Date_Planned.errors|first }}</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-sm-12">
-                                <small>L5 Completion Date (Actual)</small>
-                            </div>
-                            <div class="col-sm-12">
-                                {{initiativeForm.L5_Completion_Date_Actual}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-sm-12">
+                {% render_field initiativeThreatForm.overall_status class="select form-select required" placeholder="" %}
             </div>
+            <div class="invalid-feedback">{{ initiativeThreatForm.overall_status.errors|first }}</div>
         </div>
     </div>
-
-    <div class="toast-container position-fixed top-0 end-0 p-3" data-bs-autohide="false" style="z-index: 99998; left: 50%; transform: translate(-50%, 0px); ">
-        <div id="toast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header text-white bg-danger">
-                <img src="..." class="rounded me-2" alt="...">
-                <strong class="me-auto">We hit a snag</strong>
-                {% comment %} <small>5 mins ago</small> {% endcomment %}
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
     
-            <div class="d-flex">
-                <div id="toast-body" class="toast-body">
-                    <div><b>Review the errors on this page.</b></div>
-                    <ul><li>The date inputted, should be greater or equal to the date captured in the previous stage.</li></ul>
-                </div>
+    <div class="row mt-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeThreatForm.Workstream.id_for_label }}" class="form-label">Workstream*:</label>
             </div>
+            <div class="col-sm-12">
+                {% render_field initiativeThreatForm.Workstream class="select form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeThreatForm.Workstream.errors|first }}</div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeThreatForm.actual_Lgate.id_for_label }}"  class="form-label">Initial L-Gate*:</label>
+            </div>
+            <div class="col-sm-12">
+                <select name="actualLGate" id="actualLGate" class="form-select mb-2" required>
+                    <option value="" disabled selected>---------</option>
+                    <option value="1">G0 Idea</option>
+                    <option value="2">G1 Identify</option>
+                </select>
+                {% comment %} {% render_field initiativeThreatForm.actual_Lgate class="select form-select required" placeholder="" %} {% endcomment %}
+            </div>
+            {% comment %} <div class="invalid-feedback">{{ initiativeThreatForm.actual_Lgate.errors|first }}</div> {% endcomment %}
         </div>
     </div>
 
 
-{% comment %} </div> {% endcomment %}
-{% if initiativeForm.errors %}
+    <div class="row mt-2">
+        <div class="col-sm-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeThreatForm.infrastructureCategory.id_for_label }}" class="form-label">Infrastructure Category:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeThreatForm.infrastructureCategory class="select form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeThreatForm.infrastructureCategory.errors|first }}</div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeThreatForm.unit.id_for_label }}"  class="form-label">Unit:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeThreatForm.unit class="select form-select required" placeholder="" %}
+            </div>
+            <div class="invalid-feedback">{{ initiativeThreatForm.unit.errors|first }}</div>
+        </div>
+    </div>
+
+
+    <div class="row mt-2">
+        <div class="col-sm-6">
+            
+        </div>
+        <div class="col-md-6">
+            <div class="col-sm-12">
+                <label for="{{ initiativeThreatForm.mark_as_confidential.id_for_label }}" class="form-label">Mark as Confidential:</label>
+            </div>
+            <div class="col-sm-12">
+                {% render_field initiativeThreatForm.mark_as_confidential class="form-check check" placeholder="" %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-sm-12">
+            <label for="{{ initiativeThreatForm.description.id_for_label }}" class="form-label">Description:</label>
+        </div>
+        <div class="col-sm-12">
+            {% render_field initiativeThreatForm.description class="form-control" id="addThreater" %}
+            {% comment %} {{ initiativeThreatForm.description|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:5" }} {% endcomment %}
+        </div>
+        <div class="invalid-feedback">{{ initiativeThreatForm.description.errors|first }}</div>
+    </div>
+</div>
+{% comment %} {% if initiativeThreatForm.errors %}
     <ul>
-        {% for key,value in initiativeForm.errors.items %} 
+        {% for key,value in initiativeThreatForm.errors.items %} 
             <li>{{ key|escape }} : {{ value|escape }}</li>
         {% endfor %}
     </ul>
-{% endif %}
+{% endif %} {% endcomment %}

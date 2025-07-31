@@ -202,6 +202,14 @@ def approval_details(request, id):
 
 #1. Helper Functions
 def create_approval(initiative, gate_index, approver, role, user):
+    if approver is None:
+        if role == "Finance Sponsor":
+            approver = initiative.Workstream.user_financesponsor
+        elif role == "Workstream Lead":
+            approver = initiative.Workstream.user_workstreamlead
+        elif role == "Workstream Sponsor":
+            approver = initiative.Workstream.user_workstreamsponsor
+            
     return InitiativeApprovals.objects.create(
         initiative=initiative,
         LGateId=Actual_L_Gate.objects.get(GateIndex=gate_index),
@@ -209,7 +217,8 @@ def create_approval(initiative, gate_index, approver, role, user):
         actualApprover=approver,
         rolePlayed=role,
         created_by=user,
-        Created_Date=now()
+        Created_Date=now(),
+        last_modified_by=user
     )
 
 def update_initiative_gate(initiative, gate_index, visual_status_id, completion_date_field):
@@ -330,7 +339,6 @@ def copyImpactPlanToForecast(oImpact):
         o.Nov_Forecast = o.Nov_Plan
         o.Dec_Forecast = o.Dec_Plan
         o.save()
-
 
 def reject_initiative(request, id):
     try:

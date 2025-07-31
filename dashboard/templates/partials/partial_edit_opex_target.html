@@ -1,0 +1,11 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+<div class="mt-2">
+    <div class="col-sm-12">
+        <label class="form-label">Target:</label>
+    </div>
+    <div class="col-sm-12">
+        {% render_field opxTargetForm.target class="form-control" %}
+    </div>
+</div>
