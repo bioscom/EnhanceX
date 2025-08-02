@@ -119,8 +119,8 @@ def newThreatsOpportunity(initiatives, yyear, unit, recordType, workstream):
         'month', 'year', 'Workstream__workstreamname'
     ).annotate(
         total_count=Count('id')
-    ).order_by('month')
-    
+    ).order_by('year', 'month')
+
     queryset=filtering(queryset, yyear, unit, recordType, workstream)
     
     # Get unique months in calendar order
@@ -168,8 +168,8 @@ def resolvedThreatsOpportunity(initiatives, yyear, unit, recordType, workstream)
         'month', 'year', 'Workstream__workstreamname'
     ).annotate(
         total_count=Count('id')
-    ).order_by('month')
-    
+    ).order_by('year', 'month')
+
     queryset=filtering(queryset, yyear, unit, recordType, workstream)
     
      # Get unique months in calendar order
@@ -236,12 +236,13 @@ def overDueThreatsOpportunities(initiatives, yyear, unit, recordType, workstream
         Workstream__workstreamname__icontains='MTO',
         Planned_Date__lt=today
     ).annotate(
-        month=ExtractMonth('Created_Date')
+        month=ExtractMonth('Created_Date'),
+        year=ExtractYear('Created_Date')
     ).values(
-        'month', 'Workstream__workstreamname'
+        'month', 'year', 'Workstream__workstreamname'
     ).annotate(
         total_count=Count('id')
-    ).order_by('month')
+    ).order_by('year', 'month')
     
     queryset=filtering(queryset, yyear, unit, recordType, workstream)
     
@@ -284,13 +285,14 @@ def totalThreatsOpportunities(initiatives, yyear, unit, recordType, workstream):
     
     # Group by month + status
     queryset = initiatives.annotate(
-        month=ExtractMonth('Created_Date')
+        month=ExtractMonth('Created_Date'),
+        year=ExtractYear('Created_Date')
     ).values(
-        'month', 'overall_status'
+        'month', 'year', 'overall_status'
     ).annotate(
         total_mtoscore=Sum('mto_score')
-    ).order_by('month')
-    
+    ).order_by('year', 'month')
+
     queryset=filtering(queryset, yyear, unit, recordType, workstream)
     
     # Define status groups
@@ -344,7 +346,6 @@ def totalThreatsOpportunities(initiatives, yyear, unit, recordType, workstream):
     }
 
     return context
-
 
 #11 All ACTIVE Threats and Opportunities Report 
 def activeThreatsOpport(initiatives, yyear, unit, recordType, workstream, initovrsC, initovrsH, initovrsD, initovrsCa):
