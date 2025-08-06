@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+<div class="container mt-2">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6>Edit Initiative Report - {{ report.initiative_name }}</h6>
+            {% comment %} <span class="zoom-toggle-icon" title="Zoom" data-zoom-btn><i class="fas fa-expand-arrows-alt"></i></span> {% endcomment %}
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {% comment %} {{ form.as_p }} {% endcomment %}
+                <div class="table-responsive shadow"> {% comment %} scroll-container {% endcomment %}
+                    <table class="table table-bordered table-hover table-font">
+                        <tbody>
+                            <tr>
+                                <th>Initiative Name</th>
+                                <td>{% render_field form.initiative_name class="form-control" %}</td>
+                            </tr>
+                            <tr>
+                                <th>Yearly Planned Value</th>
+                                <td>{% render_field form.Yearly_Planned_Value class="form-control" %}</td>
+                            </tr>
+                            <tr>
+                                <th>Yearly Forecast Value</th>
+                                <td>{% render_field form.Yearly_Forecast_Value class="form-control" %}</td>
+                            </tr>
+                            <tr>
+                                <th>Yearly Actual Value</th>
+                                <td>{% render_field form.Yearly_Actual_value class="form-control" %}</td>
+                            </tr>
+                            <tr>
+                                <th>Functions</th>
+                                <td>{% render_field form.functions class="select form-select" %}</td>
+                            </tr>
+                            <tr>
+                                <th>Overall Status</th>
+                                <td>{% render_field form.overall_status class="select form-select" %}</td>
+                            </tr>
+                            <tr>
+                                <th>Actual Gate</th>
+                                <td>{% render_field form.actual_Lgate class="select form-select" %}</td>
+                            </tr>
+                            <tr>
+                                <th>Workstream</th>
+                                <td>{% render_field form.Workstream class="select form-select" %}</td>
+                            </tr>
+                            <tr>
+                                <th>Saving Type</th>
+                                <td>{% render_field form.SavingType class="select form-select" %}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'dashboard:opex_report' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

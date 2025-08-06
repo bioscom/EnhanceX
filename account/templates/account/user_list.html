@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <div class="container">
+    <div class="container-fluid">
         {% comment %} <form method="get" class="mb-3">
             <input type="text" name="q" placeholder="Search by username" class="form-control" value="{{ request.GET.q }}">
         </form> {% endcomment %}
@@ -13,9 +13,10 @@
             <div class="card-body">
                 <a class="btn btn-primary" href="{% url 'account:register' %}">Add User</a>
                 <hr>
-                <div class="table-responsive shadow" style="height: 70vh; overflow-y; auto;">
+                <div class="table-responsive shadow" style="height: 70vh">
+                {% comment %} <div class="table-responsive shadow" style="height: 70vh; overflow-y: auto;"> {% endcomment %}
                     <table id="rptTable" class="table table-bordered table-hover">
-                        <thead class="table-light" style="position: sticky; top:0; z-index:1; font-size: 13px";>
+                        <thead class="table-light" style="position: sticky; top:0; z-index:1; font-size: 13px;">
                             <tr>
                                 <th></th>
                                 <th>Username</th>
@@ -37,16 +38,17 @@
                                     <td>
                                         <a class="btn btn-sm btn-warning" href="{% url 'account:edit_user' user.pk %}">Edit</a>
                                         <a class="btn btn-sm btn-info" href="{% url 'account:manage_user_permissions' user.pk %}">Permissions</a>
-                                        {% comment %}<a class="btn btn-sm btn-outline-{{ 'danger' if user.is_active else 'success' }}"
+                                        <a class="btn btn-sm {% if user.is_active %} btn-outline-danger {% else %} btn-outline-success {% endif %}"
                                             href="{% url 'account:toggle_user_active' user.pk %}">
-                                            {{ 'Deactivate' if user.is_active else 'Activate' }}
+                                            {% if user.is_active %} Deactivate {% else %} Activate {% endif %}
+                                            {% comment %} {{ 'Deactivate' {% if user.is_active %} {% else %} 'Activate' {% endif %} }} {% endcomment %}
                                         </a>
-                                         <a class="btn btn-sm btn-secondary" href="{% url 'account:change_user_password' user.pk %}">Password</a> 
+                                        <a class="btn btn-sm btn-secondary" href="{% url 'account:change_user_password' user.pk %}">Password</a> 
                                         
-                                        <form method="post" action="{% url 'account:delete_user' user.pk %}" style="display:inline;">
+                                        <form id="deleteForm-{{ user.pk }}" method="post" action="{% url 'account:delete_user' user.pk %}" style="display:inline;">
                                             {% csrf_token %}
-                                            <button class="btn btn-sm btn-danger" onclick="return confirm('Delete user?');">Delete</button>
-                                        </form>{% endcomment %}
+                                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ user.pk }}')">Delete</button>
+                                        </form>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -68,4 +70,24 @@
 
        
     </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        function confirmDelete(userId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This user will be permanently deleted!",
+                //icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteForm-' + userId).submit();
+                }
+            });
+        }
+    </script>
 {% endblock %}

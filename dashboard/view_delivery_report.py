@@ -167,7 +167,6 @@ def edit_delivery_target(request, id):
     return render(request, "partials/partial_edit_delivery_target.html", {'delivery': form})
 
 
-
 #9. Delivery Movements
 def delivery_movements(queryLW, queryTW):
     # Build dict for last week and this week keyed by (Initiative_Name, function)
@@ -238,54 +237,54 @@ def funnel_movements(queryLW, queryTW):
     result.sort(key=lambda x: x["Difference"], reverse=True)
     return result
 
-#11. Monthly Banking Plan
-def delivery_monthly_banking_plan_Old(selected_year):
-    # Map of month names to their corresponding field prefixes
-    month_fields = {
-        "January": ["Jan_Plan", "Jan_Forecast", "Jan_Actual"],
-        "February": ["Feb_Plan", "Feb_Forecast", "Feb_Actual"],
-        "March": ["Mar_Plan", "Mar_Forecast", "Mar_Actual"],
-        "April": ["Apr_Plan", "Apr_Forecast", "Apr_Actual"],
-        "May": ["May_Plan", "May_Forecast", "May_Actual"],
-        "June": ["Jun_Plan", "Jun_Forecast", "Jun_Actual"],
-        "July": ["Jul_Plan", "Jul_Forecast", "Jul_Actual"],
-        "August": ["Aug_Plan", "Aug_Forecast", "Aug_Actual"],
-        "September": ["Sep_Plan", "Sep_Forecast", "Sep_Actual"],
-        "October": ["Oct_Plan", "Oct_Forecast", "Oct_Actual"],
-        "November": ["Nov_Plan", "Nov_Forecast", "Nov_Actual"],
-        "December": ["Dec_Plan", "Dec_Forecast", "Dec_Actual"],
-    }
+##11. Monthly Banking Plan
+# def delivery_monthly_banking_plan_Old(selected_year):
+#     # Map of month names to their corresponding field prefixes
+#     month_fields = {
+#         "January": ["Jan_Plan", "Jan_Forecast", "Jan_Actual"],
+#         "February": ["Feb_Plan", "Feb_Forecast", "Feb_Actual"],
+#         "March": ["Mar_Plan", "Mar_Forecast", "Mar_Actual"],
+#         "April": ["Apr_Plan", "Apr_Forecast", "Apr_Actual"],
+#         "May": ["May_Plan", "May_Forecast", "May_Actual"],
+#         "June": ["Jun_Plan", "Jun_Forecast", "Jun_Actual"],
+#         "July": ["Jul_Plan", "Jul_Forecast", "Jul_Actual"],
+#         "August": ["Aug_Plan", "Aug_Forecast", "Aug_Actual"],
+#         "September": ["Sep_Plan", "Sep_Forecast", "Sep_Actual"],
+#         "October": ["Oct_Plan", "Oct_Forecast", "Oct_Actual"],
+#         "November": ["Nov_Plan", "Nov_Forecast", "Nov_Actual"],
+#         "December": ["Dec_Plan", "Dec_Forecast", "Dec_Actual"],
+#     }
 
-    labels, plan_data, forecast_data, actual_data = [], [], [], []
+#     labels, plan_data, forecast_data, actual_data = [], [], [], []
 
-    # Filter records by year
-    queryset = InitiativeImpact.objects.filter(
-        YYear=selected_year,
-        initiative__Workstream__workstreamname__icontains='Renaissance Delivery'
-    )
+#     # Filter records by year
+#     queryset = InitiativeImpact.objects.filter(
+#         YYear=selected_year,
+#         initiative__Workstream__workstreamname__icontains='Renaissance Delivery'
+#     )
     
-    # Aggregate manually
-    for month, fields in month_fields.items():
-        agg = queryset.aggregate(
-            plan=Sum(fields[0]),
-            forecast=Sum(fields[1]),
-            actual=Sum(fields[2])
-        )
+#     # Aggregate manually
+#     for month, fields in month_fields.items():
+#         agg = queryset.aggregate(
+#             plan=Sum(fields[0]),
+#             forecast=Sum(fields[1]),
+#             actual=Sum(fields[2])
+#         )
 
-        labels.append(month)
-        plan_data.append(agg["plan"] or 0)
-        forecast_data.append(agg["forecast"] or 0)
-        actual_data.append(agg["actual"] or 0)
+#         labels.append(month)
+#         plan_data.append(agg["plan"] or 0)
+#         forecast_data.append(agg["forecast"] or 0)
+#         actual_data.append(agg["actual"] or 0)
 
-    # Pass to template
-    context = {
-        "labels": labels,
-        "plan_data": plan_data,
-        "forecast_data": forecast_data,
-        "actual_data": actual_data,
-    }
+#     # Pass to template
+#     context = {
+#         "labels": labels,
+#         "plan_data": plan_data,
+#         "forecast_data": forecast_data,
+#         "actual_data": actual_data,
+#     }
     
-    return context
+#     return context
 
 def delivery_monthly_banking_plan(selected_year):
     month_fields = {
@@ -870,3 +869,18 @@ def delete_delivery_duplicate(request, id):
     initiative.delete()
     return redirect(reverse("dashboard:delivery_report"))
     #return redirect(request.META.get('HTTP_REFERER', 'your-fallback-url'))
+    
+
+def edit_initiative_report(request, pk):
+    report = get_object_or_404(delivery_weekly_Initiative_Report, pk=pk)
+    
+    if request.method == 'POST':
+        form = DeliveryWeeklyInitiativeReportForm(request.POST, instance=report)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Report updated successfully.")
+            return redirect(reverse("dashboard:delivery_report"))  # update to your actual detail view name
+    else:
+        form = DeliveryWeeklyInitiativeReportForm(instance=report)
+    
+    return render(request, 'management/delivery/edit_initiative_report.html', {'form': form, 'report': report})

@@ -202,16 +202,14 @@ def user_list(request):
         print(traceback.format_exc())
     return render(request, 'account/user_list.html', {'users': users})
 
-
 @user_passes_test(staff_only)
 def register_user(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
             messages.success(request, "User registered successfully.")
-            #return redirect('users/' + str(form.id) + '/edit/')
-            return redirect('en/users/') #users/<int:pk>/edit/
+            return redirect('account:edit_user', pk=user.id)  # 👈 Use user.id
     else:
         form = UserCreationForm()
     return render(request, 'account/register.html', {'form': form})
@@ -224,7 +222,8 @@ def edit_user(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "User updated successfully.")
-            return redirect('en/users/')
+            #return redirect('en/users/')
+            return redirect(reverse("account:user_list"))
     else:
         form = UserChangeForm(instance=user)
     return render(request, 'account/edit_user.html', {'form': form, 'user_obj': user})
@@ -233,12 +232,12 @@ def edit_user(request, pk):
 def delete_user(request, pk):
     user = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
-        user.delete()
+        #user.delete()
         messages.success(request, "User deleted.")
-        return redirect('en/users/')
+        return redirect(reverse("account:user_list"))
     return render(request, 'account/confirm_delete.html', {'user_obj': user})
 
-@user_passes_test(staff_only)
+#@user_passes_test(staff_only)
 def change_user_password(request, pk):
     user = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
@@ -246,11 +245,10 @@ def change_user_password(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Password changed.")
-            return redirect('en/users/')
+            return redirect(reverse("account:user_list"))
     else:
         form = PasswordChangeForm(user)
     return render(request, 'account/change_password.html', {'form': form, 'user_obj': user})
-
 
 @user_passes_test(staff_only)
 def manage_user_permissions(request, pk):
@@ -260,7 +258,7 @@ def manage_user_permissions(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Groups/permissions updated.")
-            return redirect('en/users/')
+            return redirect(reverse("account:user_list"))
     else:
         form = UserGroupsForm(instance=user)
     return render(request, 'account/manage_permissions.html', {'form': form, 'user_obj': user})
@@ -272,7 +270,7 @@ def toggle_user_active(request, pk):
     user.save()
     status = "activated" if user.is_active else "deactivated"
     messages.success(request, f"User {status}.")
-    return redirect('en/users/')
+    return redirect(reverse("account:user_list"))
 
 #endregion =================================================================================================
 
@@ -301,7 +299,10 @@ class UserPasswordChangeView(PasswordChangeView):
     success_url = reverse_lazy('password_change_done')
     form_class = CustomPasswordChangeForm # You can also use Django’s default
 
-
+class DebugPasswordResetView(PasswordResetView):
+    def get(self, request, *args, **kwargs):
+        print("GET password reset view triggered")
+        return super().get(request, *args, **kwargs)
 
 # @login_required
 # def edit(request):

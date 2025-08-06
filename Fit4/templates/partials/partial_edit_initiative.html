@@ -82,7 +82,6 @@
                     <div class="col-sm-6">
                         <div class="col-sm-12">
                             <small>Hashtag #</small>
-
                         </div>
                         <div class="col-sm-12">
                             {{ initiativeForm.HashTag|add_class:"form-control bg-lightyellow mb-3"|attr:"rows:3" }}
@@ -91,7 +90,6 @@
                     <div class="col-md-6">
                         <div class="col-sm-12">
                             <small>Overrall Status Commentary</small>
-
                         </div>
                         <div class="col-sm-12">
                             {% render_field initiativeForm.overallstatuscommentary class="form-control" id="overrall_status" placeholder="" %}
@@ -151,6 +149,22 @@
                                 <small>Enabled by</small><span class="flex-grow-1"></span><i class="text-danger">* Note: Press control key to select multiple rows</i>
                             </div>
                             <div class="col-sm-12">
+                                <div style="display: flex; gap: 10px;">
+                                    <select id="available_enabledby" class="form-select" multiple size="10" style="width: 45%;">
+                                        {% for pr in enabled_by %}
+                                            <option value="{{ pr.id }}">{{ pr.enabledby }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <div style="display: flex; flex-direction: column; justify-content: center;">
+                                        <button type="button" onclick="moveOptionsEnabledBy('available_enabledby', 'selected_enabledby')">→</button>
+                                        <button type="button" onclick="moveOptionsEnabledBy('selected_enabledby', 'available_enabledby')">←</button>
+                                    </div>
+
+                                    <select id="selected_enabledby" class="form-select" name="selected_enabledby" multiple size="10" style="width: 45%;">
+                                        <!-- Will be filled by JS -->
+                                    </select>
+                                </div>
                                 {% render_field initiativeForm.enabledby class="select2 form-select tall-select" placeholder="" %}
                                 {% comment %} {{initiativeForm.enabledby|add_class:"select form-select"|attr:"rows:10"}} {% endcomment %}
                             </div>
@@ -162,8 +176,22 @@
                             <small>Plan Relevance</small>  <span class="flex-grow-1"></span><i class="text-danger">* Note: Press control key to select multiple rows</i>
                         </div>
                         <div class="col-sm-12">
-                            {% comment %} {{ initiativeForm.Plan_Relevance|add_class:"dual-listbox" }}
-                            {{ initiativeForm.Plan_Relevance }}{% endcomment %}
+                            <div style="display: flex; gap: 10px;">
+                                <select id="available" class="form-select" multiple size="10" style="width: 45%;">
+                                    {% for pr in plan_relevance %}
+                                        <option value="{{ pr.id }}">{{ pr.title }}</option>
+                                    {% endfor %}
+                                </select>
+
+                                <div style="display: flex; flex-direction: column; justify-content: center;">
+                                    <button type="button" onclick="moveOptions('available', 'selected')">→</button>
+                                    <button type="button" onclick="moveOptions('selected', 'available')">←</button>
+                                </div>
+
+                                <select id="selected" class="form-select" name="selected_plan_relevance" multiple size="10" style="width: 45%;">
+                                    <!-- Will be filled by JS -->
+                                </select>
+                            </div>
                             {% render_field initiativeForm.Plan_Relevance class="select2 form-select tall-select" %} 
                         </div>
                     </div>
@@ -475,6 +503,30 @@
 </div>
 
 {% block js %}
+    <script>
+        function moveOptions(fromId, toId) {
+            const fromSelect = document.getElementById(fromId);
+            const toSelect = document.getElementById(toId);
+            const selectedOptions = Array.from(fromSelect.selectedOptions);
+
+            selectedOptions.forEach(option => {
+                toSelect.appendChild(option);
+            });
+        }
+    </script>
+
+    <script>
+        function moveOptionsEnabledBy(fromId, toId) {
+            const fromSelect = document.getElementById(fromId);
+            const toSelect = document.getElementById(toId);
+            const selectedOptions = Array.from(fromSelect.selectedOptions);
+
+            selectedOptions.forEach(option => {
+                toSelect.appendChild(option);
+            });
+        }
+    </script>
+
     {% comment %} <script>
       $(document).ready(function () {
         // When modal is shown, reinitialize dual listbox

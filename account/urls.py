@@ -47,21 +47,42 @@ urlpatterns = [
 
     # Reset Password
     path('change-password/', UserPasswordChangeView.as_view(), name='change_password'),
-    path('password-change-done/', auth_views.PasswordChangeDoneView.as_view(template_name='registration/password_change_done.html'), name='password_change_done'),
+    path('password-change-done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
 
-    # Forgot Password
-    path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
+    
     
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('register/', views.register_user, name='register'),
+    
     path('users/', views.user_list, name='user_list'),
     path('users/<int:pk>/edit/', views.edit_user, name='edit_user'),
     path('users/<int:pk>/delete/', views.delete_user, name='delete_user'),
     path('users/<int:pk>/permissions/', views.manage_user_permissions, name='manage_user_permissions'),
     path('users/<int:pk>/toggle-active/', views.toggle_user_active, name='toggle_user_active'),
+    path('users/<int:pk>/change-password/', views.change_user_password, name='change_user_password'),
+    
+    # Forgot Password
+    path('password-reset/', auth_views.PasswordResetView.as_view(
+        template_name='registration/password_reset_form.html',
+        email_template_name='registration/password_reset_email.html',
+        subject_template_name='registration/password_reset_subject.txt',
+    ), name='password_reset'),
+    
+    # path('password-reset/', views.DebugPasswordResetView.as_view(
+    #     template_name='registration/password_reset_form.html'
+    # ), name='password_reset'),
+
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(
+        template_name='registration/password_reset_done.html'
+    ), name='password_reset_done'),
+
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name='registration/password_reset_confirm.html'
+    ), name='password_reset_confirm'),
+
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='registration/password_reset_complete.html'
+    ), name='password_reset_complete'),
 
 ]

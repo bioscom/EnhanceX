@@ -989,3 +989,17 @@ def delete_opex_duplicate(request, id):
     initiative.delete()
     return redirect(reverse("dashboard:opex_report"))
     #return redirect(request.META.get('HTTP_REFERER', 'your-fallback-url'))
+    
+def edit_opex_initiative_report(request, pk):
+    report = get_object_or_404(opex_weekly_Initiative_Report, pk=pk)
+    
+    if request.method == 'POST':
+        form = OpexWeeklyInitiativeReportForm(request.POST, instance=report)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Report updated successfully.")
+            return redirect(reverse("dashboard:opex_report"))  # update to your actual detail view name
+    else:
+        form = OpexWeeklyInitiativeReportForm(instance=report)
+
+    return render(request, 'management/opex/edit_initiative_report.html', {'form': form, 'report': report})

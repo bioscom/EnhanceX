@@ -111,3 +111,34 @@ class commercialTargetForm(forms.ModelForm):
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
     #     self.fields['YYear'].queryset = commercial_target.objects.values_list('YYear', flat=True).distinct().order_by('YYear')
+    
+    
+    
+
+class DeliveryWeeklyInitiativeReportForm(forms.ModelForm):
+    class Meta:
+        model = delivery_weekly_Initiative_Report
+        fields = ['initiative_name', 'Yearly_Planned_Value', 'Yearly_Forecast_Value', 'Yearly_Actual_value', 'functions', 'overall_status', 'actual_Lgate', 'Workstream', 'SavingType',]  # or list specific fields if you want to restrict
+        # widgets = {
+        #     'Planned_Date': forms.DateInput(attrs={'type': 'date'}),
+        #     'L0_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        #     'L1_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        #     'L2_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        #     'L3_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        #     'L4_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        #     'L5_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        # }
+        
+class OpexWeeklyInitiativeReportForm(forms.ModelForm):
+    class Meta:
+        model = opex_weekly_Initiative_Report
+        fields = ['initiative_name', 'Yearly_Planned_Value', 'Yearly_Forecast_Value', 'Yearly_Actual_value', 'functions', 'overall_status', 'actual_Lgate', 'Workstream', 'SavingType',]  # or list specific fields if you want to restrict
+        # widgets = {
+        #     'Planned_Date': forms.DateInput(attrs={'type': 'date'}),
+        #     'L0_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        #     'L1_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        #     'L2_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        #     'L3_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        #     'L4_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        #     'L5_Completion_Date_Planned': forms.DateInput(attrs={'type': 'date'}),
+        # }

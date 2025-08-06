@@ -31,7 +31,8 @@ urlpatterns = i18n_patterns(
     path('', include('Fit4.urls')),
     #path('ckeditor/', include('ckeditor_uploader.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
-    path('', include('account.urls')),
+    #path('', include('account.urls')),
+    path('', include(('account.urls', 'account'), namespace='account')),
     path(_('reports/'), include('reports.urls')), # Including reports app
 
     # Charts

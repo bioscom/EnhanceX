@@ -256,6 +256,10 @@ def initiative_details(request, slug):
 
         oPlanRelevance = oInitiative.Plan_Relevance.all()
         oEnabledBy = oInitiative.enabledby.all() 
+        
+        plan_relevance = PlanRelevance.objects.all().order_by('title')
+        enabled_by = EnabledBy.objects.all().order_by('enabledby')
+        
         initiativeForm = InitiativeForm2(instance=oInitiative)
         initiativeForm3 = InitiativeForm3(instance=oInitiative)
         assetHierarchyForm = AssetHierarchyForm(instance=oInitiative)
@@ -345,6 +349,8 @@ def initiative_details(request, slug):
         return render(request, 'Fit4/Initiative/Init_Details.html', {
             'initiative':oInitiative, 
             'oPlanRelevance':oPlanRelevance, 
+            'plan_relevance': plan_relevance,
+            'enabled_by': enabled_by,
             'oEnabledBy':oEnabledBy, 
             'initiativeForm':initiativeForm, 
             'initiativeForm3':initiativeForm3, 

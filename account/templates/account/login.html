@@ -41,13 +41,14 @@
 
 
 {% block body %}
-    <div class="loader"></div>
+    {% comment %} <div class="loader"></div>
     <div style="display:none;" id="myDiv" class="animate-bottom"></div>
     <div class="row">
         <div class="col-sm-6" style="background-color: #7CB9E8;height:100vh">
             <div class="row col-sm-12 mb-3 text-center">
                 <a class="navbar-brand" href="/"><img src="/media/logo/LOGO.png" alt="" height="100" loading="lazy" /></a>
-            </div>
+            </div> {% endcomment %}
+
             <form action="{% url 'account:login_page' %}" method="POST">
                 <div class="card w-50 mb-4 mx-auto">
                     <div class="card-body">
@@ -67,13 +68,11 @@
                 </div>
             </form>
 
-            {% comment %} <p class="text-center">
-                <a href="{% url 'account:password_reset' %}">Forgot Password?</a>
-            </p> {% endcomment %}
-            
-            {% comment %} <div class="card w-50 mb-4 mx-auto">
-                
-            </div> {% endcomment %}
+            <div class="card w-50 mb-4 mx-auto">
+                <p class="text-center bg-light">
+                    <a href="{% url 'account:password_reset' %}">Forgot your Password? Click here to reset it</a>
+                </p>
+            </div>
 
             <div class="mb-4 text-center">
                 Or
@@ -84,7 +83,7 @@
                 </a>
             </div>
 
-            <h6 class="fixed-bottom">
+            {% comment %} <h6 class="fixed-bottom">
                 © 2024 Renaissance, Inc. All rights reserved.
             </h6>
         </div>
@@ -92,7 +91,7 @@
         <div class="col-12 col-sm-6 d-flex justify-content-center align-items-center" style="min-height:100vh;">
             <img src="/media/FileUploads/welcome.png" alt="Welcome" loading="lazy" class="img-fluid" />
         </div>
-    </div>
+    </div> {% endcomment %}
 
     {% if form.errors %}
         <ul>

@@ -252,6 +252,8 @@
                                                     {% csrf_token %}
                                                     <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this duplicate?')">Delete</button>
                                                 </form>
+                                            {% else %}
+                                                <a href="{% url 'dashboard:edit_opex_initiative_report' o.id %}" class="btn btn-sm btn-warning">Edit</a>
                                             {% endif %}
                                         </td>
                                     </tr>

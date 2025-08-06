@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from Fit4.forms import *
 from django.contrib import messages
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Q, Count, Case, When, Value, IntegerField
+from django.db.models import Q, Count, Case, When, Value, IntegerField, Min
 import traceback
 from user_visit.models import *
 import datetime
@@ -28,6 +28,8 @@ from dashboard.models import *
 
 from django.db.models import Q, F, Prefetch, FloatField, ExpressionWrapper
 from itertools import chain
+
+from django.core.cache import cache
 
 def custom_server_error(request):
     # Capture error info
@@ -99,33 +101,149 @@ def search(request):
 
 #region================================================ Home Page ================================================================================
 
+# @login_required(login_url='account:login_page')
+# def Home(request):
+#     current_year = now().year
+#     today = now().date()
+    
+#     initiatives = Initiative.objects.filter(
+#         author=request.user,
+#         is_active=True, 
+#         last_modified_date__year=current_year
+#         ).annotate(
+#             action_count=Count('initiative_actions')
+#         ).select_related('overall_status').order_by('-Created_Date')
+    
+#     lateinitiatives = Initiative.objects.filter(
+#         author=request.user,
+#         is_active=True,
+#         Planned_Date__lt=today
+#     ).exclude(overall_status__name__in=['Completed', 'Cancelled', 'On hold', 'Defer']).order_by('-Created_Date')
+    
+#     show_late_modal = lateinitiatives.exists()
+
+#     form = InitiativeForm(request.POST)
+#     threatForm = InitiativeThreatForm(request.POST)
+
+#     oApprovals = InitiativeApprovals.objects.filter(
+#         Q(approver=request.user) | Q(actualApprover=request.user),
+#         status=None
+#     )
+
+#     noOfApprovals = oApprovals.count()
+
+#     oAction = Actions.objects.filter(
+#         assigned_to=request.user
+#     ).exclude(status__name='Completed')
+
+#     noOfActions = oAction.count()
+
+#     lateactions = oAction.filter(
+#         due_date__lt=today
+#     ).exclude(status__name='Cancelled')
+
+#     show_late_actions = lateactions.exists()
+
+#     banners = cache.get('active_banners')
+#     if not banners:
+#         banners = Banner.objects.filter(is_active=True).order_by('-uploaded_at')
+#         cache.set('active_banners', banners, 300)
+
+#     return render(request, 'Fit4/home.html', {
+#         'initiatives': initiatives,
+#         'formAddInitiative': form,
+#         'threatForm': threatForm,
+#         'formAction': oAction,
+#         'noOfActions': noOfActions,
+#         'initiativesCount': initiatives.count(),
+#         'oApprovals': oApprovals,
+#         'noOfApprovals': noOfApprovals,
+#         'banners': banners,
+#         'lateinitiatives': lateinitiatives,
+#         'show_late_modal': show_late_modal,
+#         'lateactions': lateactions,
+#         'show_late_actions': show_late_actions
+#     })
+    
 @login_required(login_url='account:login_page')
 def Home(request):
-    initiatives = Initiative.objects.filter(author=request.user).filter(is_active=True, last_modified_date__year=now().year).order_by('-Created_Date')
-    lateinitiatives = Initiative.objects.filter(author=request.user).filter(is_active=True, Planned_Date__lt=now().date()).order_by('-Created_Date').exclude(overall_status__name='Completed').exclude(overall_status__name='Cancelled').exclude(overall_status__name='On hold').exclude(overall_status__name='Defer')
-    show_late_modal = lateinitiatives.exists()
-    action_count = Initiative.objects.filter(author=request.user).filter(is_active=True, last_modified_date__year=now().year).annotate(action_count=Count('initiative_actions'))
-    ZipInitiativeAction = zip(initiatives, action_count)
+    current_year = now().year
+    today = now().date()
     
-    initiativesCount = initiatives.count()
+    # initiatives = Initiative.objects.filter(
+    #     author=request.user,
+    #     is_active=True, 
+    #     last_modified_date__year=current_year
+    #     ).annotate(
+    #         action_count=Count('initiative_actions')
+    #     ).select_related('overall_status').order_by('-Created_Date')
+    
+    # 1. First database entry
+    initiatives = Initiative.objects.filter(
+        author=request.user,
+        is_active=True, 
+        last_modified_date__year=current_year
+    ).annotate(
+        action_count=Count('initiative_actions'),
+        earliest_due=Min('initiative_actions__due_date')
+    ).order_by('-Created_Date')
+    #action_count = initiatives.annotate(action_count=Count('initiative_actions'))
+    #ZipInitiativeAction = zip(initiatives, action_count)
+
+    lateinitiatives = Initiative.objects.filter(
+        author=request.user,
+        is_active=True,
+        Planned_Date__lt=today
+    ).exclude(overall_status__name__in=['Completed', 'Cancelled', 'On hold', 'Defer']).order_by('-Created_Date')
+    
+    #.exclude(overall_status__name='Completed').exclude(overall_status__name='Cancelled').exclude(overall_status__name='On hold').exclude(overall_status__name='Defer')
+
+    show_late_modal = lateinitiatives.exists()
+    
     form = InitiativeForm(request.POST)
     threatForm = InitiativeThreatForm(request.POST)
     
-    oApprovals = InitiativeApprovals.objects.filter((Q(approver=request.user) | Q(actualApprover=request.user)) & Q(status = None)).exclude(Q(status=ApprovalStatus.Approved.value) | Q(status=ApprovalStatus.Rejected.value))
+    # 2. Second database entry
+    oApprovals = InitiativeApprovals.objects.filter(
+        (Q(approver=request.user) | Q(actualApprover=request.user)) & Q(status = None)
+    ).exclude(Q(status=ApprovalStatus.Approved.value) | Q(status=ApprovalStatus.Rejected.value))
+    
     noOfApprovals = oApprovals.count()
 
-    oAction = Actions.objects.filter(assigned_to=request.user.id).exclude(status__name='Completed')
+    # 3. Third database entry
+    allActions = Actions.objects.all()
+    oAction = allActions.filter(
+        assigned_to=request.user.id
+    ).exclude(status__name='Completed')
     noOfActions = oAction.count()
-    lateactions = Actions.objects.filter(assigned_to=request.user.id, due_date__lt=now().date()).exclude(status__name='Completed').exclude(status__name='Cancelled')
+    
+    lateactions = allActions.filter(
+        assigned_to=request.user.id, 
+        due_date__lt=today
+    ).exclude(status__name__in=['Completed', 'Cancelled'])
+    
     show_late_actions = lateactions.exists()
 
+    # 4. Fourth database entry
     banners = Banner.objects.filter(is_active=True).order_by('-uploaded_at')
 
-    return render(request, 'Fit4/home.html', {'initiatives': initiatives, 'formAddInitiative': form, 'threatForm':threatForm, 
-                                              'formAction':oAction, 'noOfActions':noOfActions, 'initiativesCount':initiativesCount, 
-                                              'oApprovals':oApprovals, 'noOfApprovals':noOfApprovals, 'banners': banners, 'initiative':ZipInitiativeAction, 
-                                              'lateinitiatives':lateinitiatives, 'show_late_modal': show_late_modal,
-                                              'lateactions': lateactions, 'show_late_actions': show_late_actions}) 
+    return render(request, 'Fit4/home.html', {
+        'initiatives': initiatives, 
+        'formAddInitiative': form, 
+        'threatForm':threatForm, 
+        'formAction':oAction, 
+        'noOfActions':noOfActions, 
+        'initiativesCount':initiatives.count(), 
+        'oApprovals':oApprovals, 
+        'noOfApprovals':noOfApprovals, 
+        'banners': banners, 
+        #'initiative':ZipInitiativeAction, 
+        'lateinitiatives':lateinitiatives, 
+        'show_late_modal': show_late_modal,
+        'lateactions': lateactions, 
+        'show_late_actions': show_late_actions,
+        'today':today,
+    })
 
 def recycleBin(request):
     initiatives = Initiative.objects.filter(author=request.user).filter(is_active=False).order_by('-Created_Date')

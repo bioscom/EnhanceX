@@ -23,6 +23,7 @@
                     <th>Actual Gate</th>
                     <th>Status</th>
                     <th>Due Date</th>
+                    <th>Pending Date</th>
                     <th>Pending Actions</th>
                     <th>Pending Approval</th>
                     <th>Record Type</th>
@@ -30,7 +31,9 @@
                 </tr>
             </thead>
             <tbody>
-            {% for o, a in initiative %}
+                initiatives
+            {% comment %} {% for o, a in initiative %} {% endcomment %}
+            {% for o in initiatives %}
                 <tr>
                     <td>{{forloop.counter}}</td>
                     <td>{{o.initiative_id}}</td>
@@ -46,13 +49,16 @@
 
                     <td>{{o.overall_status}}</td>
                     <td>{{o.Planned_Date|date:'d-m-Y'}}</td>
-                    <td> 
-                        {% if a.action_count %}
-                            {{a.action_count}}
+                    <td>{{o.earliest_due|date:'d-m-Y'}}</td>
+                    {% if o.action_count %}
+                        {% if o.earliest_due < today %}
+                            <td class="bg-danger text-white text-center align-middle">{{o.action_count}}</td>
                         {% else %}
-                           &nbsp;
+                            <td class="text-center align-middle">{{o.action_count}}</td>
                         {% endif %}
-                    </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
                     <td>...</td>
                     <td>{{o.recordType.name}}</td>
                     <td>{{o.Created_Date|date:'d-m-Y'}}</td>

@@ -40,5 +40,7 @@ urlpatterns = [
     #
     path('upload-excel/', views.upload_weekly_commitment_excel, name='upload_excel'),
     
-    
+    path(_("delivery/<int:pk>/edit/"), views.edit_initiative_report, name='edit_initiative_report'),
+
+    path(_("opex/<int:pk>/edit/"), views.edit_opex_initiative_report, name='edit_opex_initiative_report'),
 ]

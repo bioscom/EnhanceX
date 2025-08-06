@@ -12,7 +12,8 @@
                 <form method="post">
                     <div class="card-body">
                         <div class="container">
-                            <div class="table-responsive shadow p-3" style="max-height: 720px; overflow-y; auto;">
+                            <div class="table-responsive shadow" style="height: 70vh">
+                            {% comment %} <div class="table-responsive shadow p-3" style="max-height: 720px; overflow-y; auto;"> {% endcomment %}
                                 {% csrf_token %}
                                 <div class="mb-3">
                                     <label>Groups:</label>
@@ -33,6 +34,6 @@
             </div>
         </div>
     </div>
-</div>
+</div><br><br><br>
 
 {% endblock %}

@@ -13,6 +13,8 @@ from bootstrap_datepicker_plus.widgets import DatePickerInput
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from widget_tweaks.templatetags.widget_tweaks import render_field
 
+#from django.contrib.admin.widgets import FilteredSelectMultiple
+
 
 
 class ExcelUploadForm(forms.Form):
@@ -222,7 +224,7 @@ class InitiativeForm2(forms.ModelForm):
     description = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
     problem_statement = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
     overallstatuscommentary = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
-    
+    #Plan_Relevance = forms.ModelMultipleChoiceField(queryset=PlanRelevance.objects.all(), required=False, widget=FilteredSelectMultiple("Plan_Relevance", is_stacked=False))
     class Meta:
         model = Initiative
 
