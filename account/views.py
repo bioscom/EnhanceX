@@ -209,7 +209,7 @@ def register_user(request):
         if form.is_valid():
             user = form.save()
             messages.success(request, "User registered successfully.")
-            return redirect('account:edit_user', pk=user.id)  # 👈 Use user.id
+            return redirect('account:edit_user', pk=user.id)  # ?? Use user.id
     else:
         form = UserCreationForm()
     return render(request, 'account/register.html', {'form': form})
@@ -296,7 +296,7 @@ def register(request):
 
 class UserPasswordChangeView(PasswordChangeView):
     template_name = 'registration/password_change_form.html'
-    success_url = reverse_lazy('password_change_done')
+    success_url = reverse_lazy('account:password_change_done')
     form_class = CustomPasswordChangeForm # You can also use Django’s default
 
 class DebugPasswordResetView(PasswordResetView):
@@ -398,7 +398,7 @@ def password_change(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Password sucessfuly changed")
-            return redirect('/')
+            return redirect('/en/home')
             #return render(request, "registration/password_reset_form.html", {'form': form})
             #return HttpResponse(status=204, headers={'HX-Trigger': json.dumps({"movieListChanged": None, "showMessage": f"{new_user.first_name} added." })})
     else:

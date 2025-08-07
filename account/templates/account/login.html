@@ -63,25 +63,24 @@
                         {% comment %} <input type="hidden" name="text" value="{{ next }}"> {% endcomment %}
                         <button type="submit" class="btn btn-primary w-100" style="height:50px">Log in</button>
                     </div>
-                    <a href="mailto:isaac.bejide@raecafrica.com">Contact Admin to create your profile.</a><br>
-                    
+                    <a href="{% url 'account:password_reset' %}">Forgot your Password? Click here to reset it</a><br>
                 </div>
             </form>
 
-            <div class="card w-50 mb-4 mx-auto">
-                <p class="text-center bg-light">
-                    <a href="{% url 'account:password_reset' %}">Forgot your Password? Click here to reset it</a>
-                </p>
+            <div class="card w-50 mx-auto">
+                <div class="card-body">
+                    <a href="mailto:isaac.bejide@raecafrica.com">Contact Admin to create your profile.</a>
+                </div>
             </div>
 
-            <div class="mb-4 text-center">
+            {% comment %} <div class="mb-4 text-center">
                 Or
             </div>
             <div class="mb-2 text-center">
                 <a href="{% url 'account:login_page' %}">
                     <input type="submit" value="{% translate 'Log in With Single Sign On' %}" class="w-50" style="height:50px">
                 </a>
-            </div>
+            </div> {% endcomment %}
 
             {% comment %} <h6 class="fixed-bottom">
                 © 2024 Renaissance, Inc. All rights reserved.
